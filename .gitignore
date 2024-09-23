@@ -1,2 +1,4 @@
 
 /data
+/dataprocessing/__pycache__
+.cache

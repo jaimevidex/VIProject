@@ -35,8 +35,8 @@ def data_pipeline(df_main: pd.DataFrame, df_lyrics: pd.DataFrame) -> pd.DataFram
     return merged_df
 
 # Example usage
-df_main = pd.read_csv('./songs_normalize.csv')   # DataFrame with 'song' and 'artist' columns
-df_lyrics = pd.read_csv('./song_lyrics.csv')  # DataFrame with 'title', 'artist', 'lyrics' columns
+df_main = pd.read_csv('./data/no_dups_data.csv')   # DataFrame with 'song' and 'artist' columns
+df_lyrics = pd.read_json('./data/dataset1.json')  # DataFrame with 'title', 'artist', 'lyrics' columns
 
 final_df = data_pipeline(df_main, df_lyrics)
 
