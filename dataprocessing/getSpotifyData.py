@@ -86,5 +86,5 @@ if __name__ == "__main__":
     songs = searchTrack(results[i:i+50])
     for song in songs:
         df = pd.DataFrame(song.to_dict(), index=[0])
-        df.to_csv('data.csv', mode='a', header=False)
+        df.to_csv('./data/data.csv', mode='a', header=False)
     time.sleep(1)

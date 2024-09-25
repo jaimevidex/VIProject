@@ -21,16 +21,16 @@ def create_features(df: pd.DataFrame) -> pd.DataFrame:
 # Step 3: Pipeline Function
 def data_pipeline(df_main: pd.DataFrame, df_lyrics: pd.DataFrame) -> pd.DataFrame:
     # Create features in the secondary DataFrame (df_lyrics)
-    df_lyrics = create_features(df_lyrics)
+    #df_lyrics = create_features(df_lyrics)
     
     # Drop the 'lyrics' column after feature extraction
-    df_lyrics = df_lyrics.drop(['lyrics'], axis=1)
+    #df_lyrics = df_lyrics.drop(['time_signature', 'language'], axis=1)
     
     # Merge the main DataFrame and the DataFrame with keywords based on common columns
-    merged_df = pd.merge(df_main, df_lyrics, left_on=['song', 'artist'], right_on=['title', 'artist'])
+    merged_df = pd.merge(df_main, df_lyrics, left_on=['title', 'artist'], right_on=['title', 'artist'])
     
     # Drop redundant columns after the merge
-    merged_df = merged_df.drop(columns=['title'])
+    merged_df = merged_df.drop(columns=['time_signature', 'language'])
     
     return merged_df
 
@@ -42,3 +42,5 @@ final_df = data_pipeline(df_main, df_lyrics)
 
 # Inspect the final result
 print(final_df.head())
+# Save the final DataFrame to a CSV file
+final_df.to_csv('./data/final_data.csv', index=False)

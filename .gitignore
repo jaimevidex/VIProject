@@ -1,4 +1,3 @@
-
-/data
 /dataprocessing/__pycache__
 .cache
+data/dataset1.json
