@@ -82,16 +82,52 @@ function createLineChart(selectedData, containerId, minRangeValue, maxRangeValue
 
 
 function createBarchart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
+  // Filter data based on checked genres
+  data = data.filter((d) => checkedGenres.includes(d.Genre));
+
+  // Filter columns based on time range (minRangeValue and maxRangeValue)
+  data = data.map((d) => {
+    const filteredData = {};
+    filteredData["Genre"] = d.Genre;
+    for (let i = minRangeValue; i <= maxRangeValue; i++) {
+      filteredData[i] = d[i];
+    }
+    return filteredData;
+  });
+
+  console.log(data); // Log the filtered data
+
+  // Calculate the average popularity for each genre, ignoring missing values (0 or undefined)
+  data = data.map((d) => {
+    // Extract the numeric values, excluding the genre
+    const popularityValues = Object.keys(d)
+      .filter((key) => key !== "Genre")
+      .map((key) => d[key]);
+
+    // Filter out missing values
+    const filteredValues = popularityValues.filter((value) => value !== "0" && value !== undefined);
+    console.log(filteredValues);
+
+    // Calculate sum and average of popularity values
+    const sum = filteredValues.reduce((acc, value) => acc + parseInt(value), 0);
+    const average = filteredValues.length > 0 ? sum / filteredValues.length : 0;
+    console.log(sum);
+
+    return {
+      Genre: d.Genre,
+      popularity: average
+    };
+  });
+
   // Data pre-processing
+  console.log(data);  // Log the CSV data
   const genres = data.map((d) => d.Genre);
   const popularity = data.map((d) => d.popularity);
   console.log(genres);
   console.log(popularity);
 
   const filteredData = data.filter((d) => {
-    return (
-      checkedGenres.includes(d.Genre)
-    );
+    return checkedGenres.includes(d.Genre);
   });
   
   const colorMap = {
