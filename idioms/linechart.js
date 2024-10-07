@@ -1,4 +1,4 @@
-function createLinechart(data, containerId) {
+function createLineChart(data, containerId) {
   // Data processing
 
   data.sort((a, b) => a.year - b.year);
@@ -13,8 +13,8 @@ function createLinechart(data, containerId) {
 
   // Core linechart
 
-  const width = window.innerWidth * 0.95;
-  const height = 500;
+  const width = window.innerWidth * 0.80;
+  const height = 450;
 
   const margin = {
     top: 20,

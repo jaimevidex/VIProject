@@ -8,8 +8,8 @@ function createHistogram(data, containerId) {
 
   // Core Histogram
 
-  const width = window.innerWidth * 0.45;
-  const height = 400;
+  const width = window.innerWidth * 0.40;
+  const height = 300;
   const margin = {
     bottom: 70,
     left: 70,

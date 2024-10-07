@@ -1,31 +1,199 @@
 body {
-  height: 100%;
-  margin: 0;
-  font-family: Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
 }
 
+.dashboard {
+    display: flex;  /* Flexbox to align two sections */
+    height: 100vh;  /* Full viewport height */
+    width: 100%;
+}
+
+/* Left section for charts */
 .container {
-  display: grid;
-  grid-auto-columns: 1fr;
-  grid-template-columns: 1fr 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "ScatterPlot BarChart"
-    "Histogram Sunburst"
-    "LineChart LineChart";
+    flex: 8;  /* Take up 90% of the width */
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    grid-template-areas:
+        "Histogram BubbleChart"
+        "RadarChart VanDiagram";
+    padding: 20px;
 }
-.BarChart {
-  grid-area: BarChart;
-}
-.ScatterPlot {
-  grid-area: ScatterPlot;
-}
+
 .Histogram {
-  grid-area: Histogram;
+    grid-area: Histogram;
 }
-.Sunburst {
-  grid-area: Sunburst;
+
+.BubbleChart {
+    grid-area: BubbleChart;
 }
-.LineChart {
-  grid-area: LineChart;
+
+.RadarChart {
+    grid-area: RadarChart;
+}
+
+.VanDiagram {
+    grid-area: VanDiagram;
+}
+
+.buttons {
+    background-color: #f4f4f4;
+    flex: 2; /* Take up 10% of the width */
+    display: flex;
+    flex-direction: column; /* Align buttons vertically */
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.search-bar {
+    width: 80%; /* Adjust width as needed */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.checkbox-options {
+    width: 80%; /* Adjust width as needed */
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.checkbox-options input[type="checkbox"] {
+    appearance: none; /* Remove default checkbox styling */
+    width: 20px; /* Set width */
+    height: 20px; /* Set height */
+    border-radius: 50%; /* Make the checkbox rounded */
+    border: 2px solid; /* Border color */
+    outline: none; /* Remove outline */
+    cursor: pointer; /* Change cursor to pointer */
+    position: relative; /* Position for the after element */
+    top: 7px;
+    background-color: transparent; /* Background color */
+}
+
+.checkbox-options input[type="checkbox"].rock {
+    border-color: green; /* Color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].rock:checked {
+    background-color: green; /* Fill color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].pop {
+    border-color: orange; /* Color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].pop:checked {
+    background-color: orange; /* Fill color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].rap {
+    border-color: red; /* Color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].rap:checked {
+    background-color: red; /* Fill color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].rb {
+    border-color: blue; /* Color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].rb:checked {
+    background-color: blue; /* Fill color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].country {
+    border-color: brown; /* Color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"].country:checked {
+    background-color: brown; /* Fill color for Option 1 */
+}
+
+.checkbox-options input[type="checkbox"]:checked::after {
+    content: ''; /* Required for pseudo-elements */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px; /* Inner circle width */
+    height: 12px; /* Inner circle height */
+    border-radius: 50%; /* Make inner circle rounded */
+    transform: translate(-50%, -50%); /* Center the inner circle */
+}
+
+
+.range-slider {
+    position: relative;
+    width: 100%; /* Change width to 100% to utilize the full width of the buttons section */
+    margin-bottom: 30px;
+}
+
+#slider {
+    position: relative;
+    width: 98%;
+    margin-bottom: 20px;
+}
+
+#track {
+    width: 90%;
+    height: 6px;
+    background: #b0b0b0;
+    border-radius: 3px;
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    z-index: 0;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    position: absolute;
+    height: 0;
+    pointer-events: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: transparent;
+    border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: all;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    cursor: pointer;
+    position: relative;
+}
+
+/* First handle: Triangle pointing UP */
+#minRange::-webkit-slider-thumb {
+    border-bottom: 20px solid #4CAF50; /* Green triangle */
+    top: 0px; /* Position higher */
+}
+
+/* Second handle: Triangle pointing DOWN */
+#maxRange::-webkit-slider-thumb {
+    border-top: 20px solid #FF5722; /* Orange triangle */
+    top: -20px; /* Position lower */
+}
+
+.range-values {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 10px;
+    font-size: 1.2em;
 }
