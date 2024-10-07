@@ -78,46 +78,48 @@ body {
     background-color: transparent; /* Background color */
 }
 
+/* Use the same colors as D3's schemeCategory10 color palette */
 .checkbox-options input[type="checkbox"].rock {
-    border-color: green; /* Color for Option 1 */
+    border-color: #1f77b4; /* Blue */
 }
 
 .checkbox-options input[type="checkbox"].rock:checked {
-    background-color: green; /* Fill color for Option 1 */
+    background-color: #1f77b4; /* Blue fill */
 }
 
 .checkbox-options input[type="checkbox"].pop {
-    border-color: orange; /* Color for Option 1 */
+    border-color: #ff7f0e; /* Orange */
 }
 
 .checkbox-options input[type="checkbox"].pop:checked {
-    background-color: orange; /* Fill color for Option 1 */
+    background-color: #ff7f0e; /* Orange fill */
 }
 
 .checkbox-options input[type="checkbox"].rap {
-    border-color: red; /* Color for Option 1 */
+    border-color: #2ca02c; /* Green */
 }
 
 .checkbox-options input[type="checkbox"].rap:checked {
-    background-color: red; /* Fill color for Option 1 */
+    background-color: #2ca02c; /* Green fill */
 }
 
 .checkbox-options input[type="checkbox"].rb {
-    border-color: blue; /* Color for Option 1 */
+    border-color: #d62728; /* Red */
 }
 
 .checkbox-options input[type="checkbox"].rb:checked {
-    background-color: blue; /* Fill color for Option 1 */
+    background-color: #d62728; /* Red fill */
 }
 
 .checkbox-options input[type="checkbox"].country {
-    border-color: brown; /* Color for Option 1 */
+    border-color: #9467bd; /* Purple */
 }
 
 .checkbox-options input[type="checkbox"].country:checked {
-    background-color: brown; /* Fill color for Option 1 */
+    background-color: #9467bd; /* Purple fill */
 }
 
+/* Pseudo-element for checked state */
 .checkbox-options input[type="checkbox"]:checked::after {
     content: ''; /* Required for pseudo-elements */
     position: absolute;
@@ -128,7 +130,6 @@ body {
     border-radius: 50%; /* Make inner circle rounded */
     transform: translate(-50%, -50%); /* Center the inner circle */
 }
-
 
 .range-slider {
     position: relative;
@@ -181,13 +182,13 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* First handle: Triangle pointing UP */
 #minRange::-webkit-slider-thumb {
-    border-bottom: 20px solid #4CAF50; /* Green triangle */
+    border-bottom: 20px solid #000000; /* Green triangle */
     top: 0px; /* Position higher */
 }
 
 /* Second handle: Triangle pointing DOWN */
 #maxRange::-webkit-slider-thumb {
-    border-top: 20px solid #FF5722; /* Orange triangle */
+    border-top: 20px solid #000000; /* Orange triangle */
     top: -20px; /* Position lower */
 }
 

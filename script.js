@@ -50,25 +50,43 @@ function updateSlider(event) {
 
     // Update the global variables
     minRangeValue = parseInt(minRange.value);
-    maxRangeValue = parseInt(maxRange.value);
-    console.log(minRangeValue, maxRangeValue);
+    maxRangeValue = parseInt(maxRange.value)
 }
 
 function updateGenreSelection() {
-const genreCheckboxes = [
-  document.getElementById("rock_checkbox"),
-  document.getElementById("pop_checkbox"),
-  document.getElementById("rap_checkbox"),
-  document.getElementById("country_checkbox"),
-  document.getElementById("rb_checkbox")
-]
+    const genreCheckboxes = [
+        document.getElementById("rock_checkbox"),
+        document.getElementById("pop_checkbox"),
+        document.getElementById("rap_checkbox"),
+        document.getElementById("country_checkbox"),
+        document.getElementById("rb_checkbox")
+    ];
 
-//create an array with the genres that are checked
-const checkedGenres = genreCheckboxes.filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.value);
+    // Create an array with the genres that are checked
+    const checkedGenres = genreCheckboxes.filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.value);
 
-//update the global variable
-genres = checkedGenres;
+    // Ensure at least one genre is selected
+    if (checkedGenres.length === 0) {
+        // Re-check the previously selected genres to ensure at least one stays selected
+        genreCheckboxes.forEach((checkbox) => {
+            if (genres.includes(checkbox.value)) {
+                checkbox.checked = true;
+            }
+        });
+        return;
+    }
 
-console.log(genres);
+    // Update the global variable
+    genres = checkedGenres;
 
+    console.log(genres);
+
+    // Clear the existing chart (this prevents duplication)
+    d3.select(".Barchart").selectAll("*").remove();
+
+    // Load data and create the new chart
+    d3.csv("./data/genre_all_time_attribute.csv").then(function (data) {
+        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
+    });
 }
+
