@@ -1,5 +1,14 @@
 function createBarchart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
 
+  // Filter data based on the selected genres
+  const filteredData = data.filter((d) => checkedGenres.includes(d.Genre));
+
+  // Filter data based on the selected time range (each year is a column in the data)
+  const timeRangeData = filteredData.map((d) => {
+    const timeRange = Object.entries(d).slice(1).filter(([, value], index) => index >= minRangeValue && index <= maxRangeValue);
+    return Object.fromEntries(timeRange);
+  });
+  
 
   // Data pre-processing
   const genres = data.map((d) => d.Genre);
