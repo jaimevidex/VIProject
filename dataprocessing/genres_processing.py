@@ -222,3 +222,35 @@ def create_genre_files():
 
     # Save the sorted DataFrame to a CSV file
     sorted_df.to_csv('./data/genre_keyword_total.csv')
+
+# function to create a file that creates a table with a column for each year and a row for each genre wwith the average value of popularity for each genre in that year
+def create_popul_time_table():
+    df = pd.read_csv('./data/final_data.csv')
+    # Get the unique genres
+    genres = df['tag'].unique().tolist()
+    # Create a dictionary to store the average popularity values
+    genre_popularity_dict = {genre: [] for genre in genres}
+
+    # Iterate through the years
+    for year in range(1960, 2022):
+        # Iterate through the genres
+        for genre in genres:
+            # Get all the songs for that genre in that year
+            songs = df[(df['tag'] == genre) & (df['year'] == year)]
+            # Get the average popularity for that genre in that year
+            if not songs.empty:
+                value = round(songs['popularity'].mean(), 1)
+            else:
+                value = 0
+            # Append the value to the corresponding genre list
+            genre_popularity_dict[genre].append(value)
+
+    # Convert the dictionary to a DataFrame
+    genre_popularity_df = pd.DataFrame(genre_popularity_dict, index=range(1960, 2022)).transpose()
+    genre_popularity_df.index.name = 'Genre'
+
+    # Save the DataFrame to a CSV file
+    genre_popularity_df.to_csv('./data/genre_popularity_time.csv')
+
+# Call the function to create the table
+create_popul_time_table()

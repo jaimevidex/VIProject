@@ -1,4 +1,4 @@
-function createBarchart(data, containerId) {
+function createBarchart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
 
 
   // Data pre-processing
