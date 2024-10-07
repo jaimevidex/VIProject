@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./script.js"></script>
+    <script src="./idioms/histogram.js"></script>
+    <script src="./idioms/bubble.js"></script>
+    <script src="./idioms/language.js"></script>
+    <script src="./idioms/radar.js"></script>
+    <script src="./idioms/vanDiagram.js"></script>
+
+  </head>
+  <body onload="init()">
+    <div class="dashboard">
+        <div class="container">
+            <div class="Histogram"></div>
+            <div class="BubbleChart"></div>
+            <div class="RadarChart"></div>
+            <div class="VanDiagram"></div>
+        </div>
+        <div class="buttons">
+            <div class="range-slider">
+                <div class="range-values">
+                    <span id="minOutput">1962</span><span id="maxOutput">2022</span>
+                </div>
+                <div id="slider">
+                    <div id="track"></div>
+                    <input type="range" id="minRange" min="1962" max="2022" value="1962" step="1" >
+                    <input type="range" id="maxRange" min="1962" max="2022" value="2022" step="1" >
+                </div>
+            </div>
+            <input type="text" placeholder="Search Keyword" class="search-bar" />
+            <input type="text" placeholder="Search Artist" class="search-bar" />
+            <div class="checkbox-options">
+                <label>
+                    <input type="checkbox" class="rock" /> Rock
+                </label>
+                <label>
+                    <input type="checkbox" class="pop" /> Pop
+                </label>
+                <label>
+                    <input type="checkbox" class="rap" /> Rap
+                </label>
+                <label>
+                    <input type="checkbox" class="rb" /> R&B
+                </label>
+                <label>
+                    <input type="checkbox" class="country" /> Country
+                </label>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
