@@ -1,9 +1,6 @@
 function init() {
-    d3.json("./data/dataset.json").then(function (data) {
-        createHistogram(data, ".Histogram");
-        createBubbleChart(data, ".BubbleChart");
-        createRadarChart(data, ".RadarChart");
-        createVanDiagram(data, ".VanDiagram");
+    d3.csv("./data/genre_all_time_attribute.csv").then(function (data) {
+      createBarchart(data, ".Barchart");
     });
 
     const minRange = document.getElementById("minRange");
