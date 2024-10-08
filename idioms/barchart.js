@@ -380,7 +380,53 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .transition()
       .duration(1000)
       .attr("y", (d) => yScale(d.popularity))
-      .attr("height", (d) => yScale(0) - yScale(d.popularity));
+      .attr("height", (d) => yScale(0) - yScale(d.popularity))
+      .on("click", function (event, d) {
+        if (minRangeValue - maxRangeValue != 0) {
+          // Hide the bar chart and display the line chart container
+          d3.select(containerId).style("display", "none");
+          d3.select(".Linechart").style("display", "block");
+  
+          d3.csv("./../data/genre_popularity_time.csv").then((data) => {
+            // Reshape the data: Convert the wide format to a long format
+            const longFormatData = [];
+            data.forEach((row) => {
+              const genre = row.Genre;
+              for (let year = 1960; year <= 2021; year++) {
+                longFormatData.push({
+                  genre: genre,
+                  year: year,
+                  popularity: +row[year], // Convert to number
+                });
+              }
+            });
+  
+            // Filter for the selected genre
+            const filteredData = longFormatData.filter(
+              (item) => item.genre === d.genre
+            );
+  
+            // Prepare the selected data
+            const years = filteredData.map((item) => item.year);
+            const popularity = filteredData.map((item) => item.popularity);
+  
+            const selectedData = {
+              years: years,
+              popularity: popularity,
+              color: d.color, // Use the same color as the bar
+            };
+  
+            // Call the createLineChart function
+            createLineChart(
+              selectedData,
+              ".Linechart",
+              minRangeValue,
+              maxRangeValue,
+              checkedGenres
+            );
+          });
+        }
+      });
 
     // Remove bars that are no longer in the data
     bars.exit().transition().duration(1000).attr("height", 0).attr("y", yScale(0)).remove();
