@@ -237,6 +237,10 @@ def create_popul_time_table():
         for genre in genres:
             # Get all the songs for that genre in that year
             songs = df[(df['tag'] == genre) & (df['year'] == year)]
+
+            #  remove any row that has the value 0.0 or 0 in the popularity column
+            songs = songs[songs['popularity'] != 0]
+
             # Get the average popularity for that genre in that year
             if not songs.empty:
                 value = round(songs['popularity'].mean(), 1)

@@ -1,4 +1,10 @@
-
+const colorMap = {
+    "rock": "#1f77b4",    // Blue
+    "pop": "#ff7f0e",     // Orange
+    "rap": "#2ca02c",     // Green
+    "rb": "#d62728",      // Red
+    "country": "#9467bd"  // Purple
+};
 //create variables to store the min and max values of the sliders and the genres that are checked
 let minRangeValue = 1960;
 let maxRangeValue = 2021;
@@ -86,8 +92,6 @@ function updateGenreSelection() {
 
     // Update the global variable
     genres = checkedGenres;
-
-    console.log(genres);
 
     // Clear the existing chart (this prevents duplication)
     d3.select(".Barchart").selectAll("*").remove();
