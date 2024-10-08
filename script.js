@@ -58,13 +58,9 @@ function updateSlider(event) {
     minRangeValue = parseInt(minRange.value);
     maxRangeValue = parseInt(maxRange.value);
     
-     // Clear the existing chart (this prevents duplication)
-     d3.select(".Barchart").selectAll("*").remove();
 
      // Load data and create the new chart
-     d3.csv("./data/genre_popularity_time.csv").then(function (data) {
-         createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
-     });
+     updateBarchart(minRangeValue, maxRangeValue, genres)
   }
 
 function updateGenreSelection() {
@@ -93,12 +89,7 @@ function updateGenreSelection() {
     // Update the global variable
     genres = checkedGenres;
 
-    // Clear the existing chart (this prevents duplication)
-    d3.select(".Barchart").selectAll("*").remove();
-
     // Load data and create the new chart
-    d3.csv("./data/genre_popularity_time.csv").then(function (data) {
-        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
-    });
+   updateBarchart(minRangeValue, maxRangeValue, genres)
 }
 
