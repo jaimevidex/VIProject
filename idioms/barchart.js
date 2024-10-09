@@ -95,19 +95,6 @@ function createBarchart(data, containerId, minRangeValue, maxRangeValue, checked
       }
     });
 
-  // Append popularity values inside bars
-  svg
-    .selectAll("text")
-    .data(jsonData)
-    .enter()
-    .append("text")
-    .attr("x", (d, i) => xScale(i) + xScale.bandwidth() / 2)
-    .attr("y", (d) => yScale(d.popularity) - 5)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "20px")
-    .attr("fill", "black")
-    .text((d) => d.popularity);
-
   // Create x-axis
   svg
     .append("g")
@@ -181,14 +168,14 @@ function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue
     .attr("class", "yAxis")
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(yScale));
-  
+
  // Create circles and apply transitions
   svg
     .selectAll("circle")
     .data(selectedData.popularity)
     .enter()
     .append("circle")
-    .attr("cx", (d, i) => xScale(years[i]))
+    .attr("cx", (d, i) => xScale(minRangeValue + i))
     .attr("cy", height - margin.bottom) // Start from bottom
     .attr("r", 5)
     .attr("fill", selectedData.color)
@@ -264,53 +251,51 @@ function updateFrontend() {
 function updateDashboard(minRangeValue, maxRangeValue, checkedGenres) {
   if (checkedGenres.length === 1 && isBarchart) {
     console.log("Transform to line chart");
-    // Update checkboxes
-    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
-      checkbox.checked = checkedGenres.includes(checkbox.value);
-    });
-    // Update selectedGenres array
-    genres = checkedGenres;
-    // Transform to line chart if only one genre is selected
-    const selectedGenre = checkedGenres[0];
-    d3.csv("./data/genre_popularity_time.csv").then((data) => {
+      // Transform to line chart if only one genre is selected
+      const selectedGenre = checkedGenres[0];
       const longFormatData = [];
-      data.forEach((row) => {
-        for (let year = minRangeValue; year <= maxRangeValue; year++) {
-          longFormatData.push({
-            genre: row.Genre,
-            year: year,
-            popularity: +row[year],
+      d3.csv("./../data/genre_popularity_time.csv").then(data => {
+          data.forEach(row => {
+              const genre = row.Genre;
+              for (let year = minRangeValue; year <= maxRangeValue; year++) {
+                  longFormatData.push({
+                      genre: genre,
+                      year: year,
+                      popularity: +row[year],
+                  });
+              }
           });
-        }
+
+          const filteredData = longFormatData.filter(item => item.genre === selectedGenre);
+          const years = filteredData.map(item => item.year);
+          const popularity = filteredData.map(item => item.popularity);
+
+          const selectedData = {
+              years: years,
+              popularity: popularity,
+              color: colorMap[selectedGenre],
+          };
+
+          isBarchart = false;
+          selectGenre = selectedGenre; // Store the selected genre
+          createLinechart(selectedData, ".Barchart", minRangeValue, maxRangeValue, checkedGenres, data);
       });
-      const selectedData = longFormatData.filter(
-        (item) => item.genre === selectedGenre
-      );
-      const popularity = selectedData.map((d) => d.popularity);
-      const color = colorMap[selectedGenre];
-      createLinechart(
-        { popularity, color },
-        ".Barchart",
-        minRangeValue,
-        maxRangeValue,
-        checkedGenres,
-        data
-      );
-    });
-  } else if (checkedGenres.length > 1 && !isBarchart) {
-    console.log("Transform to bar chart");
-    // Transform to bar chart if more than one genre is selected
-    d3.csv("./data/genre_popularity_time.csv").then((data) => {
-      createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, checkedGenres);
-    });
   } else if (checkedGenres.length > 1 && isBarchart) {
-    console.log("Update bar chart");
-    // Update bar chart if more than one genre is selected
-    updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
-  } else if (checkedGenres.length === 1 && !isBarchart) {
-    console.log("Update line chart");
-    // Update line chart if only one genre is selected
-    updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0]);
+    console.log("Transform to bar chart");
+      // Transform to bar chart if more than one genre is selected
+      d3.csv("./../data/genre_popularity_time.csv").then(data => {
+          isBarchart = true;
+          selectGenre = null; // Clear the selected genre
+          d3.select(".Barchart").selectAll("*").remove(); // Clear the line chart elements
+          createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, checkedGenres);
+      });
+  } else {
+      // Update the current chart
+      if (isBarchart) {
+          updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
+      } else {
+          updateLinechart(minRangeValue, maxRangeValue, selectGenre); // Use the stored selected genre
+      }
   }
 }
 
@@ -483,6 +468,34 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
       .duration(1000)
       .attr("d", line)
       .attr("stroke", color);
+
+      // Bind new data to the circles and apply transition
+    const circles = svg.selectAll("circle").data(selectedData);
+
+    // Enter new circles with transitions
+    circles
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => xScale(d.year))
+      .attr("cy", height - margin.bottom) // Start from the bottom
+      .attr("r", 5)
+      .attr("fill", (d) => d.color)
+      .attr("stroke", "black")
+      .merge(circles) // Merge the enter selection with the update selection
+      .transition() // Apply the transition
+      .duration(1000)
+      .attr("cx", (d) => xScale(d.year))
+      .attr("cy", (d) => yScale(d.popularity));
+
+    // Update existing circles with transitions
+    circles
+      .transition()
+      .duration(1000)
+      .attr("cx", (d) => xScale(d.year))
+      .attr("cy", (d) => yScale(d.popularity));
+
+    // Remove extra circles
+    circles.exit().transition().duration(1000).attr("cy", height - margin.bottom).remove();
 
     // Calculate tick interval based on the selected time range
     const timeRange = maxRangeValue - minRangeValue;
