@@ -1,5 +1,6 @@
 let isBarchart = true;
 let selectGenre = null;
+let allGenres = ["pop","rock","rb","country","rap"];
 
 function createBarchart(
   data,
@@ -264,6 +265,35 @@ function createLineChart(
     .append("g")
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(yScale));
+  
+ // Create circles and apply transitions
+  svg
+    .selectAll("circle")
+    .data(selectedData.popularity)
+    .enter()
+    .append("circle")
+    .attr("cx", (d, i) => xScale(years[i]))
+    .attr("cy", height - margin.bottom) // Start from bottom
+    .attr("r", 5)
+    .attr("fill", selectedData.color)
+    .attr("stroke", "black")
+    .transition() // Apply the transition
+    .duration(1000)
+    .attr("cy", (d) => yScale(d)); // Transition the 'cy' attribute
+
+  // Attach event handlers after the transition
+  svg
+    .selectAll("circle")
+    .on("mouseover", function (event) {
+        d3.select(this)
+            .attr("r", 8)
+            .attr("stroke-width", 2);
+    })
+    .on("mouseleave", function (event) {
+        d3.select(this)
+            .attr("r", 5)
+            .attr("stroke-width", 1);
+    });
 
   // Append a cross (close button) to return to the bar chart
   svg
@@ -282,9 +312,37 @@ function createLineChart(
         containerId,
         minRangeValue,
         maxRangeValue,
-        checkedGenres
+        allGenres
       );
+
+      checkAllGenres();
     });
+}
+
+function checkAllGenres() {
+  const checkboxes = document.querySelectorAll('.genre-checkbox');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = true; // Set each checkbox to checked
+  });
+  updateFrontend(); // Update the frontend to reflect changes
+}
+
+function updateFrontend() {
+  // Get all checked genre checkboxes
+  const selectedGenres = Array.from(document.querySelectorAll('.genre-checkbox:checked')).map(checkbox => checkbox.value);
+
+  // Get all existing genre buttons
+  const genreButtons = document.querySelectorAll('.genre-button'); // Assuming these buttons already exist
+
+  // Update the button text based on checked genres
+  genreButtons.forEach(button => {
+    const genre = button.value; // Assuming button has a value that corresponds to the checkbox
+    if (selectedGenres.includes(genre)) {
+      button.textContent = `${genre.charAt(0).toUpperCase() + genre.slice(1)} (Selected)`;
+    } else {
+      button.textContent = `${genre.charAt(0).toUpperCase() + genre.slice(1)} (Not Selected)`;
+    }
+  });
 }
 
 function updateDashboard(minRangeValue, maxRangeValue, checkedGenres) {
@@ -331,9 +389,19 @@ function updateDashboard(minRangeValue, maxRangeValue, checkedGenres) {
   } else {
       // Update the current chart
       if (isBarchart) {
-          updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
+        updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
       } else {
-          updateLinechart(minRangeValue, maxRangeValue, selectGenre); // Use the stored selected genre
+        updateLinechart(minRangeValue, maxRangeValue, selectGenre); // Use the stored selected genre
+        /* if (minRangeValue - maxRangeValue != 0) {
+          updateLinechart(minRangeValue, maxRangeValue, selectGenre);
+        } 
+        else
+        { 
+          d3.csv("./../data/genre_popularity_time.csv").then(data => {
+            d3.select(".Barchart").selectAll("*").remove();
+            createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
+          });
+        } */
       }
   }
 }
@@ -575,6 +643,34 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
           .duration(1000)
           .attr("d", line)
           .attr("stroke", jsonData[0].color);
+
+      // Bind new data to the circles and apply transition
+      const circles = svg.selectAll("circle").data(jsonData);
+
+      // Enter new circles with transitions
+      circles
+        .enter()
+        .append("circle")
+        .attr("cx", (d) => xScale(d.year))
+        .attr("cy", height - margin.bottom) // Start from the bottom
+        .attr("r", 5)
+        .attr("fill", (d) => d.color)
+        .attr("stroke", "black")
+        .merge(circles) // Merge the enter selection with the update selection
+        .transition() // Apply the transition
+        .duration(1000)
+        .attr("cx", (d) => xScale(d.year))
+        .attr("cy", (d) => yScale(d.popularity));
+
+      // Update existing circles with transitions
+      circles
+        .transition()
+        .duration(1000)
+        .attr("cx", (d) => xScale(d.year))
+        .attr("cy", (d) => yScale(d.popularity));
+
+      // Remove extra circles
+      circles.exit().transition().duration(1000).attr("cy", height - margin.bottom).remove();
 
       // Update x-axis with smooth transition
       svg

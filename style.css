@@ -42,6 +42,7 @@ body {
 .buttons {
     background-color: #f4f4f4;
     flex: 2; /* Take up 10% of the width */
+    height: 50%;
     display: flex;
     flex-direction: column; /* Align buttons vertically */
     justify-content: center;
