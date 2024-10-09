@@ -340,183 +340,176 @@ function updateDashboard(minRangeValue, maxRangeValue, checkedGenres) {
 
 function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
   d3.csv("./../data/genre_popularity_time.csv").then(data => {
-    // Filter and process data for the selected genres and time range
-    const filteredData = data
-      .filter(d => checkedGenres.includes(d.Genre))
-      .map(d => {
-        const filteredData = { Genre: d.Genre };
-        for (let i = minRangeValue; i <= maxRangeValue; i++) {
-          filteredData[i] = d[i];
-        }
-        return filteredData;
-      })
-      .map(d => {
-        const popularityValues = Object.keys(d)
-          .filter(key => key !== "Genre")
-          .map(key => d[key]);
-        const filteredValues = popularityValues.filter(
-          value => value !== "0" && value !== undefined
-        );
-        const sum = filteredValues.reduce(
-          (acc, value) => acc + parseInt(value),
-          0
-        );
-        const average =
-          filteredValues.length > 0 ? sum / filteredValues.length : 0;
-        return { Genre: d.Genre, popularity: average };
-      })
-      .filter(d => checkedGenres.includes(d.Genre));
+      // Filter and process data for the selected genres and time range
+      const filteredData = data
+          .filter(d => checkedGenres.includes(d.Genre))
+          .map(d => {
+              const filteredData = { Genre: d.Genre };
+              for (let i = minRangeValue; i <= maxRangeValue; i++) {
+                  filteredData[i] = d[i];
+              }
+              return filteredData;
+          })
+          .map(d => {
+              const popularityValues = Object.keys(d)
+                  .filter(key => key !== "Genre")
+                  .map(key => d[key]);
+              const filteredValues = popularityValues.filter(
+                  value => value !== "0" && value !== undefined
+              );
+              const sum = filteredValues.reduce(
+                  (acc, value) => acc + parseInt(value),
+                  0
+              );
+              const average =
+                  filteredValues.length > 0 ? sum / filteredValues.length : 0;
+              return { Genre: d.Genre, popularity: average };
+          })
+          .filter(d => checkedGenres.includes(d.Genre));
 
-    const colorMap = {
-      rock: "#1f77b4",
-      pop: "#ff7f0e",
-      rap: "#2ca02c",
-      rb: "#d62728",
-      country: "#9467bd",
-    };
+      const colorMap = {
+          rock: "#1f77b4",
+          pop: "#ff7f0e",
+          rap: "#2ca02c",
+          rb: "#d62728",
+          country: "#9467bd",
+      };
 
-    const jsonData = filteredData.map(d => ({
-      genre: d.Genre,
-      popularity: d.popularity,
-      color: colorMap[d.Genre],
-    }));
+      const jsonData = filteredData.map(d => ({
+          genre: d.Genre,
+          popularity: d.popularity,
+          color: colorMap[d.Genre],
+      }));
 
-    const width = 600;
-    const height = 400;
-    const margin = { bottom: 50, left: 50, right: 50, top: 50 };
+      const width = 600;
+      const height = 400;
+      const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
-    // Select the existing SVG element
-    const svg = d3.select(".Barchart").select("svg");
+      // Select the existing SVG element
+      const svg = d3.select(".Barchart").select("svg");
 
-    // Define the updated scales based on new data
-    const xScale = d3
-      .scaleBand()
-      .domain(d3.range(jsonData.length))
-      .range([margin.left, width - margin.right])
-      .padding(0.1);
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, d3.max(jsonData, d => d.popularity) + 5])
-      .range([height - margin.bottom, margin.top]);
+      // Define the updated scales based on new data
+      const xScale = d3
+          .scaleBand()
+          .domain(d3.range(jsonData.length))
+          .range([margin.left, width - margin.right])
+          .padding(0.1);
+      const yScale = d3
+          .scaleLinear()
+          .domain([0, d3.max(jsonData, d => d.popularity) + 5])
+          .range([height - margin.bottom, margin.top]);
 
-    // Bind new data to the existing bars and update their attributes
-    const bars = svg.selectAll("rect.dataItem").data(jsonData, d => d.genre);
+      // Bind new data to the existing bars and update their attributes
+      const bars = svg.selectAll("rect.dataItem").data(jsonData, d => d.genre);
 
-    // Handle update pattern for existing bars
-    bars
-      .transition()
-      .duration(1000)
-      .attr("x", (d, i) => xScale(i))
-      .attr("y", d => yScale(d.popularity))
-      .attr("height", d => yScale(0) - yScale(d.popularity))
-      .attr("width", xScale.bandwidth())
-      .attr("fill", d => d.color)
-      .attr("rx", 5) // Rounded top corners
-      .attr("ry", 5); // Rounded top corners
+      bars
+          .transition()
+          .duration(1000)
+          .attr("x", (d, i) => xScale(i))
+          .attr("y", d => yScale(d.popularity))
+          .attr("height", d => yScale(0) - yScale(d.popularity))
+          .attr("width", xScale.bandwidth())
+          .attr("fill", d => d.color)
+          .attr("rx", 5) // Rounded top corners
+          .attr("ry", 5); // Rounded top corners
 
-    // Handle enter pattern for new bars
-    bars
-      .enter()
-      .append("rect")
-      .attr("class", "dataItem")
-      .attr("x", (d, i) => xScale(i))
-      .attr("y", yScale(0))
-      .attr("height", 0)
-      .attr("width", xScale.bandwidth())
-      .attr("fill", d => d.color)
-      .attr("rx", 5) // Rounded top corners
-      .attr("ry", 5) // Rounded top corners
-      .on("mouseover", function () {
-        d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
-      })
-      .on("mouseleave", function () {
-        d3.select(this).style("stroke-width", "1px");
-      })
-      .on("click", function (event, d) {
-        if (minRangeValue - maxRangeValue != 0) {
-          selectGenre = d.genre;
-          // Uncheck all checkboxes except the selected genre
-          d3.selectAll(".genre-checkbox").each(function () {
-            if (this.value === d.genre) {
-              this.checked = true;
-            } else {
-              this.checked = false;
-            }
-          });
-          bars
-            .transition()
-            .duration(1000)
-            .attr("height", 0)
-            .attr("y", yScale(0))
-            .remove();
+      // Handle enter pattern for new bars
+      bars
+          .enter()
+          .append("rect")
+          .attr("class", "dataItem")
+          .attr("x", (d, i) => xScale(i))
+          .attr("y", yScale(0))
+          .attr("height", 0)
+          .attr("width", xScale.bandwidth())
+          .attr("fill", d => d.color)
+          .attr("rx", 5) // Rounded top corners
+          .attr("ry", 5) // Rounded top corners
+          .on("mouseover", function () {
+              d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
+          })
+          .on("mouseleave", function () {
+              d3.select(this).style("stroke-width", "1px");
+          })
+          .on("click", function (event, d) {
+              if (minRangeValue - maxRangeValue != 0) {
+                  selectGenre = d.genre;
+                  // Uncheck all checkboxes except the selected genre
+                  d3.selectAll(".genre-checkbox").each(function () {
+                      if (this.value === d.genre) {
+                          this.checked = true;
+                      } else {
+                          this.checked = false;
+                      }
+                  });
+                  bars
+                      .transition()
+                      .duration(1000)
+                      .attr("height", 0)
+                      .attr("y", yScale(0))
+                      .remove();
 
-          // Create line chart
-          const years = d3.range(minRangeValue, maxRangeValue + 1);
-          const line = d3
-            .line()
-            .x((d, i) => xScale(years[i]))
-            .y(d => yScale(d));
+                  // Create line chart
+                  const years = d3.range(minRangeValue, maxRangeValue + 1);
+                  const line = d3
+                      .line()
+                      .x((d, i) => xScale(years[i]))
+                      .y(d => yScale(d));
 
-          svg
-            .append("path")
-            .datum(d.popularity)
-            .attr("fill", "none")
-            .attr("stroke", d.color)
-            .attr("stroke-width", 2)
-            .attr("d", line);
+                  svg
+                      .append("path")
+                      .datum(d.popularity)
+                      .attr("fill", "none")
+                      .attr("stroke", d.color)
+                      .attr("stroke-width", 2)
+                      .attr("d", line);
 
-          // Append x and y axes
-          svg
-            .append("g")
-            .attr("transform", `translate(0,${height - margin.bottom})`)
-            .call(d3.axisBottom(xScale).ticks(10).tickFormat(d3.format("d")));
+                  // Append x and y axes
+                  svg
+                      .append("g")
+                      .attr("transform", `translate(0,${height - margin.bottom})`)
+                      .call(d3.axisBottom(xScale).ticks(10).tickFormat(d3.format("d")));
 
-          svg
-            .append("g")
-            .attr("transform", `translate(${margin.left},0)`)
-            .call(d3.axisLeft(yScale));
+                  svg
+                      .append("g")
+                      .attr("transform", `translate(${margin.left},0)`)
+                      .call(d3.axisLeft(yScale));
 
-          // Append a cross (close button) to return to the bar chart
-          svg
-            .append("text")
-            .attr("x", width - 30)
-            .attr("y", margin.top)
-            .attr("font-size", "24px")
-            .attr("cursor", "pointer")
-            .text("✖")
-            .on("click", function () {
-              d3.select(containerId).style("display", "none");
-              d3.select(".Barchart").style("display", "block");
-              // Recheck the genre checkboxes in the barchart data
-              d3.selectAll(".genre-checkbox").each(function () {
-                if (checkedGenres.includes(this.value)) {
-                  this.checked = true;
-                }
-              });
-            });
-        }
-      })
-      .transition()
-      .duration(1000)
-      .attr("y", d => yScale(d.popularity))
-      .attr("height", d => yScale(0) - yScale(d.popularity));
+                  // Append a cross (close button) to return to the bar chart
+                  svg
+                      .append("text")
+                      .attr("x", width - 30)
+                      .attr("y", margin.top)
+                      .attr("font-size", "24px")
+                      .attr("cursor", "pointer")
+                      .text("✖")
+                      .on("click", function () {
+                          d3.select(containerId).style("display", "none");
+                          d3.select(".Barchart").style("display", "block");
+                      });
+              }
+          })
+          .transition()
+          .duration(1000)
+          .attr("y", d => yScale(d.popularity))
+          .attr("height", d => yScale(0) - yScale(d.popularity));
 
-    // Remove bars that are no longer in the data
-    bars.exit().transition().duration(1000).attr("height", 0).attr("y", yScale(0)).remove();
+      // Remove bars that are no longer in the data
+      bars.exit().transition().duration(1000).attr("height", 0).attr("y", yScale(0)).remove();
 
-    // Update x-axis with smooth transition
-    svg
-      .select("g.xAxis")
-      .transition()
-      .duration(1000)
-      .call(d3.axisBottom(xScale).tickFormat(i => jsonData[i].genre));
+      // Update x-axis with smooth transition
+      svg
+          .select("g.xAxis")
+          .transition()
+          .duration(1000)
+          .call(d3.axisBottom(xScale).tickFormat(i => jsonData[i].genre));
 
-    // Update y-axis with smooth transition
-    svg
-      .select("g.yAxis")
-      .transition()
-      .duration(1000)
-      .call(d3.axisLeft(yScale).ticks(null, jsonData.format));
+      // Update y-axis with smooth transition
+      svg
+          .select("g.yAxis")
+          .transition()
+          .duration(1000)
+          .call(d3.axisLeft(yScale).ticks(null, jsonData.format));
   });
 }
 
