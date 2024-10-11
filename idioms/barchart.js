@@ -38,14 +38,15 @@ function createBarchart(data, containerId, minRangeValue, maxRangeValue, checked
     color: colorMap[d.Genre],
   }));
 
-  const width = 600;
-  const height = 400;
+  const width = 500;
+  const height = 350;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   // Append chart title
   d3.select(containerId)
     .append("h3")
     .style("margin-left", `${margin.left}px`)
+    .style("margin-bottom", "-30px")
     .text("Bar Chart");
 
   const svg = d3
@@ -118,8 +119,8 @@ function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue
   // Clear the existing chart elements
   d3.select(containerId).selectAll("*").remove();
 
-  const width = 600;
-  const height = 400;
+  const width = 500;
+  const height = 350;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   const svg = d3
@@ -237,59 +238,6 @@ function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue
     });
 }
 
-function updateDashboard(minRangeValue, maxRangeValue, checkedGenres) {
-  if (checkedGenres.length === 1 && isBarchart) {
-    console.log("Transform to line chart");
-    // Update checkboxes
-    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
-      checkbox.checked = checkedGenres.includes(checkbox.value);
-    });
-    // Update selectedGenres array
-    genres = checkedGenres;
-    // Transform to line chart if only one genre is selected
-    const selectedGenre = checkedGenres[0];
-    d3.csv("./data/genre_popularity_time.csv").then((data) => {
-      const longFormatData = [];
-      data.forEach((row) => {
-        for (let year = minRangeValue; year <= maxRangeValue; year++) {
-          longFormatData.push({
-            genre: row.Genre,
-            year: year,
-            popularity: +row[year],
-          });
-        }
-      });
-      const selectedData = longFormatData.filter(
-        (item) => item.genre === selectedGenre
-      );
-      const popularity = selectedData.map((d) => d.popularity);
-      const color = colorMap[selectedGenre];
-      createLinechart(
-        { popularity, color },
-        ".Barchart",
-        minRangeValue,
-        maxRangeValue,
-        checkedGenres,
-        data
-      );
-    });
-  } else if (checkedGenres.length > 1 && !isBarchart) {
-    console.log("Transform to bar chart");
-    // Transform to bar chart if more than one genre is selected
-    d3.csv("./data/genre_popularity_time.csv").then((data) => {
-      createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, checkedGenres);
-    });
-  } else if (checkedGenres.length > 1 && isBarchart) {
-    console.log("Update bar chart");
-    // Update bar chart if more than one genre is selected
-    updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
-  } else if (checkedGenres.length === 1 && !isBarchart) {
-    console.log("Update line chart");
-    // Update line chart if only one genre is selected
-    updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0]);
-  }
-}
-
 function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
   d3.csv("./data/genre_popularity_time.csv").then((data) => {
     // Filter and process data for the selected genres and time range
@@ -325,8 +273,8 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       color: colorMap[d.Genre],
     }));
 
-    const width = 600;
-    const height = 400;
+    const width = 500;
+    const height = 350;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
     // Select the existing SVG element
@@ -428,8 +376,8 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
     const popularity = selectedData.map((d) => d.popularity);
     const color = colorMap[selectedGenre];
 
-    const width = 600;
-    const height = 400;
+    const width = 500;
+    const height = 350;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
     // Select the existing SVG element

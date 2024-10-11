@@ -1,103 +1,115 @@
-function createRadarChart(data, containerId) {
-  data = data.filter(function (elem) {
-    return elem["variety"] == "Portuguese Red";
-  });
-  data = data.map((obj) => obj["price"]);
 
-  // Core Histogram
+let genre2 = null;
 
-  const width = window.innerWidth * 0.40;
-  const height = 300;
-  const margin = {
-    bottom: 70,
-    left: 70,
-    right: 60,
-  };
+function createRadarchart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
+  isBarchart = true;
+  // Clear the existing chart elements
+  d3.select(containerId).selectAll("*").remove();
 
-  d3.select(containerId).append("h3").style("margin-left", `${margin.left}px`).text(histogram.title[language]);
+  // Filter and process data
+  const filteredData = data
+    .map((d) => {
+      const filteredData = { Genre: d.Genre };
+      for (let i = minRangeValue; i <= maxRangeValue; i++) {
+        filteredData[i] = d[i];
+      }
+      return filteredData;
+    })
+    .map((d) => {
+      const popularityValues = Object.keys(d)
+        .filter((key) => key !== "Genre")
+        .map((key) => d[key]);
+      const filteredValues = popularityValues.filter(
+        (value) => value !== "0" && value !== undefined
+      );
+      const sum = filteredValues.reduce(
+        (acc, value) => acc + parseInt(value),
+        0
+      );
+      const average =
+        filteredValues.length > 0 ? sum / filteredValues.length : 0;
+      return { Genre: d.Genre, popularity: average };
+    })
+    .filter((d) => checkedGenres.includes(d.Genre));
+
+  const jsonData = filteredData.map((d) => ({
+    genre: d.Genre,
+    popularity: d.popularity,
+    color: colorMap[d.Genre],
+  }));
+
+  const width = 500;
+  const height = 350;
+  const margin = { bottom: 50, left: 50, right: 50, top: 50 };
+
+  // Append chart title
+  d3.select(containerId)
+    .append("h3")
+    .style("margin-left", `${margin.left}px`)
+    .style("margin-bottom", "-30px")
+    .text("Bar Chart");
 
   const svg = d3
     .select(containerId)
     .append("svg")
+    .attr("height", height)
     .attr("width", width)
-    .attr("height", height);
+    .attr("viewBox", [0, 0, width, height]);
 
+  // Create scales
   const xScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(data)])
-    .range([margin.left, width - margin.right]);
-
-  const histogramFunc = d3.histogram().domain(xScale.domain());
-
-  const bins = histogramFunc(data);
-
+    .scaleBand()
+    .domain(d3.range(jsonData.length))
+    .range([margin.left, width - margin.right])
+    .padding(0.1);
   const yScale = d3
     .scaleLinear()
-    .domain([
-      0,
-      d3.max(bins, function (d) {
-        return d.length;
-      }),
-    ])
-    .range([height - margin.bottom, 0]);
+    .domain([0, d3.max(jsonData, (d) => d.popularity) + 5])
+    .range([height - margin.bottom, margin.top]);
 
-  svg
+  // Create bars
+  const bars = svg
     .selectAll("rect")
-    .data(bins)
+    .data(jsonData.sort((a, b) => d3.descending(a.popularity, b.popularity)))
     .enter()
     .append("rect")
-    .attr("x", function (d) {
-      return xScale(d.x0);
+    .attr("class", "dataItem")
+    .attr("x", (d, i) => xScale(i))
+    .attr("y", (d) => yScale(d.popularity))
+    .attr("height", (d) => yScale(0) - yScale(d.popularity))
+    .attr("width", xScale.bandwidth())
+    .attr("fill", (d) => d.color)
+    .attr("ry", 10)
+    .on("mouseover", function () {
+      if (minRangeValue - maxRangeValue != 0) {
+        d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
+      }
     })
-    .attr("y", function (d) {
-      return yScale(d.length) - margin.bottom;
-    })
-    .attr("width", function (d) {
-      return xScale(d.x1) - xScale(d.x0);
-    })
-    .attr("height", function (d) {
-      return height - yScale(d.length);
-    })
-    .style("fill", "steelblue")
-    .style("stroke", "black")
-    .on("mouseover", function (event, d) {
-      d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
-    })
-    .on("mouseleave", function (event, d) {
+    .on("mouseleave", function () {
       d3.select(this).style("stroke-width", "1px");
     })
     .on("click", function (event, d) {
-      swal.fire(histogram.info[language] + d.length);
-    })
-    .append("title")
-    .text(function (d) {
-      return d.length;
+      if (minRangeValue - maxRangeValue != 0) {
+        selectGenre = d.genre;
+        updateDashboard(minRangeValue, maxRangeValue, [selectGenre]);
+      }
     });
 
-  // Axis
-
+  // Create x-axis
   svg
     .append("g")
-    .attr("transform", `translate(0, ${height - margin.bottom})`)
-    .call(d3.axisBottom(xScale));
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre))
+    .attr("class", "xAxis")
+    .attr("font-size", "10px")
+    .attr("color", "black");
 
-  svg
-    .append("text")
-    .attr("x", width / 2)
-    .attr("y", height - margin.bottom / 3)
-    .attr("text-anchor", "middle")
-    .text(histogram.xAxis[language]);
-
+  // Create y-axis
   svg
     .append("g")
-    .attr("transform", `translate(${margin.left}, 0)`)
-    .call(d3.axisLeft(yScale).tickSizeOuter(0));
-
-  svg
-    .append("text")
-    .attr("x", -(height - margin.bottom) / 2)
-    .attr("y", margin.left / 2)
-    .attr("transform", "rotate(-90)")
-    .attr("text-anchor", "middle")
-    .text(histogram.yAxis[language]);
-  }
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(yScale).ticks(null, jsonData.format))
+    .attr("class", "yAxis")
+    .attr("font-size", "10px")
+    .attr("color", "black");
+}

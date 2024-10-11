@@ -13,6 +13,9 @@ let genres = ["rock", "pop", "rap", "country", "rb"];
 function init() {
   d3.csv("./data/genre_popularity_time.csv").then((data) => {
     createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
+    createBubblechart(data, ".Bubblechart", minRangeValue, maxRangeValue, genres);
+    createRadarchart(data, ".Radarchart", minRangeValue, maxRangeValue, genres);
+    createVanDiagram(data, ".Vandiagram", minRangeValue, maxRangeValue, genres);
   });
 
   const minRange = document.getElementById("minRange");
@@ -76,4 +79,57 @@ function updateGenreSelection() {
 
   genres = checkedGenres;
   updateDashboard(minRangeValue, maxRangeValue, genres);
+}
+
+function updateDashboard(minRangeValue, maxRangeValue, checkedGenres) {
+  if (checkedGenres.length === 1 && isBarchart) {
+    console.log("Transform to line chart");
+    // Update checkboxes
+    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+      checkbox.checked = checkedGenres.includes(checkbox.value);
+    });
+    // Update selectedGenres array
+    genres = checkedGenres;
+    // Transform to line chart if only one genre is selected
+    const selectedGenre = checkedGenres[0];
+    d3.csv("./data/genre_popularity_time.csv").then((data) => {
+      const longFormatData = [];
+      data.forEach((row) => {
+        for (let year = minRangeValue; year <= maxRangeValue; year++) {
+          longFormatData.push({
+            genre: row.Genre,
+            year: year,
+            popularity: +row[year],
+          });
+        }
+      });
+      const selectedData = longFormatData.filter(
+        (item) => item.genre === selectedGenre
+      );
+      const popularity = selectedData.map((d) => d.popularity);
+      const color = colorMap[selectedGenre];
+      createLinechart(
+        { popularity, color },
+        ".Barchart",
+        minRangeValue,
+        maxRangeValue,
+        checkedGenres,
+        data
+      );
+    });
+  } else if (checkedGenres.length > 1 && !isBarchart) {
+    console.log("Transform to bar chart");
+    // Transform to bar chart if more than one genre is selected
+    d3.csv("./data/genre_popularity_time.csv").then((data) => {
+      createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, checkedGenres);
+    });
+  } else if (checkedGenres.length > 1 && isBarchart) {
+    console.log("Update bar chart");
+    // Update bar chart if more than one genre is selected
+    updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
+  } else if (checkedGenres.length === 1 && !isBarchart) {
+    console.log("Update line chart");
+    // Update line chart if only one genre is selected
+    updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0]);
+  }
 }

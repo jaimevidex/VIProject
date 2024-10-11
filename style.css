@@ -15,34 +15,34 @@ body {
     flex: 8;  /* Take up 90% of the width */
     display: grid;
     grid-auto-columns: 1fr;
-    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: 10px;
     grid-template-areas:
-        "Histogram BubbleChart"
-        "RadarChart VanDiagram";
+        "Barchart Bubblechart"
+        "Radarchart Vandiagram";
     padding: 20px;
 }
 
-.Histogram {
-    grid-area: Histogram;
+.Barchart {
+    grid-area: Barchart;
 }
 
-.BubbleChart {
-    grid-area: BubbleChart;
+.Bubblechart {
+    grid-area: Bubblechart;
 }
 
-.RadarChart {
-    grid-area: RadarChart;
+.Radarchart {
+    grid-area: Radarchart;
 }
 
-.VanDiagram {
-    grid-area: VanDiagram;
+.Vandiagram {
+    grid-area: Vandiagram;
 }
 
 .buttons {
     background-color: #f4f4f4;
     flex: 2; /* Take up 10% of the width */
-    height: 50%;
+    height: 100%;
     display: flex;
     flex-direction: column; /* Align buttons vertically */
     justify-content: center;
@@ -158,6 +158,7 @@ body {
 
 input[type="range"] {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     position: absolute;
     height: 0;
