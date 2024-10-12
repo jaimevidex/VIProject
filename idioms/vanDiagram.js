@@ -1,114 +1,88 @@
+let isVendiagram = null;
 let genre3 = null;
 
-function createVanDiagram(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
-  isBarchart = true;
-  // Clear the existing chart elements
-  d3.select(containerId).selectAll("*").remove();
+function createVanDiagram(data, containerId, minRangeValue, maxRangeValue, genres) {
+  // Data for the Venn diagram
+  const data1 = [
+    { keywords: ["annoy", "beach", "choice", "love", "extra"],
+      keywords1: ["love", "faggot", "extra", "gay", "house"] }
+  ];
 
-  // Filter and process data
-  const filteredData = data
-    .map((d) => {
-      const filteredData = { Genre: d.Genre };
-      for (let i = minRangeValue; i <= maxRangeValue; i++) {
-        filteredData[i] = d[i];
-      }
-      return filteredData;
-    })
-    .map((d) => {
-      const popularityValues = Object.keys(d)
-        .filter((key) => key !== "Genre")
-        .map((key) => d[key]);
-      const filteredValues = popularityValues.filter(
-        (value) => value !== "0" && value !== undefined
-      );
-      const sum = filteredValues.reduce(
-        (acc, value) => acc + parseInt(value),
-        0
-      );
-      const average =
-        filteredValues.length > 0 ? sum / filteredValues.length : 0;
-      return { Genre: d.Genre, popularity: average };
-    })
-    .filter((d) => checkedGenres.includes(d.Genre));
+  // Extract the keywords from the data
+  const set1 = data1[0].keywords;
+  const set2 = data1[0].keywords1;
 
-  const jsonData = filteredData.map((d) => ({
-    genre: d.Genre,
-    popularity: d.popularity,
-    color: colorMap[d.Genre],
-  }));
+  // Calculate the unique and common values between the two sets
+  const set1Unique = set1.filter(d => !set2.includes(d)); // Unique to set 1
+  const set2Unique = set2.filter(d => !set1.includes(d)); // Unique to set 2
+  const common = set1.filter(d => set2.includes(d)); // Common between both
 
+  // Set up SVG dimensions
   const width = 500;
   const height = 350;
-  const margin = { bottom: 50, left: 50, right: 50, top: 50 };
+  const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
   // Append chart title
   d3.select(containerId)
     .append("h3")
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
-    .text("Bar Chart");
+    .text("Venn Diagram");
 
-  const svg = d3
-    .select(containerId)
+  // Create the SVG container
+  const svg = d3.select(containerId)
     .append("svg")
-    .attr("height", height)
     .attr("width", width)
-    .attr("viewBox", [0, 0, width, height]);
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .append("g")
+    .attr("transform", `translate(${width / 2},${height / 2})`);
 
-  // Create scales
-  const xScale = d3
-    .scaleBand()
-    .domain(d3.range(jsonData.length))
-    .range([margin.left, width - margin.right])
-    .padding(0.1);
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(jsonData, (d) => d.popularity) + 5])
-    .range([height - margin.bottom, margin.top]);
+  // Draw the circles for the Venn diagram with overlap
+  const circle1 = svg.append("circle")
+    .attr("cx", -60) // Adjust position for overlap
+    .attr("cy", 0)
+    .attr("r", 100)
+    .attr("fill", "lightblue")
+    .attr("opacity", 0.5);
 
-  // Create bars
-  const bars = svg
-    .selectAll("rect")
-    .data(jsonData.sort((a, b) => d3.descending(a.popularity, b.popularity)))
+  const circle2 = svg.append("circle")
+    .attr("cx", 60) // Adjust position for overlap
+    .attr("cy", 0)
+    .attr("r", 100)
+    .attr("fill", "lightgreen")
+    .attr("opacity", 0.5);
+
+  // Add text for the unique values in the first circle
+  svg.selectAll(".set1-text")
+    .data(set1Unique)
     .enter()
-    .append("rect")
-    .attr("class", "dataItem")
-    .attr("x", (d, i) => xScale(i))
-    .attr("y", (d) => yScale(d.popularity))
-    .attr("height", (d) => yScale(0) - yScale(d.popularity))
-    .attr("width", xScale.bandwidth())
-    .attr("fill", (d) => d.color)
-    .attr("ry", 10)
-    .on("mouseover", function () {
-      if (minRangeValue - maxRangeValue != 0) {
-        d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
-      }
-    })
-    .on("mouseleave", function () {
-      d3.select(this).style("stroke-width", "1px");
-    })
-    .on("click", function (event, d) {
-      if (minRangeValue - maxRangeValue != 0) {
-        selectGenre = d.genre;
-        updateDashboard(minRangeValue, maxRangeValue, [selectGenre]);
-      }
-    });
+    .append("text")
+    .attr("x", -80) // Position in the first circle
+    .attr("y", (d, i) => -40 + i * 45) // Distribute text vertically
+    .attr("text-anchor", "middle")
+    .text(d => d)
+    .attr("font-size", "14px");
 
-  // Create x-axis
-  svg
-    .append("g")
-    .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre))
-    .attr("class", "xAxis")
-    .attr("font-size", "10px")
-    .attr("color", "black");
+  // Add text for the unique values in the second circle
+  svg.selectAll(".set2-text")
+    .data(set2Unique)
+    .enter()
+    .append("text")
+    .attr("x", 80) // Position in the second circle
+    .attr("y", (d, i) => -40 + i * 45) // Distribute text vertically
+    .attr("text-anchor", "middle")
+    .text(d => d)
+    .attr("font-size", "14px");
 
-  // Create y-axis
-  svg
-    .append("g")
-    .attr("transform", `translate(${margin.left},0)`)
-    .call(d3.axisLeft(yScale).ticks(null, jsonData.format))
-    .attr("class", "yAxis")
-    .attr("font-size", "10px")
-    .attr("color", "black");
+  // Add text for the common values in the overlapping area
+  svg.selectAll(".common-text")
+    .data(common)
+    .enter()
+    .append("text")
+    .attr("x", 0) // Position in the center
+    .attr("y", (d, i) => -15 + i * 35) // Distribute text vertically
+    .attr("text-anchor", "middle")
+    .text(d => d)
+    .attr("font-size", "14px");
 }

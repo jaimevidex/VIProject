@@ -1,115 +1,154 @@
-
+let isRadarchart = null;
 let genre2 = null;
 
 function createRadarchart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
-  isBarchart = true;
-  // Clear the existing chart elements
-  d3.select(containerId).selectAll("*").remove();
+  // Data for the radar chart with multiple values per axis
+  const data1 = [
+    { axis: "love", values: [0.8, 0.6, 0.2, 0.6, 0.7] },
+    { axis: "houses", values: [0.6, 0.4, 0.1, 0.4, 0.3] },
+    { axis: "name", values: [0.9, 0.7, 0.8, 0.2, 0.3] },
+    { axis: "tonight", values: [0.7, 0.5, 0.6, 0.6, 0.5] },
+    { axis: "courtyard", values: [0.5, 0.3, 0.2, 0.5, 0.7] }
+  ];
 
-  // Filter and process data
-  const filteredData = data
-    .map((d) => {
-      const filteredData = { Genre: d.Genre };
-      for (let i = minRangeValue; i <= maxRangeValue; i++) {
-        filteredData[i] = d[i];
-      }
-      return filteredData;
-    })
-    .map((d) => {
-      const popularityValues = Object.keys(d)
-        .filter((key) => key !== "Genre")
-        .map((key) => d[key]);
-      const filteredValues = popularityValues.filter(
-        (value) => value !== "0" && value !== undefined
-      );
-      const sum = filteredValues.reduce(
-        (acc, value) => acc + parseInt(value),
-        0
-      );
-      const average =
-        filteredValues.length > 0 ? sum / filteredValues.length : 0;
-      return { Genre: d.Genre, popularity: average };
-    })
-    .filter((d) => checkedGenres.includes(d.Genre));
-
-  const jsonData = filteredData.map((d) => ({
-    genre: d.Genre,
-    popularity: d.popularity,
-    color: colorMap[d.Genre],
-  }));
-
+  // Set up SVG dimensions
   const width = 500;
   const height = 350;
-  const margin = { bottom: 50, left: 50, right: 50, top: 50 };
+  const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+
+  // Calculate the radius of the radar chart
+  const radius = Math.min(width, height) / 2 - Math.max(margin.top, margin.right, margin.bottom, margin.left);
 
   // Append chart title
   d3.select(containerId)
     .append("h3")
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
-    .text("Bar Chart");
+    .text("Radar Chart");
 
-  const svg = d3
-    .select(containerId)
+  // Create the SVG container
+  const svg = d3.select(containerId)
     .append("svg")
-    .attr("height", height)
     .attr("width", width)
-    .attr("viewBox", [0, 0, width, height]);
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .append("g")
+    .attr("transform", `translate(${width / 2},${height / 2})`);
 
-  // Create scales
-  const xScale = d3
-    .scaleBand()
-    .domain(d3.range(jsonData.length))
-    .range([margin.left, width - margin.right])
-    .padding(0.1);
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(jsonData, (d) => d.popularity) + 5])
-    .range([height - margin.bottom, margin.top]);
+  // Calculate the number of axes (one per data point)
+  const angleSlice = (Math.PI * 2) / data1.length;
 
-  // Create bars
-  const bars = svg
-    .selectAll("rect")
-    .data(jsonData.sort((a, b) => d3.descending(a.popularity, b.popularity)))
+  // Create a scale for each axis, scaling the data values (0 to 1) to the radar chart radius
+  const rScale = d3.scaleLinear()
+    .domain([0, 1])
+    .range([0, radius]);
+
+  // Create the radar chart axes (spokes)
+  const axes = svg.selectAll(".axis")
+    .data(data1)
     .enter()
-    .append("rect")
-    .attr("class", "dataItem")
-    .attr("x", (d, i) => xScale(i))
-    .attr("y", (d) => yScale(d.popularity))
-    .attr("height", (d) => yScale(0) - yScale(d.popularity))
-    .attr("width", xScale.bandwidth())
-    .attr("fill", (d) => d.color)
-    .attr("ry", 10)
-    .on("mouseover", function () {
-      if (minRangeValue - maxRangeValue != 0) {
-        d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
-      }
-    })
-    .on("mouseleave", function () {
-      d3.select(this).style("stroke-width", "1px");
-    })
-    .on("click", function (event, d) {
-      if (minRangeValue - maxRangeValue != 0) {
-        selectGenre = d.genre;
-        updateDashboard(minRangeValue, maxRangeValue, [selectGenre]);
-      }
-    });
-
-  // Create x-axis
-  svg
     .append("g")
-    .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre))
-    .attr("class", "xAxis")
-    .attr("font-size", "10px")
-    .attr("color", "black");
+    .attr("class", "axis");
 
-  // Create y-axis
-  svg
-    .append("g")
-    .attr("transform", `translate(${margin.left},0)`)
-    .call(d3.axisLeft(yScale).ticks(null, jsonData.format))
-    .attr("class", "yAxis")
-    .attr("font-size", "10px")
-    .attr("color", "black");
+  // Draw each axis line from the center outward
+  axes.append("line")
+    .attr("x1", 0)
+    .attr("y1", 0)
+    .attr("x2", (d, i) => rScale(1) * Math.cos(angleSlice * i - Math.PI / 2))
+    .attr("y2", (d, i) => rScale(1) * Math.sin(angleSlice * i - Math.PI / 2))
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 2);
+
+  // Add labels to each axis
+  axes.append("text")
+    .attr("x", (d, i) => rScale(1.1) * Math.cos(angleSlice * i - Math.PI / 2))
+    .attr("y", (d, i) => rScale(1.1) * Math.sin(angleSlice * i - Math.PI / 2))
+    .attr("text-anchor", "middle")
+    .attr("font-size", "12px")
+    .text(d => d.axis);
+
+  // Create the radar line generator for each set of values
+  const radarLine = d3.lineRadial()
+    .radius(d => rScale(d))
+    .angle((d, i) => i * angleSlice)
+    .curve(d3.curveLinearClosed);
+
+  // Loop over the number of value sets (since there are 5 values per axis)
+  const numValueSets = data1[0].values.length;
+
+  // Create the radar chart area (polygon) for each set of values
+  for (let setIdx = 0; setIdx < numValueSets; setIdx++) {
+    const valueSet = data1.map(d => d.values[setIdx]); // Extract the current set of values
+    
+    // Append the radar chart area (polygon) for this set of values
+    svg.append("path")
+      .datum(valueSet)
+      .attr("d", radarLine)
+      .attr("fill", d3.schemeCategory10[setIdx]) // Use different color for each set
+      .attr("fill-opacity", 0.3)
+      .attr("stroke", d3.schemeCategory10[setIdx])
+      .attr("stroke-width", 2);
+  }
+
+  // Draw circles at each data point on the radar chart for each set of values
+  for (let setIdx = 0; setIdx < numValueSets; setIdx++) {
+    const valueSet = data1.map(d => d.values[setIdx]);
+
+    const circles = svg.selectAll(`.radar-circle-${setIdx}`)
+      .data(valueSet)
+      .enter()
+      .append("circle")
+      .attr("class", `radar-circle-${setIdx}`)
+      .attr("r", 4)
+      .attr("cx", (d, i) => rScale(d) * Math.cos(angleSlice * i - Math.PI / 2))
+      .attr("cy", (d, i) => rScale(d) * Math.sin(angleSlice * i - Math.PI / 2))
+      .attr("fill", d3.schemeCategory10[setIdx])
+      .attr("fill-opacity", 0.8);
+      
+      // Add mouseover and mouseout events to the circles
+    circles
+      .on("mouseover", function (event, d) {
+        d3.select(this)
+          .attr("r", 6) // Increase circle size on hover
+          .attr("stroke", "black") // Optional: Add a stroke around the circle
+          .attr("stroke-width", 2); // Make stroke visible
+        
+        const tooltipText = `Value: ${valueSet[setIdx]}`;
+        const textSize = tooltipText.length * 6; // Adjust size based on text length
+
+        // Append background rectangle for the tooltip
+        svg
+          .append("rect")
+          .attr("id", "tooltip-bg") // Assign id for easy removal
+          .attr("x", d3.select(this).attr("cx") - textSize / 2)
+          .attr("y", d3.select(this).attr("cy") - 25) // Position above the circle
+          .attr("width", textSize)
+          .attr("height", 20)
+          .attr("fill", "lightgray") // Background color
+          .attr("rx", 4) // Rounded corners
+          .attr("ry", 4); // Rounded corners
+
+        // Append tooltip text
+        svg
+          .append("text")
+          .attr("id", "tooltip") // Assign id for easy removal
+          .attr("x", d3.select(this).attr("cx"))
+          .attr("y", d3.select(this).attr("cy") - 10) // Position above the circle
+          .attr("text-anchor", "middle")
+          .attr("font-size", "12px")
+          .attr("fill", "black")
+          .text(tooltipText);
+      })
+      .on("mouseout", function () {
+        d3.select(this)
+          .attr("r", 4) // Reset circle size
+          .attr("stroke-width", 0); // Remove stroke
+
+        // Remove tooltip and background
+        d3.select("#tooltip").remove();
+        d3.select("#tooltip-bg").remove();
+      });  
+  }
+
+  
 }
