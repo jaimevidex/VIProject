@@ -89,7 +89,7 @@ def create_artist_search_table():
             artist_search_table.at[i, 'time_interval'] = (min(time_interval[0], artist_search_table.at[i, 'time_interval'][0]), max(time_interval[1], artist_search_table.at[i, 'time_interval'][1]))            
         else:
             # Add the artist to the artist_search_table
-            new_row = pd.DataFrame({'artist': [artist], 'genres': [[genre]], 'time_interval': [time_interval], 'song_ids': [[song_id]]})
+            new_row = pd.DataFrame({'artist': [artist], 'genre': [genre], 'time_interval': [time_interval], 'song_ids': [[song_id]]})
             artist_search_table = pd.concat([artist_search_table, new_row], ignore_index=True)
 
         # Print the percentage of rows that have been processed
@@ -100,7 +100,7 @@ def create_artist_search_table():
 
 
 #create_keyword_search_table()
-#create_artist_search_table()
+create_artist_search_table()
 
 # Sort the artist_search_table by artist alphabetically
 pd.read_csv('./data/artist_search_table.csv').sort_values(by='artist').to_csv('./data/artist_search_table.csv', index=False)
