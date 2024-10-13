@@ -128,41 +128,40 @@ def get_genre_keyword(df: pd.DataFrame, start_year: int, end_year: int) -> pd.Da
 # function to get the average value of music attributes for each genre
 def get_total_atributes():
     df = pd.read_csv('./data/final_data.csv')
-    #get the unique genres
+    # Get the unique genres
     genres = df['tag'].unique().tolist()
-    #create a dataframe to store the average value of each attribute for each genre
+    # Create a DataFrame to store the average value of each attribute for each genre and year
     genre_attribute_df = pd.DataFrame()
 
-    genre_values = []
-    genres2 = []  # List to store the genres
-    #iterate through the genres
-    for genre in genres:
+    # Iterate through the years
+    for year in range(1960, 2022):
+        year_data = []
+        # Iterate through the genres
+        for genre in genres:
+            genre_values = [genre, year]
+            for attribute in attributes:
+                # Filter the DataFrame for the current genre and year
+                filtered_df = df[(df['tag'] == genre) & (df['year'] == year)]
+                if not filtered_df.empty:
+                    if attribute == 'tempo':
+                        value = round(filtered_df[attribute].mean() / 10) * 10
+                    elif filtered_df[attribute].dtype == 'int64':
+                        value = round(filtered_df[attribute].mean())
+                    elif attribute == 'key':
+                        value = int(filtered_df[attribute].mode())
+                    else:
+                        value = filtered_df[attribute].mean()
+                else:
+                    value = 0
+                genre_values.append(value)
+            year_data.append(genre_values)
 
-        for attribute in attributes:
-            # Identify the most frequent range
-            bins = pd.cut(df[df['tag'] == genre][attribute], bins=100)
-            most_common_bin = bins.value_counts().idxmax()
+        # Add the average values to the DataFrame
+        year_df = pd.DataFrame(year_data, columns=['Genre', 'Year'] + attributes)
+        genre_attribute_df = pd.concat([genre_attribute_df, year_df], ignore_index=True)
 
-            # Filter the DataFrame to include only values in the most frequent bin
-            filtered_df = df[(df['tag'] == genre) & (df[attribute].between(most_common_bin.left, most_common_bin.right))]
-            # if the attribute is an integer, round the value to the nearest integer
-            if filtered_df[attribute].dtype == 'int64':
-                value = round(filtered_df[attribute].mean())
-            elif attribute == 'key':
-                value = int(filtered_df[attribute].mode())
-            else:
-                value = filtered_df[attribute].mean()
-            genre_values.append(value)
-
-        genres2.append(genre)  # Add the genre to the list
-
-    #add the average values to the dataframe
-    genre_attribute_df['Genre'] = genres2
-    for i in range(len(attributes)):
-        genre_attribute_df[attributes[i]] = genre_values[i::len(attributes)]
-    
-    #save the dataframe to a csv file
-    genre_attribute_df.to_csv('./data/genre_all_time_attribute.csv')
+    # Save the DataFrame to a CSV file
+    genre_attribute_df.to_csv('./data/genre_all_time_attribute.csv', index=False)
 
 # function to create a file for each genre with the mode value of each attribute divided by 10 year periods from 1960 to 2022
 def get_genre_time_attributes():
@@ -257,4 +256,4 @@ def create_popul_time_table():
     genre_popularity_df.to_csv('./data/genre_popularity_time.csv')
 
 # Call the function to create the table
-create_popul_time_table()
+get_total_atributes()
