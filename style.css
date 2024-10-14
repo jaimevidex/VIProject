@@ -6,7 +6,7 @@ body {
 
 .dashboard {
     display: flex;  /* Flexbox to align two sections */
-    height: 100vh;  /* Full viewport height */
+    height: 100%;  /* Full viewport height */
     width: 100%;
 }
 
@@ -35,7 +35,7 @@ body {
     grid-area: Radarchart;
 }
 
-.Vandiagram {
+.Venndiagram {
     grid-area: Vandiagram;
 }
 

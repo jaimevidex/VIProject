@@ -15,7 +15,8 @@ function init() {
     createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
     createBubblechart(data, ".Bubblechart", minRangeValue, maxRangeValue, genres);
     createRadarchart(data, ".Radarchart", minRangeValue, maxRangeValue, genres);
-    createVanDiagram(data, ".Vandiagram", minRangeValue, maxRangeValue, genres);
+    createVennDiagram(data, ".Venndiagram", minRangeValue, maxRangeValue, genres);
+    updateVennDiagram("Bee Gees", "rap");
   });
 
   const minRange = document.getElementById("minRange");

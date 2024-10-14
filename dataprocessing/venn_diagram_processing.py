@@ -67,5 +67,7 @@ def create_venn_table():
     # Save the artist_keywords_data to a csv file
     artist_keywords_data.to_csv('./data/venn_table.csv', index=False)
 
+import re
+
 if __name__ == "__main__":
     create_venn_table()
