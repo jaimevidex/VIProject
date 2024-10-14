@@ -9,6 +9,8 @@ const colorMap = {
 let minRangeValue = 1960;
 let maxRangeValue = 2021;
 let genres = ["rock", "pop", "rap", "country", "rb"];
+let artist = null;
+let keyword = null;
 
 function init() {
   d3.csv("./data/genre_popularity_time.csv").then((data) => {
@@ -28,6 +30,34 @@ function init() {
   document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
     checkbox.addEventListener("change", updateGenreSelection);
   });
+
+  document.getElementById("artist").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      updateArtistSearch();
+    }
+  });
+  
+  document.getElementById("keyword").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      updateKeywordSearch();
+    }
+  });
+}
+
+function updateArtistSearch() {
+  artist = document.getElementById("artist").value;
+
+  console.log(artist);
+
+  updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
+}
+
+function updateKeywordSearch() {
+  keyword = document.getElementById("keyword").value;
+
+  console.log(keyword);
+  
+  updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
 }
 
 function updateSlider(event) {
@@ -58,7 +88,7 @@ function updateSlider(event) {
   minRangeValue = parseInt(minRange.value);
   maxRangeValue = parseInt(maxRange.value);
 
-  updateDashboard(minRangeValue, maxRangeValue, genres);
+  updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
 }
 
 function updateGenreSelection() {
@@ -79,10 +109,12 @@ function updateGenreSelection() {
   }
 
   genres = checkedGenres;
-  updateDashboard(minRangeValue, maxRangeValue, genres);
+  updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
 }
 
-function updateDashboard(minRangeValue, maxRangeValue, checkedGenres) {
+function updateDashboard(minRangeValue, maxRangeValue, checkedGenres, artist, keyword) {
+  // clean the data so that only musics from that artist are shown and contains the keyword
+
   if (checkedGenres.length === 1 && isBarchart) {
     console.log("Transform to line chart");
     // Update checkboxes
