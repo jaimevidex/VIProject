@@ -17,8 +17,15 @@ function init() {
     createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
     createBubblechart(data, ".Bubblechart", minRangeValue, maxRangeValue, genres);
     createRadarchart(data, ".Radarchart", minRangeValue, maxRangeValue, genres);
-    createVennDiagram(data, ".Venndiagram", minRangeValue, maxRangeValue, genres);
-    updateVennDiagram("Bee Gees", "rap");
+  });
+
+  /* 
+  CREATE THE VENN DIAGRAM HERE WITH A DEFAULT ARTIST
+  */
+  d3.csv("./data/venn_table.csv").then((data) => {
+    // filter the data to only send the data from the beatles
+    data = data.filter((d) => d.artist === "The Beatles");
+    createVennDiagram(data, ".Venndiagram", minRangeValue, maxRangeValue, genres, "The Beatles");
   });
 
   const minRange = document.getElementById("minRange");
@@ -114,7 +121,8 @@ function updateGenreSelection() {
 
 function updateDashboard(minRangeValue, maxRangeValue, checkedGenres, artist, keyword) {
   // clean the data so that only musics from that artist are shown and contains the keyword
-
+  updateVennDiagram(artist, checkedGenres, keyword);
+  
   if (checkedGenres.length === 1 && isBarchart) {
     console.log("Transform to line chart");
     // Update checkboxes

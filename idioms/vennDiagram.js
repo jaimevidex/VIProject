@@ -1,22 +1,14 @@
 let isVendiagram = null;
 let genre3 = null;
 
-function createVennDiagram(data, containerId, minRangeValue, maxRangeValue, genres) {
-  // Data for the Venn diagram
-  const data1 = [
-    { keywords: ["select", "an"],
-      keywords1: ["an", "artist"] }
-  ];
-
-  console.log(data1);
-
+function createVennDiagram(data, containerId) {
   // Extract the keywords from the data
-  const set1 = data1[0].keywords;
-  const set2 = data1[0].keywords1;
+  const set1 = JSON.parse(data[0].artist_keywords);
+  const set2 = JSON.parse(data[0].genre_keywords);
 
   // Calculate the unique and common values between the two sets
-  const set1Unique = set1.filter(d => !set2.includes(d)); // Unique to set 1
-  const set2Unique = set2.filter(d => !set1.includes(d)); // Unique to set 2
+  const set1Unique = set1.filter(d => !set2.includes(d)).slice(0, 4); // Unique to set 1
+  const set2Unique = set2.filter(d => !set1.includes(d)).slice(0, 4); // Unique to set 2
   const common = set1.filter(d => set2.includes(d)); // Common between both
 
   // Set up SVG dimensions
@@ -55,13 +47,22 @@ function createVennDiagram(data, containerId, minRangeValue, maxRangeValue, genr
     .attr("fill", "lightgreen")
     .attr("opacity", 0.5);
 
+  // Add the artist's name near the left circle
+  svg.append("text")
+    .attr("x", -80) // Adjust the x-position to the left of the first circle
+    .attr("y", -110)    // Align vertically with the center of the first circle
+    .attr("text-anchor", "middle")
+    .text(data[0].artist) // Artist's name from the data
+    .attr("font-size", "16px")
+    .attr("font-weight", "bold");
+
   // Add text for the unique values in the first circle
   svg.selectAll(".set1-text")
     .data(set1Unique)
     .enter()
     .append("text")
     .attr("x", -80) // Position in the first circle
-    .attr("y", (d, i) => -40 + i * 45) // Distribute text vertically
+    .attr("y", (d, i) => -65 + i * 45) // Distribute text vertically
     .attr("text-anchor", "middle")
     .text(d => d)
     .attr("font-size", "14px");
@@ -72,7 +73,7 @@ function createVennDiagram(data, containerId, minRangeValue, maxRangeValue, genr
     .enter()
     .append("text")
     .attr("x", 80) // Position in the second circle
-    .attr("y", (d, i) => -40 + i * 45) // Distribute text vertically
+    .attr("y", (d, i) => -65 + i * 45) // Distribute text vertically
     .attr("text-anchor", "middle")
     .text(d => d)
     .attr("font-size", "14px");
@@ -83,7 +84,7 @@ function createVennDiagram(data, containerId, minRangeValue, maxRangeValue, genr
     .enter()
     .append("text")
     .attr("x", 0) // Position in the center
-    .attr("y", (d, i) => -15 + i * 35) // Distribute text vertically
+    .attr("y", (d, i) => i * 35) // Distribute text vertically
     .attr("text-anchor", "middle")
     .text(d => d)
     .attr("font-size", "14px");
@@ -106,8 +107,8 @@ function updateVennDiagram(artist, genres) {
   
     // Update the Venn diagram with the new data
     const data1 = [
-      { keywords: artistKeywords.slice(0, 4),
-        keywords1: genreKeywords.slice(0, 4) }
+      { keywords: artistKeywords.slice(0, 5),
+        keywords1: genreKeywords.slice(0, 5) }
     ];
 
     console.log(data1);
@@ -152,16 +153,16 @@ function updateVennDiagram(artist, genres) {
 
     // Draw the circles for the Venn diagram with overlap
     const circle1 = svg.append("circle")
-      .attr("cx", -90) // Adjust position for overlap
+      .attr("cx", -60) // Adjust position for overlap
       .attr("cy", 0)
-      .attr("r", radius)
+      .attr("r", 100)
       .attr("fill", "lightblue")
       .attr("opacity", 0.5);
 
     const circle2 = svg.append("circle")
-      .attr("cx", 90) // Adjust position for overlap
+      .attr("cx", 60) // Adjust position for overlap
       .attr("cy", 0)
-      .attr("r", radius*1.2)
+      .attr("r", 100)
       .attr("fill", "lightgreen")
       .attr("opacity", 0.5);
 
@@ -169,6 +170,15 @@ function updateVennDiagram(artist, genres) {
     const startY1 = -((set1Unique.length - 1) * 45) / 2;
     const startY2 = -((set2Unique.length - 1) * 45) / 2;
     const startYCommon = -((common.length - 1) * 35) / 2;
+
+    // Add the artist's name near the left circle
+    svg.append("text")
+      .attr("x", -80) // Adjust the x-position to the left of the first circle
+      .attr("y", -110)    // Align vertically with the center of the first circle
+      .attr("text-anchor", "middle")
+      .text(artist) // Artist's name from the data
+      .attr("font-size", "16px")
+      .attr("font-weight", "bold");
 
     // Add text for the unique values in the first circle
     svg.selectAll(".set1-text")
