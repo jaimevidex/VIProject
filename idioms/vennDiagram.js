@@ -3,13 +3,17 @@ let genre3 = null;
 
 function createVennDiagram(data, containerId) {
   // Extract the keywords from the data
-  const set1 = JSON.parse(data[0].artist_keywords);
-  const set2 = JSON.parse(data[0].genre_keywords);
+  const set1 = JSON.parse(data[0].artist_keywords).slice(0, 5);
+  const set2 = JSON.parse(data[0].genre_keywords).slice(0, 5);
+  const genre = data[0].genre;
 
   // Calculate the unique and common values between the two sets
-  const set1Unique = set1.filter(d => !set2.includes(d)).slice(0, 4); // Unique to set 1
-  const set2Unique = set2.filter(d => !set1.includes(d)).slice(0, 4); // Unique to set 2
+  const set1Unique = set1.filter(d => !set2.includes(d)); // Unique to set 1
+  const set2Unique = set2.filter(d => !set1.includes(d)); // Unique to set 2
   const common = set1.filter(d => set2.includes(d)); // Common between both
+
+  console.log(set1Unique);
+  console.log(set2Unique);
 
   // Set up SVG dimensions
   const width = 500;
@@ -56,14 +60,29 @@ function createVennDiagram(data, containerId) {
     .attr("font-size", "16px")
     .attr("font-weight", "bold");
 
+  // Add the artist's name near the left circle
+  svg.append("text")
+    .attr("x", 80) // Adjust the x-position to the left of the first circle
+    .attr("y", 120)    // Align vertically with the center of the first circle
+    .attr("text-anchor", "middle")
+    .text(`Other ${genre} artists`) // Artist's name from the data
+    .attr("font-size", "16px")
+    .attr("font-weight", "bold");
+
+  // Calculate the starting y position for centering the text
+  const startY1 = -((set1Unique.length - 1) * 35) / 2;
+  const startY2 = -((set2Unique.length - 1) * 35) / 2;
+  const startYCommon = -((common.length - 1) * 25) / 2;
+
   // Add text for the unique values in the first circle
   svg.selectAll(".set1-text")
     .data(set1Unique)
     .enter()
     .append("text")
     .attr("x", -80) // Position in the first circle
-    .attr("y", (d, i) => -65 + i * 45) // Distribute text vertically
+    .attr("y", (d, i) => startY1 + i * 35) // Distribute text vertically
     .attr("text-anchor", "middle")
+    .style("font-weight", "600") 
     .text(d => d)
     .attr("font-size", "14px");
 
@@ -73,8 +92,9 @@ function createVennDiagram(data, containerId) {
     .enter()
     .append("text")
     .attr("x", 80) // Position in the second circle
-    .attr("y", (d, i) => -65 + i * 45) // Distribute text vertically
+    .attr("y", (d, i) => startY2 + i * 35) // Distribute text vertically
     .attr("text-anchor", "middle")
+    .style("font-weight", "600") 
     .text(d => d)
     .attr("font-size", "14px");
 
@@ -84,15 +104,17 @@ function createVennDiagram(data, containerId) {
     .enter()
     .append("text")
     .attr("x", 0) // Position in the center
-    .attr("y", (d, i) => i * 35) // Distribute text vertically
+    .attr("y", (d, i) => startYCommon + i * 25) // Distribute text vertically
     .attr("text-anchor", "middle")
+    .style("font-weight", "600") 
     .text(d => d)
     .attr("font-size", "14px");
 }
 
-function updateVennDiagram(artist, genres) {
+function updateVennDiagram(artist) {
   artistKeywords = [];
   genreKeywords = [];
+  genre = "";
 
   // Get the data for the Venn diagram
   d3.csv("data/venn_table.csv").then(data => {
@@ -100,15 +122,17 @@ function updateVennDiagram(artist, genres) {
     const artistData = data.filter(d => d.artist === artist);
 
     // Extract the keywords pass them to a literal array
-    artistKeywords = JSON.parse(artistData[0].artist_keywords);
+    artistKeywords = JSON.parse(artistData[0].artist_keywords).slice(0, 5);
+
+    genre = artistData[0].genre;
 
     // Extract the keywords for the selected genres
-    genreKeywords = JSON.parse(artistData[0].genre_keywords);
+    genreKeywords = JSON.parse(artistData[0].genre_keywords).slice(0, 5);
   
     // Update the Venn diagram with the new data
     const data1 = [
-      { keywords: artistKeywords.slice(0, 5),
-        keywords1: genreKeywords.slice(0, 5) }
+      { keywords: artistKeywords,
+        keywords1: genreKeywords }
     ];
 
     console.log(data1);
@@ -167,9 +191,9 @@ function updateVennDiagram(artist, genres) {
       .attr("opacity", 0.5);
 
     // Calculate the starting y position for centering the text
-    const startY1 = -((set1Unique.length - 1) * 45) / 2;
-    const startY2 = -((set2Unique.length - 1) * 45) / 2;
-    const startYCommon = -((common.length - 1) * 35) / 2;
+    const startY1 = -((set1Unique.length - 1) * 35) / 2;
+    const startY2 = -((set2Unique.length - 1) * 35) / 2;
+    const startYCommon = -((common.length - 1) * 25) / 2;
 
     // Add the artist's name near the left circle
     svg.append("text")
@@ -180,14 +204,24 @@ function updateVennDiagram(artist, genres) {
       .attr("font-size", "16px")
       .attr("font-weight", "bold");
 
+    // Add the artist's name near the left circle
+    svg.append("text")
+      .attr("x", 80) // Adjust the x-position to the left of the first circle
+      .attr("y", 120)    // Align vertically with the center of the first circle
+      .attr("text-anchor", "middle")
+      .text(`Other ${genre} artists`) // Artist's name from the data
+      .attr("font-size", "16px")
+      .attr("font-weight", "bold");
+
     // Add text for the unique values in the first circle
     svg.selectAll(".set1-text")
       .data(set1Unique)
       .enter()
       .append("text")
       .attr("x", -80) // Position in the first circle
-      .attr("y", (d, i) => startY1 + i * 45) // Distribute text vertically
+      .attr("y", (d, i) => startY1 + i * 35) // Distribute text vertically
       .attr("text-anchor", "middle")
+      .style("font-weight", "600") 
       .text(d => d)
       .attr("font-size", "14px");
 
@@ -197,8 +231,9 @@ function updateVennDiagram(artist, genres) {
       .enter()
       .append("text")
       .attr("x", 80) // Position in the second circle
-      .attr("y", (d, i) => startY2 + i * 45) // Distribute text vertically
+      .attr("y", (d, i) => startY2 + i * 35) // Distribute text vertically
       .attr("text-anchor", "middle")
+      .style("font-weight", "600") 
       .text(d => d)
       .attr("font-size", "14px");
 
@@ -208,8 +243,9 @@ function updateVennDiagram(artist, genres) {
       .enter()
       .append("text")
       .attr("x", 0) // Position in the center
-      .attr("y", (d, i) => startYCommon + i * 35) // Distribute text vertically
+      .attr("y", (d, i) => startYCommon + i * 25) // Distribute text vertically
       .attr("text-anchor", "middle")
+      .style("font-weight", "600") 
       .text(d => d)
       .attr("font-size", "14px");
   });
