@@ -112,6 +112,7 @@ function createVennDiagram(data, containerId) {
 }
 
 function updateVennDiagram(artist) {
+  console.log("Update Venn diagram for", artist);
   artistKeywords = [];
   genreKeywords = [];
   genre = "";
