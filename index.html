@@ -34,7 +34,15 @@
                     <input type="range" id="maxRange" min="1962" max="2021" value="2021" step="1" >
                 </div>
             </div>
-            <input id="keyword" type="text" placeholder="Search Keyword" class="search-bar" />
+            <div class="search_keyword_container">
+                <div class="keywordInput" id="keywordInput">
+                  <input class="wordInput" id="wordInput" type="text" placeholder="Search Keyword">
+                  <div class="resultKeyword" id="resultKeyword">
+                    <!-- here list are inserted from javascript -->
+                  </div>
+                  <img src="./search.svg" class="searchKeywordIcon" id="searchKeywordIcon" />
+                </div>
+            </div>
             <div class="search_container">
                 <div class="searchInput" id="searchInput">
                   <input class="userInput" id="userInput" type="text" placeholder="Search Artist">
@@ -44,6 +52,7 @@
                   <img src="./search.svg" class="searchIcon" id="searchIcon" />
                 </div>
               </div>
+              
             <div class="checkbox-options">
                 <label>
                     <input type="checkbox" class="genre-checkbox rock" id="rock_checkbox" value="rock" checked/> Rock

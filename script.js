@@ -18,7 +18,6 @@ let artists = [];
 function init() {
   d3.csv("./data/artist_search_table.csv").then((data) => {
     data.forEach((d) => {
-      console.log(d.artist);
       artists.push(d.artist);
     });
 
@@ -65,14 +64,6 @@ function init() {
   document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
     checkbox.addEventListener("change", updateGenreSelection);
   });
-
-  document
-    .getElementById("keyword")
-    .addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        updateKeywordSearch();
-      }
-    });
 
   document
     .getElementById("userInput")
