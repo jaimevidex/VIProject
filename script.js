@@ -45,7 +45,7 @@ function init() {
   */
   d3.csv("./data/venn_table.csv").then((data) => {
     // filter the data to only send the data from the beatles
-    data = data.filter((d) => d.artist === "The Beatles");
+    data = data.filter((d) => d.artist === "Ariana Grande");
     createVennDiagram(
       data,
       ".Venndiagram",

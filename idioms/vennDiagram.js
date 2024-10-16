@@ -42,14 +42,56 @@ function createVennDiagram(data, containerId) {
     .attr("cy", 0)
     .attr("r", 100)
     .attr("fill", "lightblue")
-    .attr("opacity", 0.5);
+    .attr("opacity", 0.5)
+    .on("mouseover", function() {
+      d3.select(this).attr("r", 110)
+      .attr("cx", -70)
+      .attr("opacity", 1);
+    })
+    .on("mouseleave", function() {
+      d3.select(this).attr("r", 100)
+      .attr("cx", -60)
+      .attr("opacity", 0.5);
+    })
+    .on("click", function() {
+      // Join the keywords array into a nicely formatted string with line breaks
+      const formattedKeywords = (JSON.parse(data[0].artist_keywords)).join(",\n");
+      
+      // Display the alert with formatted keywords
+      swal.fire({
+        title: "All the Keywords",
+        text: formattedKeywords,
+        icon: "question",
+      });
+    });
 
   const circle2 = svg.append("circle")
     .attr("cx", 60) // Adjust position for overlap
     .attr("cy", 0)
     .attr("r", 100)
     .attr("fill", "lightgreen")
-    .attr("opacity", 0.5);
+    .attr("opacity", 0.5)
+    .on("mouseover", function() {
+      d3.select(this).attr("r", 110)
+      .attr("cx", 70)
+      .attr("opacity", 1);
+    })
+    .on("mouseleave", function() {
+      d3.select(this).attr("r", 100)
+      .attr("cx", 60)
+      .attr("opacity", 0.5);
+    })
+    .on("click", function() {
+      // Join the keywords array into a nicely formatted string with line breaks
+      const formattedKeywords = (JSON.parse(data[0].genre_keywords)).join(",\n");
+      
+      // Display the alert with formatted keywords
+      swal.fire({
+        title: "All the Keywords",
+        text: formattedKeywords,
+        icon: "question",
+      });
+    });
 
   // Add the artist's name near the left circle
   svg.append("text")
@@ -178,18 +220,60 @@ function updateVennDiagram(artist) {
 
     // Draw the circles for the Venn diagram with overlap
     const circle1 = svg.append("circle")
-      .attr("cx", -60) // Adjust position for overlap
-      .attr("cy", 0)
-      .attr("r", 100)
-      .attr("fill", "lightblue")
+    .attr("cx", -60) // Adjust position for overlap
+    .attr("cy", 0)
+    .attr("r", 100)
+    .attr("fill", "lightblue")
+    .attr("opacity", 0.5)
+    .on("mouseover", function() {
+      d3.select(this).attr("r", 110)
+      .attr("cx", -70)
+      .attr("opacity", 1);
+    })
+    .on("mouseleave", function() {
+      d3.select(this).attr("r", 100)
+      .attr("cx", -60)
       .attr("opacity", 0.5);
+    })
+    .on("click", function() {
+      // Join the keywords array into a nicely formatted string with line breaks
+      const formattedKeywords = (JSON.parse(data[0].artist_keywords)).join(",\n");
+      
+      // Display the alert with formatted keywords
+      swal.fire({
+        title: "All the Keywords",
+        text: formattedKeywords,
+        icon: "question",
+      });
+    });
 
-    const circle2 = svg.append("circle")
+      const circle2 = svg.append("circle")
       .attr("cx", 60) // Adjust position for overlap
       .attr("cy", 0)
       .attr("r", 100)
       .attr("fill", "lightgreen")
-      .attr("opacity", 0.5);
+      .attr("opacity", 0.5)
+      .on("mouseover", function() {
+        d3.select(this).attr("r", 110)
+        .attr("cx", 70)
+        .attr("opacity", 1);
+      })
+      .on("mouseleave", function() {
+        d3.select(this).attr("r", 100)
+        .attr("cx", 60)
+        .attr("opacity", 0.5);
+      })
+      .on("click", function() {
+        // Join the keywords array into a nicely formatted string with line breaks
+        const formattedKeywords = (JSON.parse(data[0].genre_keywords)).join(",\n");
+        
+        // Display the alert with formatted keywords
+        swal.fire({
+          title: "All the Keywords",
+          text: formattedKeywords,
+          icon: "question",
+        });
+      });
 
     // Calculate the starting y position for centering the text
     const startY1 = -((set1Unique.length - 1) * 35) / 2;
