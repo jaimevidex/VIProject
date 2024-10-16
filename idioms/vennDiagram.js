@@ -37,21 +37,33 @@ function createVennDiagram(data, containerId) {
     .attr("transform", `translate(${width / 2},${height / 2})`);
 
   // Draw the circles for the Venn diagram with overlap
-  const circle1 = svg.append("circle")
-    .attr("cx", -60) // Adjust position for overlap
-    .attr("cy", 0)
-    .attr("r", 100)
-    .attr("fill", "lightblue")
-    .attr("opacity", 0.5)
+const circle1 = svg.append("circle")
+.attr("cx", -60) // Adjust position for overlap
+.attr("cy", 0)
+.attr("r", 0) // Start with radius 0
+.attr("fill", "lightblue")
+.attr("opacity", 0.5)
+.transition() // Add transition
+.duration(1000) // Duration of 1 second
+.attr("r", 100) // Animate radius to 100
+.on("end", function() { // Ensure the rest of the code runs after the transition
+  d3.select(this)
     .on("mouseover", function() {
-      d3.select(this).attr("r", 110)
-      .attr("cx", -70)
-      .attr("opacity", 1);
+      d3.select(this)
+        .transition()
+        .duration(200)
+        .attr("r", 110)
+        .attr("cx", -70)
+        .attr("cursor", "pointer")
+        .attr("opacity", 1);
     })
     .on("mouseleave", function() {
-      d3.select(this).attr("r", 100)
-      .attr("cx", -60)
-      .attr("opacity", 0.5);
+      d3.select(this)
+        .transition()
+        .duration(300)
+        .attr("r", 100)
+        .attr("cx", -60)
+        .attr("opacity", 0.5);
     })
     .on("click", function() {
       // Join the keywords array into a nicely formatted string with line breaks
@@ -64,22 +76,35 @@ function createVennDiagram(data, containerId) {
         icon: "question",
       });
     });
+});
 
-  const circle2 = svg.append("circle")
-    .attr("cx", 60) // Adjust position for overlap
-    .attr("cy", 0)
-    .attr("r", 100)
-    .attr("fill", "lightgreen")
-    .attr("opacity", 0.5)
+const circle2 = svg.append("circle")
+.attr("cx", 60) // Adjust position for overlap
+.attr("cy", 0)
+.attr("r", 0) // Start with radius 0
+.attr("fill", "lightgreen")
+.attr("opacity", 0.5)
+.transition() // Add transition
+.duration(1000) // Duration of 1 second
+.attr("r", 100) // Animate radius to 100
+.on("end", function() { // Ensure the rest of the code runs after the transition
+  d3.select(this)
     .on("mouseover", function() {
-      d3.select(this).attr("r", 110)
-      .attr("cx", 70)
-      .attr("opacity", 1);
+      d3.select(this)
+        .transition()
+        .duration(200)
+        .attr("r", 110)
+        .attr("cx", 70)
+        .attr("cursor", "pointer")
+        .attr("opacity", 1);
     })
     .on("mouseleave", function() {
-      d3.select(this).attr("r", 100)
-      .attr("cx", 60)
-      .attr("opacity", 0.5);
+      d3.select(this)
+        .transition()
+        .duration(300)
+        .attr("r", 100)
+        .attr("cx", 60)
+        .attr("opacity", 0.5);
     })
     .on("click", function() {
       // Join the keywords array into a nicely formatted string with line breaks
@@ -92,6 +117,7 @@ function createVennDiagram(data, containerId) {
         icon: "question",
       });
     });
+});
 
   // Add the artist's name near the left circle
   svg.append("text")

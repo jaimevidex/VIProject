@@ -267,11 +267,14 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       })
       .filter((d) => checkedGenres.includes(d.Genre));
 
-    const jsonData = filteredData.map((d) => ({
-      genre: d.Genre,
-      popularity: d.popularity,
-      color: colorMap[d.Genre],
-    }));
+    // Sort the jsonData in descending order based on popularity
+    const jsonData = filteredData
+      .map((d) => ({
+        genre: d.Genre,
+        popularity: d.popularity,
+        color: colorMap[d.Genre],
+      }))
+      .sort((a, b) => d3.descending(a.popularity, b.popularity));
 
     const width = 500;
     const height = 350;
