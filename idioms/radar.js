@@ -4,11 +4,11 @@ let genre2 = null;
 function createRadarchart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
   // Data for the radar chart with multiple values per axis
   const data1 = [
-    { axis: "love", values: [0.8, 0.6, 0.2, 0.6, 0.7] },
-    { axis: "houses", values: [0.6, 0.4, 0.1, 0.4, 0.3] },
-    { axis: "name", values: [0.9, 0.7, 0.8, 0.2, 0.3] },
-    { axis: "tonight", values: [0.7, 0.5, 0.6, 0.6, 0.5] },
-    { axis: "courtyard", values: [0.5, 0.3, 0.2, 0.5, 0.7] }
+    { axis: "danceability", values: [0.8, 0.6, 0.2, 0.6, 0.7] },
+    { axis: "tempo", values: [0.6, 0.4, 0.1, 0.4, 0.3] },
+    { axis: "accousticness", values: [0.9, 0.7, 0.8, 0.2, 0.3] },
+    { axis: "key", values: [0.7, 0.5, 0.6, 0.6, 0.5] },
+    { axis: "energy", values: [0.5, 0.3, 0.2, 0.5, 0.7] }
   ];
 
   // Set up SVG dimensions
