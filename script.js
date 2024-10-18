@@ -16,6 +16,7 @@ let keyword = null;
 let artists = [];
 
 function init() {
+  localStorage.clear();
   d3.csv("./data/artist_search_table.csv").then((data) => {
     data.forEach((d) => {
       artists.push(d.artist);
@@ -79,11 +80,9 @@ function init() {
       }
     });
 
-  document
-    .getElementById("searchIcon")
-    .addEventListener("click", function (e) {
-      updateArtistSearch();
-    });
+  document.getElementById("searchIcon").addEventListener("click", function (e) {
+    updateArtistSearch();
+  });
 }
 
 // Function to handle input changes
@@ -134,11 +133,10 @@ function showSuggestions(list) {
 function updateArtistSearch() {
   artist = document.getElementById("userInput").value;
   // Check if the artist is in the list of artists comparing everything in lowercase
-  if (!artists.some((a) => a.toLowerCase() === artist.toLowerCase())) {  
+  if (!artists.some((a) => a.toLowerCase() === artist.toLowerCase())) {
     swal.fire(artist + " not found, make sure you typed the name correctly.");
     return;
-  }
-  else {
+  } else {
     artist = artists.find((a) => a.toLowerCase() === artist.toLowerCase());
   }
 
@@ -152,6 +150,8 @@ function updateArtistSearch() {
     maxRangeValue = parseInt(time_interval[1]);
     document.getElementById("minRange").value = minRangeValue;
     document.getElementById("maxRange").value = maxRangeValue;
+    document.getElementById("minOutput").textContent = minRangeValue;
+    document.getElementById("maxOutput").textContent = maxRangeValue;
     //select the genres of the artist
     genres = [data[0].genre];
     document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
@@ -159,9 +159,7 @@ function updateArtistSearch() {
     });
     console.log(genres);
     updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
-
   });
-
 }
 
 function updateKeywordSearch() {
@@ -231,8 +229,13 @@ function updateDashboard(
   artist,
   keyword
 ) {
+  
   // clean the data so that only musics from that artist are shown and contains the keyword
-  updateVennDiagram(artist, checkedGenres, keyword);
+  console.log(artist + " " + localStorage.getItem("artist"));
+  console.log(artist !== localStorage.getItem("artist"));
+  if (artist !== localStorage.getItem("artist")) {
+    updateVennDiagram(artist, checkedGenres, keyword);
+  }
 
   if (checkedGenres.length === 1 && isBarchart) {
     console.log("Transform to line chart");

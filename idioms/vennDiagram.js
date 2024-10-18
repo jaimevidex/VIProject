@@ -194,6 +194,7 @@ function createVennDiagram(data, containerId) {
 }
 
 function updateVennDiagram(artist) {
+  localStorage.setItem("artist", artist);
   console.log("Update Venn diagram for", artist);
   artistKeywords = [];
   genreKeywords = [];
@@ -357,6 +358,7 @@ function updateVennDiagram(artist) {
     // Add the artist's name near the left circle
     svg
       .append("text")
+      .attr("class", "artist-name")
       .attr("x", -80) // Adjust the x-position to the left of the first circle
       .attr("y", -110) // Align vertically with the center of the first circle
       .attr("text-anchor", "middle")
