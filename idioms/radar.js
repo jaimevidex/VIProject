@@ -12,8 +12,8 @@ function createRadarchart(data, containerId, minRangeValue, maxRangeValue, check
   ];
 
   // Set up SVG dimensions
-  const width = 500;
-  const height = 350;
+  const width = 700;
+  const height = 510;
   const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
   // Calculate the radius of the radar chart

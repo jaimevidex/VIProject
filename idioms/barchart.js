@@ -1,7 +1,13 @@
 let isBarchart = true;
 let selectGenre = null;
 
-function createBarchart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
+function createBarchart(
+  data,
+  containerId,
+  minRangeValue,
+  maxRangeValue,
+  checkedGenres
+) {
   isBarchart = true;
   // Clear the existing chart elements
   d3.select(containerId).selectAll("*").remove();
@@ -38,8 +44,8 @@ function createBarchart(data, containerId, minRangeValue, maxRangeValue, checked
     color: colorMap[d.Genre],
   }));
 
-  const width = 500;
-  const height = 350;
+  const width = 700;
+  const height = 510;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   // Append chart title
@@ -114,13 +120,20 @@ function createBarchart(data, containerId, minRangeValue, maxRangeValue, checked
     .attr("color", "black");
 }
 
-function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue, checkedGenres, originalData) {
+function createLinechart(
+  selectedData,
+  containerId,
+  minRangeValue,
+  maxRangeValue,
+  checkedGenres,
+  originalData
+) {
   isBarchart = false;
   // Clear the existing chart elements
   d3.select(containerId).selectAll("*").remove();
 
-  const width = 500;
-  const height = 350;
+  const width = 700;
+  const height = 510;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   const svg = d3
@@ -155,7 +168,7 @@ function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue
     .attr("stroke-width", 1.5)
     .attr("d", line);
 
-    // Add circles on each data point
+  // Add circles on each data point
   svg
     .selectAll("circle")
     .data(selectedData.popularity)
@@ -170,7 +183,7 @@ function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue
         .attr("r", 6) // Increase circle size on hover
         .attr("stroke", "black") // Optional: Add a stroke around the circle
         .attr("stroke-width", 2); // Make stroke visible
-      
+
       const tooltipText = `Popularity: ${d}`;
       const textSize = tooltipText.length * 6; // Adjust size based on text length
 
@@ -207,7 +220,6 @@ function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue
       d3.select("#tooltip-bg").remove();
     });
 
-
   // Append x-axis
   svg
     .append("g")
@@ -234,7 +246,13 @@ function createLinechart(selectedData, containerId, minRangeValue, maxRangeValue
       // Clear the line chart
       d3.select(containerId).selectAll("*").remove();
       // Recreate the bar chart
-      createBarchart(originalData, containerId, minRangeValue, maxRangeValue, checkedGenres);
+      createBarchart(
+        originalData,
+        containerId,
+        minRangeValue,
+        maxRangeValue,
+        checkedGenres
+      );
     });
 }
 
@@ -276,8 +294,8 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       }))
       .sort((a, b) => d3.descending(a.popularity, b.popularity));
 
-    const width = 500;
-    const height = 350;
+    const width = 700;
+    const height = 510;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
     // Select the existing SVG element
@@ -322,7 +340,9 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("ry", 5)
       .on("mouseover", function () {
         if (minRangeValue - maxRangeValue != 0) {
-          d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
+          d3.select(this)
+            .style("cursor", "pointer")
+            .style("stroke-width", "3px");
         }
       })
       .on("mouseleave", function () {
@@ -340,7 +360,13 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("height", (d) => yScale(0) - yScale(d.popularity));
 
     // Remove bars that are no longer in the data
-    bars.exit().transition().duration(1000).attr("height", 0).attr("y", yScale(0)).remove();
+    bars
+      .exit()
+      .transition()
+      .duration(1000)
+      .attr("height", 0)
+      .attr("y", yScale(0))
+      .remove();
 
     // Update x-axis with smooth transition
     svg
@@ -379,8 +405,8 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
     const popularity = selectedData.map((d) => d.popularity);
     const color = colorMap[selectedGenre];
 
-    const width = 500;
-    const height = 350;
+    const width = 700;
+    const height = 510;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
     // Select the existing SVG element
@@ -416,19 +442,15 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
     let tickInterval = 1;
     if (timeRange > 10) tickInterval = Math.ceil(timeRange / 10);
 
-    svg
-    .select("g.xAxis")
-    .selectAll("*")
-    .remove();
+    svg.select("g.xAxis").selectAll("*").remove();
 
     // Update x-axis without transition
-    svg
-      .select("g.xAxis")
-      .call(
-        d3.axisBottom(xScale)
-          .ticks((maxRangeValue - minRangeValue) / tickInterval)
-          .tickFormat(d3.format("d"))
-      );
+    svg.select("g.xAxis").call(
+      d3
+        .axisBottom(xScale)
+        .ticks((maxRangeValue - minRangeValue) / tickInterval)
+        .tickFormat(d3.format("d"))
+    );
 
     // Update y-axis with smooth transition
     svg.select("g.yAxis").transition().duration(1000).call(d3.axisLeft(yScale));
@@ -457,17 +479,17 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
       .append("circle")
       .attr("cx", (d, i) => xScale(minRangeValue + i))
       .attr("cy", (d) => yScale(d))
-      .attr("r", 0)  // Start with radius 0 for animation
+      .attr("r", 0) // Start with radius 0 for animation
       .attr("fill", color)
       .on("mouseover", function (event, d) {
         d3.select(this)
           .attr("r", 6) // Increase circle size on hover
           .attr("stroke", "black") // Optional: Add a stroke around the circle
           .attr("stroke-width", 2); // Make stroke visible
-        
+
         const tooltipText = `Popularity: ${d}`;
         const textSize = tooltipText.length * 6; // Adjust size based on text length
-  
+
         // Append background rectangle for the tooltip
         svg
           .append("rect")
@@ -479,7 +501,7 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
           .attr("fill", "lightgray") // Background color
           .attr("rx", 4) // Rounded corners
           .attr("ry", 4); // Rounded corners
-  
+
         // Append tooltip text
         svg
           .append("text")
@@ -495,17 +517,17 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
         d3.select(this)
           .attr("r", 4) // Reset circle size
           .attr("stroke-width", 0); // Remove stroke
-  
+
         // Remove tooltip and background
         d3.select("#tooltip").remove();
         d3.select("#tooltip-bg").remove();
       })
-      .merge(circles)  // Merge enter and update selections
+      .merge(circles) // Merge enter and update selections
       .transition()
       .duration(1000)
       .attr("cx", (d, i) => xScale(minRangeValue + i))
       .attr("cy", (d) => yScale(d))
-      .attr("r", 5);  // Animate to final radius
+      .attr("r", 5); // Animate to final radius
 
     // Append a cross (close button) to return to the bar chart
     svg
@@ -519,13 +541,7 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
         // Clear the line chart
         d3.select(".Barchart").selectAll("*").remove();
         // Recreate the bar chart
-        createBarchart(
-          data,
-          ".Barchart",
-          minRangeValue,
-          maxRangeValue,
-          genres
-        );
+        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
       });
   });
 }

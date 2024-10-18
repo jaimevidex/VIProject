@@ -16,8 +16,8 @@ function createVennDiagram(data, containerId) {
   console.log(set2Unique);
 
   // Set up SVG dimensions
-  const width = 500;
-  const height = 350;
+  const width = 700;
+  const height = 510;
   const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
   // Append chart title
@@ -234,8 +234,8 @@ function updateVennDiagram(artist) {
     const radius = maxTextHeight / 2;
 
     // Set up SVG dimensions
-    const width = 500;
-    const height = 350;
+    const width = 700;
+    const height = 510;
     const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
     // Clean circles and texts
