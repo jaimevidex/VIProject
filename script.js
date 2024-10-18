@@ -73,7 +73,7 @@ function init() {
 
   document
     .getElementById("userInput")
-    .addEventListener("keydown", function (event) {
+    .addEventListener("keyup", function (event) {
       if (event.key === "Enter") {
         updateArtistSearch();
       }
@@ -133,10 +133,35 @@ function showSuggestions(list) {
 
 function updateArtistSearch() {
   artist = document.getElementById("userInput").value;
+  // Check if the artist is in the list of artists comparing everything in lowercase
+  if (!artists.some((a) => a.toLowerCase() === artist.toLowerCase())) {  
+    swal.fire(artist + " not found, make sure you typed the name correctly.");
+    return;
+  }
+  else {
+    artist = artists.find((a) => a.toLowerCase() === artist.toLowerCase());
+  }
 
   console.log(artist);
 
-  updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
+  //get time range and genre from the artist data file
+  d3.csv("./data/artist_search_table.csv").then((data) => {
+    data = data.filter((d) => d.artist === artist);
+    time_interval = data[0].time_interval.replace(/['"(),]/g, "").split(" ");
+    minRangeValue = parseInt(time_interval[0]);
+    maxRangeValue = parseInt(time_interval[1]);
+    document.getElementById("minRange").value = minRangeValue;
+    document.getElementById("maxRange").value = maxRangeValue;
+    //select the genres of the artist
+    genres = [data[0].genre];
+    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+      checkbox.checked = genres.includes(checkbox.value);
+    });
+    console.log(genres);
+    updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
+
+  });
+
 }
 
 function updateKeywordSearch() {

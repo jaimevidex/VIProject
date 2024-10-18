@@ -201,8 +201,8 @@ function updateVennDiagram(artist) {
 
   // Get the data for the Venn diagram
   d3.csv("data/venn_table.csv").then((data) => {
-    // Filter the data for the selected artist
-    const artistData = data.filter((d) => d.artist === artist);
+    // Filter the data for the selected artist match in lowercase
+    const artistData = data.filter((d) => d.artist.toLowerCase() === artist.toLowerCase());
 
     // Extract the keywords pass them to a literal array
     artistKeywords = JSON.parse(artistData[0].artist_keywords).slice(0, 5);
