@@ -243,9 +243,29 @@ function updateArtistSearch() {
 }
 
 function updateKeywordSearch() {
-  keyword = document.getElementById("keyword").value;
+  keyword = document.getElementById("wordInput").value;
 
   console.log(keyword);
+
+   //get time range and genre from the keyword data file
+   d3.csv("./data/keyword_search_table.csv").then((data) => {
+    data = data.filter((d) => d.keyword === keyword);
+    time_interval = data[0].time_interval.replace(/['"(),]/g, "").split(" ");
+    minRangeValue = Math.max(parseInt(time_interval[0]), 1962);
+    maxRangeValue = Math.min(parseInt(time_interval[1]), 2021);
+    document.getElementById("minRange").value = minRangeValue;
+    document.getElementById("maxRange").value = maxRangeValue;
+    document.getElementById("minOutput").textContent = minRangeValue;
+    document.getElementById("maxOutput").textContent = maxRangeValue;
+    //select the genres of the keyword from string to array
+    const genresString = data[0].genres.replace(/'/g, '"');
+    genres = JSON.parse(genresString);
+    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+      checkbox.checked = genres.includes(checkbox.value);
+    });
+    console.log(genres);
+    updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
+  });
 
   updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
 }
