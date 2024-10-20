@@ -14,30 +14,46 @@ let keyword = null;
 
 // Get all the artists names from the csv file artist_search_table
 let artists = [];
+let keywords = [];
 
-function init() {
-  localStorage.clear();
-  d3.csv("./data/artist_search_table.csv").then((data) => {
+function initArtists() {
+  return d3.csv("./data/artist_search_table.csv").then((data) => {
     data.forEach((d) => {
       artists.push(d.artist);
     });
+  });
+}
 
-    d3.csv("./data/genre_popularity_time.csv").then((data) => {
-      createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
-      createBubblechart(
-        data,
-        ".Bubblechart",
-        minRangeValue,
-        maxRangeValue,
-        genres
-      );
-      createRadarchart(
-        data,
-        ".Radarchart",
-        minRangeValue,
-        maxRangeValue,
-        genres
-      );
+function initKeywords() {
+  return d3.csv("./data/keyword_search_table.csv").then((data) => {
+    data.forEach((d) => {
+      keywords.push(d.keyword);
+    });
+  });
+}
+
+function init() {
+  // Initialize the arrays and wait for them to be filled to then do the rest of the code
+  initArtists().then(() => {
+    initKeywords().then(() => {
+      localStorage.clear();
+      d3.csv("./data/genre_popularity_time.csv").then((data) => {
+        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
+        createBubblechart(
+          data,
+          ".Bubblechart",
+          minRangeValue,
+          maxRangeValue,
+          genres
+        );
+        createRadarchart(
+          data,
+          ".Radarchart",
+          minRangeValue,
+          maxRangeValue,
+          genres
+        );
+      });
     });
   });
   /* 
@@ -55,6 +71,7 @@ function init() {
       "The Beatles"
     );
   });
+
 
   const minRange = document.getElementById("minRange");
   const maxRange = document.getElementById("maxRange");
@@ -80,8 +97,26 @@ function init() {
       }
     });
 
+  document
+    .getElementById("wordInput")
+    .addEventListener("input", function (event) {
+      handleKeywordInputSearchChange(event);
+    });
+
+  document
+    .getElementById("wordInput")
+    .addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+        updateKeywordSearch();
+      }
+    });
+
   document.getElementById("searchIcon").addEventListener("click", function (e) {
     updateArtistSearch();
+  });
+
+  document.getElementById("searchKeywordIcon").addEventListener("click", function (e) {
+    updateKeywordSearch();
   });
 }
 
@@ -100,13 +135,40 @@ function handleInputChange(e) {
     });
     document.getElementById("searchInput").classList.add("active"); // Show autocomplete box
     showSuggestions(emptyArray);
-    let allList = resultBox.querySelectorAll("li");
+    let allList = document.getElementById("resultBox").querySelectorAll("li");
     for (let i = 0; i < allList.length; i++) {
       // Adding onclick function in all li tag
       allList[i].setAttribute("onclick", "select(this)");
     }
   } else {
     document.getElementById("searchInput").classList.remove("active"); // Hide autocomplete box
+  }
+}
+
+function handleKeywordInputSearchChange(e) {
+  let userData = document.getElementById("wordInput").value; // User entered data
+  let emptyArray = [];
+  if (userData) {
+    emptyArray = keywords.filter((data) => {
+      // Filtering array value and user characters to lowercase and return only those words which start with user entered chars
+      return data.toLocaleLowerCase().startsWith(userData.toLocaleLowerCase());
+    });
+    emptyArray = emptyArray.map((data) => {
+      // Passing return data inside li tag
+      return (data = "<li>" + data + "</li>");
+    });
+    document.getElementById("keywordInput").classList.add("active"); // Show autocomplete box
+    showKeywordSuggestions(emptyArray);
+    console.log(emptyArray);
+    let allList = document
+      .getElementById("resultKeyword")
+      .querySelectorAll("li");
+    for (let i = 0; i < allList.length; i++) {
+      // Adding onclick function in all li tag
+      allList[i].setAttribute("onclick", "selectKeyword(this)");
+    }
+  } else {
+    document.getElementById("keywordInput").classList.remove("active"); // Hide autocomplete box
   }
 }
 
@@ -117,17 +179,35 @@ function select(element) {
   document.getElementById("searchInput").classList.remove("active"); // Hide autocomplete box
 }
 
+function selectKeyword(element) {
+  let selectData = element.textContent;
+  document.getElementById("wordInput").value = selectData; // Passing the selected list data inside textfield
+  document.getElementById("keywordInput").classList.remove("active"); // Hide autocomplete box
+}
+
 // Function to show suggestions
 function showSuggestions(list) {
   console.log(list);
   let listData;
   if (!list.length) {
-    userValue = input.value;
+    userValue = document.getElementById("userInput").value;
     listData = "<li>" + userValue + "</li>";
   } else {
     listData = list.join("");
   }
-  resultBox.innerHTML = listData;
+  document.getElementById("resultBox").innerHTML = listData;
+}
+
+function showKeywordSuggestions(list) {
+  console.log(list);
+  let listData;
+  if (!list.length) {
+    userValue = document.getElementById("wordInput").value;
+    listData = "<li>" + userValue + "</li>";
+  } else {
+    listData = list.join("");
+  }
+  document.getElementById("resultKeyword").innerHTML = listData;
 }
 
 function updateArtistSearch() {
@@ -229,7 +309,6 @@ function updateDashboard(
   artist,
   keyword
 ) {
-  
   // clean the data so that only musics from that artist are shown and contains the keyword
   console.log(artist + " " + localStorage.getItem("artist"));
   console.log(artist !== localStorage.getItem("artist"));
