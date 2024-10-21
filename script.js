@@ -46,7 +46,7 @@ function init() {
           maxRangeValue,
           genres
         );
-        createRadarchart(
+        RadarChart(
           data,
           ".Radarchart",
           minRangeValue,
@@ -392,4 +392,11 @@ function updateDashboard(
     // Update line chart if only one genre is selected
     updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0]);
   }
+  updateRadarChart(
+    data,
+    ".Radarchart",
+    minRangeValue,
+    maxRangeValue,
+    checkedGenres
+  );
 }
