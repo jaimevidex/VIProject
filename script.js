@@ -393,8 +393,6 @@ function updateDashboard(
     updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0]);
   }
   updateRadarChart(
-    data,
-    ".Radarchart",
     minRangeValue,
     maxRangeValue,
     checkedGenres
