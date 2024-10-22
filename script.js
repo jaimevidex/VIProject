@@ -32,6 +32,22 @@ function initKeywords() {
   });
 }
 
+//function that receives a genre in a string and returns its color
+function getColor(genre) {
+  switch (genre) {
+    case "rock":
+      return colorMap.rock;
+    case "pop":
+      return colorMap.pop;
+    case "rap":
+      return colorMap.rap;
+    case "country":
+      return colorMap.country;
+    case "rb":
+      return colorMap.rb;
+  }
+}
+
 function init() {
   // Initialize the arrays and wait for them to be filled to then do the rest of the code
   initArtists().then(() => {
@@ -47,6 +63,7 @@ function init() {
           genres
         );
         RadarChart(
+          colorMap,
           data,
           ".Radarchart",
           minRangeValue,
