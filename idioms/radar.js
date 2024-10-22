@@ -112,9 +112,9 @@ function RadarChart(
     };
 
     var height = (window.innerHeight - 64) / 2;
-    var width = (window.innerWidth - 300) / 2;
+    var width = (window.innerWidth - 300 - 50) / 2;
 
-    var radius = height / 2;
+    var radius = (height-100) / 2;
 
     var allAxis = radarData[0].polygon.map((i) => i.axis),
       total = allAxis.length,
@@ -127,8 +127,8 @@ function RadarChart(
       svg = d3
         .select(id)
         .append("svg")
-        .attr("width", width + config.margin.left + config.margin.right)
-        .attr("height", height + config.margin.top + config.margin.bottom)
+        .attr("width", width)
+        .attr("height", height)
         .attr("class", "radar" + id);
 
       var g = svg
@@ -136,9 +136,9 @@ function RadarChart(
         .attr(
           "transform",
           "translate(" +
-            (width / 2 + config.margin.left) +
+            (width / 2 ) +
             "," +
-            (height / 2 + config.margin.top) +
+            (height / 2 ) +
             ")"
         );
 
@@ -617,10 +617,10 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       strokeWidth: 2,
     };
 
-    var height = (window.innerHeight - 64) / 2;
-    var width = (window.innerWidth - 300) / 2;
+    var height = (window.innerHeight - 64 -50) / 2;
+    var width = (window.innerWidth - 300 -50) / 2;
 
-    var radius = height / 2;
+    var radius = (height-100) / 2;
 
     var allAxis = radarData[0].polygon.map((i) => i.axis),
       total = allAxis.length,

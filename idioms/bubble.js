@@ -11,8 +11,8 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
 ];
 
   // Set up SVG dimensions
-  const width = 700;
-  const height = 510;
+  const width = (window.innerWidth - 350)/2;
+  const height = (window.innerHeight - 50 - 64) / 2;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   
