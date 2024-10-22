@@ -2,6 +2,7 @@ let isVendiagram = null;
 let genre3 = null;
 
 function createVennDiagram(data, containerId) {
+  localStorage.setItem("artist", data[0].artist);
   // Extract the keywords from the data
   const set1 = JSON.parse(data[0].artist_keywords).slice(0, 5);
   const set2 = JSON.parse(data[0].genre_keywords).slice(0, 5);

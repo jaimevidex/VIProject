@@ -246,7 +246,7 @@ body {
   width: 20px; /* Set width */
   height: 20px; /* Set height */
   border-radius: 50%; /* Make the checkbox rounded */
-  border: 2px solid; /* Border color */
+  border: 1px solid; /* Border color */
   outline: none; /* Remove outline */
   cursor: pointer; /* Change cursor to pointer */
   position: relative; /* Position for the after element */

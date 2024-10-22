@@ -95,9 +95,18 @@ function createBarchart(
       d3.select(this).style("stroke-width", "1px");
     })
     .on("click", function (event, d) {
+      //get checked genres from html element
+      genres = [];
+      document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+        if (checkbox.checked) {
+          genres.push(checkbox.value);
+        }
+      });
+      console.log("genres", genres);
+      localStorage.setItem("selectedGenres", JSON.stringify(genres));
       if (minRangeValue - maxRangeValue != 0) {
         selectGenre = d.genre;
-        updateDashboard(minRangeValue, maxRangeValue, [selectGenre]);
+        updateDashboard(minRangeValue, maxRangeValue, [selectGenre],null, null, true);
       }
     });
 
@@ -126,7 +135,8 @@ function createLinechart(
   minRangeValue,
   maxRangeValue,
   checkedGenres,
-  originalData
+  originalData,
+  wasByClick
 ) {
   isBarchart = false;
   // Clear the existing chart elements
@@ -235,25 +245,35 @@ function createLinechart(
     .call(d3.axisLeft(yScale));
 
   // Append a cross (close button) to return to the bar chart
-  svg
-    .append("text")
-    .attr("x", width - 30)
-    .attr("y", margin.top)
-    .attr("font-size", "24px")
-    .attr("cursor", "pointer")
-    .text("✖")
-    .on("click", function () {
-      // Clear the line chart
-      d3.select(containerId).selectAll("*").remove();
-      // Recreate the bar chart
-      createBarchart(
-        originalData,
-        containerId,
-        minRangeValue,
-        maxRangeValue,
-        checkedGenres
-      );
-    });
+  if (wasByClick) {
+    svg
+      .append("text")
+      .attr("x", width - 30)
+      .attr("y", margin.top)
+      .attr("font-size", "24px")
+      .attr("cursor", "pointer")
+      .text("✖")
+      .on("click", function () {
+        // Clear the line chart
+        d3.select(containerId).selectAll("*").remove();
+        // Recreate the bar chart
+        const selectedGenres = JSON.parse(
+          localStorage.getItem("selectedGenres")
+        );
+        // chcek the selectedGenres checkboxes
+        document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+          checkbox.checked = selectedGenres.includes(checkbox.value);
+        });
+        createBarchart(
+          originalData,
+          containerId,
+          minRangeValue,
+          maxRangeValue,
+          selectedGenres
+        );
+        updateDashboard(minRangeValue, maxRangeValue, selectedGenres);
+      });
+  }
 }
 
 function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
@@ -349,9 +369,19 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
         d3.select(this).style("stroke-width", "1px");
       })
       .on("click", function (event, d) {
+        console.log("clicked", d.genre);
+        //get checked genres from html element
+        genres = [];
+        document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+          if (checkbox.checked) {
+            genres.push(checkbox.value);
+          }
+        });
+        console.log("genres", genres);
+        localStorage.setItem("selectedGenres", JSON.stringify(genres));
         if (minRangeValue - maxRangeValue != 0) {
           selectGenre = d.genre;
-          updateDashboard(minRangeValue, maxRangeValue, [selectGenre]);
+          updateDashboard(minRangeValue, maxRangeValue, [selectGenre], null, null, true);
         }
       })
       .transition()
@@ -384,7 +414,12 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
   });
 }
 
-function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
+function updateLinechart(
+  minRangeValue,
+  maxRangeValue,
+  selectedGenre,
+  wasByClick
+) {
   d3.csv("./data/genre_popularity_time.csv").then((data) => {
     // Filter and process data for the selectedGenre and time range
     const longFormatData = [];
@@ -530,18 +565,30 @@ function updateLinechart(minRangeValue, maxRangeValue, selectedGenre) {
       .attr("r", 5); // Animate to final radius
 
     // Append a cross (close button) to return to the bar chart
-    svg
-      .select("text")
-      .attr("x", width - 30)
-      .attr("y", margin.top)
-      .attr("font-size", "24px")
-      .attr("cursor", "pointer")
-      .text("✖")
-      .on("click", function () {
-        // Clear the line chart
-        d3.select(".Barchart").selectAll("*").remove();
-        // Recreate the bar chart
-        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
-      });
+    if (wasByClick) {
+      svg
+        .select("text")
+        .attr("x", width - 30)
+        .attr("y", margin.top)
+        .attr("font-size", "24px")
+        .attr("cursor", "pointer")
+        .text("✖")
+        .on("click", function () {
+          // Clear the line chart
+          d3.select(".Barchart").selectAll("*").remove();
+          // Recreate the bar chart
+          console.log(
+            "Update to bar chart",
+            localStorage.getItem("selectedGenres")
+          );
+          createBarchart(
+            data,
+            ".Barchart",
+            minRangeValue,
+            maxRangeValue,
+            JSON.parse(localStorage.getItem("selectedGenres"))
+          );
+        });
+    }
   });
 }

@@ -50,9 +50,9 @@ function getColor(genre) {
 
 function init() {
   // Initialize the arrays and wait for them to be filled to then do the rest of the code
+  localStorage.clear();
   initArtists().then(() => {
     initKeywords().then(() => {
-      localStorage.clear();
       d3.csv("./data/genre_popularity_time.csv").then((data) => {
         createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
         createBubblechart(
@@ -344,12 +344,11 @@ function updateDashboard(
   maxRangeValue,
   checkedGenres,
   artist,
-  keyword
+  keyword,
+  wasByClick
 ) {
   // clean the data so that only musics from that artist are shown and contains the keyword
-  console.log(artist + " " + localStorage.getItem("artist"));
-  console.log(artist !== localStorage.getItem("artist"));
-  if (artist !== localStorage.getItem("artist")) {
+  if (artist !== localStorage.getItem("artist") && artist !== undefined && artist !== null) {
     updateVennDiagram(artist, checkedGenres, keyword);
   }
 
@@ -385,7 +384,7 @@ function updateDashboard(
         minRangeValue,
         maxRangeValue,
         checkedGenres,
-        data
+        data,wasByClick
       );
     });
   } else if (checkedGenres.length > 1 && !isBarchart) {
@@ -407,7 +406,7 @@ function updateDashboard(
   } else if (checkedGenres.length === 1 && !isBarchart) {
     console.log("Update line chart");
     // Update line chart if only one genre is selected
-    updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0]);
+    updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0], false);
   }
   updateRadarChart(
     minRangeValue,
