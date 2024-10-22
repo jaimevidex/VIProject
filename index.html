@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=REM:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./script.js"></script>
@@ -12,65 +18,127 @@
     <script src="./idioms/bubble.js"></script>
     <script src="./idioms/radar.js"></script>
     <script src="./idioms/vennDiagram.js"></script>
-
   </head>
   <body onload="init()">
     <div class="dashboard">
-        <div class="container">
-            <div class="Barchart"></div>
-            <div class="Linechart" style="display: none;"></div>
-            <div class="Bubblechart"></div>
-            <div class="Radarchart"></div>
-            <div class="Venndiagram"></div>
+      <div class="container">
+        <div class="Barchart"></div>
+        <div class="Linechart" style="display: none"></div>
+        <div class="Bubblechart"></div>
+        <div class="Radarchart"></div>
+        <div class="Venndiagram"></div>
+      </div>
+      <div class="buttons">
+        <div class="range-slider">
+          <div class="range-values">
+            <span id="minOutput">1962</span><span id="maxOutput">2021</span>
+          </div>
+          <div id="slider">
+            <div id="track"></div>
+            <input
+              type="range"
+              id="minRange"
+              min="1962"
+              max="2021"
+              value="1962"
+              step="1"
+            />
+            <input
+              type="range"
+              id="maxRange"
+              min="1962"
+              max="2021"
+              value="2021"
+              step="1"
+            />
+          </div>
         </div>
-        <div class="buttons">
-            <div class="range-slider">
-                <div class="range-values">
-                    <span id="minOutput">1962</span><span id="maxOutput">2021</span>
-                </div>
-                <div id="slider">
-                    <div id="track"></div>
-                    <input type="range" id="minRange" min="1962" max="2021" value="1962" step="1" >
-                    <input type="range" id="maxRange" min="1962" max="2021" value="2021" step="1" >
-                </div>
+        <div class="search_keyword_container">
+          <div class="keywordInput" id="keywordInput">
+            <input
+              class="wordInput"
+              id="wordInput"
+              type="text"
+              placeholder="Search Keyword"
+            />
+            <div class="resultKeyword" id="resultKeyword">
+              <!-- here list are inserted from javascript -->
             </div>
-            <div class="search_keyword_container">
-                <div class="keywordInput" id="keywordInput">
-                  <input class="wordInput" id="wordInput" type="text" placeholder="Search Keyword">
-                  <div class="resultKeyword" id="resultKeyword">
-                    <!-- here list are inserted from javascript -->
-                  </div>
-                  <img src="./search.svg" class="searchKeywordIcon" id="searchKeywordIcon" />
-                </div>
-            </div>
-            <div class="search_container">
-                <div class="searchInput" id="searchInput">
-                  <input class="userInput" id="userInput" type="text" placeholder="Search Artist">
-                  <div class="resultBox" id="resultBox">
-                    <!-- here list are inserted from javascript -->
-                  </div>
-                  <img src="./search.svg" class="searchIcon" id="searchIcon" />
-                </div>
-              </div>
-              
-            <div class="checkbox-options">
-                <label>
-                    <input type="checkbox" class="genre-checkbox rock" id="rock_checkbox" value="rock" checked/> Rock
-                </label>
-                <label>
-                    <input type="checkbox" class="genre-checkbox pop" id="pop_checkbox" value="pop" checked/> Pop
-                </label>
-                <label>
-                    <input type="checkbox" class="genre-checkbox rap" id="rap_checkbox" value="rap" checked/> Rap
-                </label>
-                <label>
-                    <input type="checkbox" class="genre-checkbox rb" id="rb_checkbox" value="rb" checked/> R&B
-                </label>
-                <label>
-                    <input type="checkbox" class="genre-checkbox country" id="country_checkbox" value="country" checked/> Country
-                </label>
-            </div>
+            <img
+              src="./search.svg"
+              class="searchKeywordIcon"
+              id="searchKeywordIcon"
+            />
+          </div>
         </div>
+        <div class="search_container">
+          <div class="searchInput" id="searchInput">
+            <input
+              class="userInput"
+              id="userInput"
+              type="text"
+              placeholder="Search Artist"
+            />
+            <div class="resultBox" id="resultBox">
+              <!-- here list are inserted from javascript -->
+            </div>
+            <img src="./search.svg" class="searchIcon" id="searchIcon" />
+          </div>
+        </div>
+
+        <div class="checkbox-options">
+          <label>
+            <input
+              type="checkbox"
+              class="genre-checkbox rock"
+              id="rock_checkbox"
+              value="rock"
+              checked
+            />
+            Rock
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              class="genre-checkbox pop"
+              id="pop_checkbox"
+              value="pop"
+              checked
+            />
+            Pop
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              class="genre-checkbox rap"
+              id="rap_checkbox"
+              value="rap"
+              checked
+            />
+            Rap
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              class="genre-checkbox rb"
+              id="rb_checkbox"
+              value="rb"
+              checked
+            />
+            R&B
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              class="genre-checkbox country"
+              id="country_checkbox"
+              value="country"
+              checked
+            />
+            Country
+          </label>
+        </div>
+      </div>
     </div>
   </body>
 </html>
