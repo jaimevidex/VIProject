@@ -7,6 +7,7 @@
 body {
   height: 100%;
   margin: 0;
+  background-color: #ffffff;
   font-family: Arial, sans-serif;
 }
 
@@ -47,13 +48,13 @@ body {
 
 .buttons {
   background-color: #f4f4f4;
-  flex: 2; /* Take up 10% of the width */
   height: 100%;
   display: flex;
   flex-direction: column; /* Align buttons vertically */
   justify-content: center;
   align-items: center;
   padding: 20px;
+  min-width: 300px;
 }
 
 ::selection {
@@ -254,43 +255,43 @@ body {
 
 /* Use the same colors as D3's schemeCategory10 color palette */
 .checkbox-options input[type="checkbox"].rock {
-  border-color: #1f77b4; /* Blue */
+  border-color: #1e272e; /* Red */
 }
 
 .checkbox-options input[type="checkbox"].rock:checked {
-  background-color: #1f77b4; /* Blue fill */
+  background-color: #f53b57; /* Blue fill */
 }
 
 .checkbox-options input[type="checkbox"].pop {
-  border-color: #ff7f0e; /* Orange */
+  border-color: #1e272e; /* Orange */
 }
 
 .checkbox-options input[type="checkbox"].pop:checked {
-  background-color: #ff7f0e; /* Orange fill */
+  background-color: #ffa801; /* Orange fill */
 }
 
 .checkbox-options input[type="checkbox"].rap {
-  border-color: #2ca02c; /* Green */
+  border-color: #1e272e; /* Green */
 }
 
 .checkbox-options input[type="checkbox"].rap:checked {
-  background-color: #2ca02c; /* Green fill */
+  background-color: #05c46b; /* Green fill */
 }
 
 .checkbox-options input[type="checkbox"].rb {
-  border-color: #d62728; /* Red */
+  border-color: #1e272e; /* Red */
 }
 
 .checkbox-options input[type="checkbox"].rb:checked {
-  background-color: #d62728; /* Red fill */
+  background-color: #0fbcf9; /* Red fill */
 }
 
 .checkbox-options input[type="checkbox"].country {
-  border-color: #9467bd; /* Purple */
+  border-color: #1e272e; /* Purple */
 }
 
 .checkbox-options input[type="checkbox"].country:checked {
-  background-color: #9467bd; /* Purple fill */
+  background-color: #3c40c6; /* Purple fill */
 }
 
 /* Pseudo-element for checked state */

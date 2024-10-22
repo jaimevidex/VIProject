@@ -1,9 +1,9 @@
 const colorMap = {
-  rock: "#1f77b4", // Blue
-  pop: "#ff7f0e", // Orange
-  rap: "#2ca02c", // Green
-  rb: "#d62728", // Red
-  country: "#9467bd", // Purple
+  rock: "#f53b57", // Red
+  pop: "#ffa801", // Orange
+  rap: "#05c46b", // Green
+  rb: "#0fbcf9", // Blue
+  country: "#3c40c6", // Purple
 };
 
 let minRangeValue = 1960;
