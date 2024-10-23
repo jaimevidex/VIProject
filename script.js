@@ -363,7 +363,7 @@ function updateDashboard(
 ) {
   // clean the data so that only musics from that artist are shown and contains the keyword
   if (artist !== localStorage.getItem("artist") && artist !== undefined && artist !== null) {
-    updateVennDiagram(artist, checkedGenres, keyword);
+    updateVennDiagram(artist, getColor(checkedGenres[0]));
   }
 
   if (checkedGenres.length === 1 && isBarchart) {

@@ -38,7 +38,8 @@ function createVennDiagram(data, containerId) {
     .attr("height", height)
     .attr("viewBox", [0, 0, width, height])
     .append("g")
-    .attr("transform", `translate(${width / 2},${height / 2})`);
+    .attr("transform", `translate(${width / 2},${height / 2}) scale(1.2)`);
+
 
   // Draw the circles for the Venn diagram with overlap
   const circle1 = svg
@@ -46,157 +47,35 @@ function createVennDiagram(data, containerId) {
     .attr("cx", -60) // Adjust position for overlap
     .attr("cy", 0)
     .attr("r", 0) // Start with radius 0
-    .attr("fill", "lightblue")
+    .attr("fill", "#d2dae2")
     .attr("opacity", 0.5)
     .transition() // Add transition
     .duration(1000) // Duration of 1 second
-    .attr("r", 100) // Animate radius to 100
-    .on("end", function () {
-      // Ensure the rest of the code runs after the transition
-      d3.select(this)
-        .on("mouseover", function () {
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("r", 110)
-            .attr("cx", -70)
-            .attr("cursor", "pointer")
-            .attr("opacity", 1);
-        })
-        .on("mouseleave", function () {
-          d3.select(this)
-            .transition()
-            .duration(300)
-            .attr("r", 100)
-            .attr("cx", -60)
-            .attr("opacity", 0.5);
-        })
-        .on("click", function () {
-          // Join the keywords array into a nicely formatted string with line breaks
-          const formattedKeywords = JSON.parse(data[0].artist_keywords).join(
-            ",\n"
-          );
-
-          // Display the alert with formatted keywords
-          swal.fire({
-            title: "All the Keywords",
-            text: formattedKeywords,
-            icon: "question",
-          });
-        });
-    });
+    .attr("r", 100); // Animate radius to 100
 
   const circle2 = svg
     .append("circle")
     .attr("cx", 60) // Adjust position for overlap
     .attr("cy", 0)
     .attr("r", 0) // Start with radius 0
-    .attr("fill", "lightgreen")
+    .attr("fill", "#d2dae2")
     .attr("opacity", 0.5)
     .transition() // Add transition
     .duration(1000) // Duration of 1 second
-    .attr("r", 100) // Animate radius to 100
-    .on("end", function () {
-      // Ensure the rest of the code runs after the transition
-      d3.select(this)
-        .on("mouseover", function () {
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("r", 110)
-            .attr("cx", 70)
-            .attr("cursor", "pointer")
-            .attr("opacity", 1);
-        })
-        .on("mouseleave", function () {
-          d3.select(this)
-            .transition()
-            .duration(300)
-            .attr("r", 100)
-            .attr("cx", 60)
-            .attr("opacity", 0.5);
-        })
-        .on("click", function () {
-          // Join the keywords array into a nicely formatted string with line breaks
-          const formattedKeywords = JSON.parse(data[0].genre_keywords).join(
-            ",\n"
-          );
-
-          // Display the alert with formatted keywords
-          swal.fire({
-            title: "All the Keywords",
-            text: formattedKeywords,
-            icon: "question",
-          });
-        });
-    });
+    .attr("r", 100);
 
   // Add the artist's name near the left circle
   svg
     .append("text")
-    .attr("x", -80) // Adjust the x-position to the left of the first circle
-    .attr("y", -110) // Align vertically with the center of the first circle
+    .attr("x", 0) // Adjust the x-position to the left of the first circle
+    .attr("y", 0) // Align vertically with the center of the first circle
     .attr("text-anchor", "middle")
-    .text(data[0].artist) // Artist's name from the data
+    .text("Search for an Artist!") // Artist's name from the data
     .attr("font-size", "16px")
-    .attr("font-weight", "bold");
-
-  // Add the artist's name near the left circle
-  svg
-    .append("text")
-    .attr("x", 80) // Adjust the x-position to the left of the first circle
-    .attr("y", 120) // Align vertically with the center of the first circle
-    .attr("text-anchor", "middle")
-    .text(`Other ${genre} artists`) // Artist's name from the data
-    .attr("font-size", "16px")
-    .attr("font-weight", "bold");
-
-  // Calculate the starting y position for centering the text
-  const startY1 = -((set1Unique.length - 1) * 35) / 2;
-  const startY2 = -((set2Unique.length - 1) * 35) / 2;
-  const startYCommon = -((common.length - 1) * 25) / 2;
-
-  // Add text for the unique values in the first circle
-  svg
-    .selectAll(".set1-text")
-    .data(set1Unique)
-    .enter()
-    .append("text")
-    .attr("x", -80) // Position in the first circle
-    .attr("y", (d, i) => startY1 + i * 35) // Distribute text vertically
-    .attr("text-anchor", "middle")
-    .style("font-weight", "600")
-    .text((d) => d)
-    .attr("font-size", "14px");
-
-  // Add text for the unique values in the second circle
-  svg
-    .selectAll(".set2-text")
-    .data(set2Unique)
-    .enter()
-    .append("text")
-    .attr("x", 80) // Position in the second circle
-    .attr("y", (d, i) => startY2 + i * 35) // Distribute text vertically
-    .attr("text-anchor", "middle")
-    .style("font-weight", "600")
-    .text((d) => d)
-    .attr("font-size", "14px");
-
-  // Add text for the common values in the overlapping area
-  svg
-    .selectAll(".common-text")
-    .data(common)
-    .enter()
-    .append("text")
-    .attr("x", 0) // Position in the center
-    .attr("y", (d, i) => startYCommon + i * 25) // Distribute text vertically
-    .attr("text-anchor", "middle")
-    .style("font-weight", "600")
-    .text((d) => d)
-    .attr("font-size", "14px");
+    .attr("font-weight", "bold");  
 }
 
-function updateVennDiagram(artist) {
+function updateVennDiagram(artist, color) {
   localStorage.setItem("artist", artist);
   console.log("Update Venn diagram for", artist);
   artistKeywords = [];
@@ -216,7 +95,8 @@ function updateVennDiagram(artist) {
     genre = artistData[0].genre;
 
     // Extract the keywords for the selected genres
-    genreKeywords = JSON.parse(artistData[0].genre_keywords).slice(0, 5);
+    console.log(artistData[0].genre_keywords);
+    genreKeywords = JSON.parse(artistData[0].genre_keywords).slice(0, Math.min(5, artistData[0].genre_keywords.length));
 
     // Update the Venn diagram with the new data
     const data1 = [{ keywords: artistKeywords, keywords1: genreKeywords }];
@@ -260,7 +140,7 @@ function updateVennDiagram(artist) {
       .attr("height", height)
       .attr("viewBox", [0, 0, width, height])
       .append("g")
-      .attr("transform", `translate(${width / 2},${height / 2})`);
+      .attr("transform", `translate(${width / 2},${height / 2}), scale(1.25)`);
 
     // clean old title
     d3.select(".Venndiagram").select("h3").text("");
@@ -276,7 +156,7 @@ function updateVennDiagram(artist) {
       .attr("cx", -60) // Adjust position for overlap
       .attr("cy", 0)
       .attr("r", 0) // Start with radius 0
-      .attr("fill", "lightblue")
+      .attr("fill", "#d2dae2")
       .attr("opacity", 0.5)
       .transition() // Add transition
       .duration(1000) // Duration of 1 second
@@ -316,12 +196,13 @@ function updateVennDiagram(artist) {
           });
       });
 
+    
     const circle2 = svg
       .append("circle")
       .attr("cx", 60) // Adjust position for overlap
       .attr("cy", 0)
       .attr("r", 0) // Start with radius 0
-      .attr("fill", "lightgreen")
+      .attr("fill", color)
       .attr("opacity", 0.5)
       .transition() // Add transition
       .duration(1000) // Duration of 1 second
@@ -374,7 +255,7 @@ function updateVennDiagram(artist) {
       .attr("y", -110) // Align vertically with the center of the first circle
       .attr("text-anchor", "middle")
       .text(artist) // Artist's name from the data
-      .attr("font-size", "16px")
+      .attr("font-size", "14px")
       .attr("font-weight", "bold");
 
     // Add the artist's name near the left circle
@@ -384,7 +265,7 @@ function updateVennDiagram(artist) {
       .attr("y", 120) // Align vertically with the center of the first circle
       .attr("text-anchor", "middle")
       .text(`Other ${genre} artists`) // Artist's name from the data
-      .attr("font-size", "16px")
+      .attr("font-size", "14px")
       .attr("font-weight", "bold");
 
     // Add text for the unique values in the first circle
@@ -393,12 +274,12 @@ function updateVennDiagram(artist) {
       .data(set1Unique)
       .enter()
       .append("text")
-      .attr("x", -80) // Position in the first circle
+      .attr("x", -70) // Position in the first circle
       .attr("y", (d, i) => startY1 + i * 35) // Distribute text vertically
       .attr("text-anchor", "middle")
       .style("font-weight", "600")
       .text((d) => d)
-      .attr("font-size", "14px");
+      .attr("font-size", "12px");
 
     // Add text for the unique values in the second circle
     svg
@@ -406,12 +287,12 @@ function updateVennDiagram(artist) {
       .data(set2Unique)
       .enter()
       .append("text")
-      .attr("x", 80) // Position in the second circle
+      .attr("x", 70) // Position in the second circle
       .attr("y", (d, i) => startY2 + i * 35) // Distribute text vertically
       .attr("text-anchor", "middle")
       .style("font-weight", "600")
       .text((d) => d)
-      .attr("font-size", "14px");
+      .attr("font-size", "12px");
 
     // Add text for the common values in the overlapping area
     svg
@@ -424,6 +305,6 @@ function updateVennDiagram(artist) {
       .attr("text-anchor", "middle")
       .style("font-weight", "600")
       .text((d) => d)
-      .attr("font-size", "14px");
+      .attr("font-size", "12px");
   });
 }

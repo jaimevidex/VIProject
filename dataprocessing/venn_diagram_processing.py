@@ -70,4 +70,14 @@ def create_venn_table():
 import re
 
 if __name__ == "__main__":
-    create_venn_table()
+    #create_venn_table()
+
+    df = pd.read_csv('./data/venn_table.csv')
+
+    # Replace newline characters with commas in all string columns
+    df = df.applymap(lambda x: x.replace('\n', ',') if isinstance(x, str) else x)
+
+    # Save the modified DataFrame back to the CSV file
+    df.to_csv('./data/venn_table.csv', index=False)
+
+    
