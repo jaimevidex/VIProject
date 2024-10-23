@@ -95,6 +95,15 @@ function init() {
 
   minRange.addEventListener("input", updateSlider);
   maxRange.addEventListener("input", updateSlider);
+  minRange.addEventListener("mouseup", sliderChange);
+  maxRange.addEventListener("mouseup", sliderChange);
+
+  document.getElementById("selectAll").addEventListener("click", function (e) { 
+    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+      checkbox.checked = true;
+    });
+    updateGenreSelection();
+  });
 
   document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
     checkbox.addEventListener("change", updateGenreSelection);
@@ -311,6 +320,11 @@ function updateSlider(event) {
     maxRange.value = minRange.value;
     maxOutput.textContent = maxRange.value;
   }
+}
+
+function sliderChange(event) {
+  const minRange = document.getElementById("minRange");
+  const maxRange = document.getElementById("maxRange");
 
   minRangeValue = parseInt(minRange.value);
   maxRangeValue = parseInt(maxRange.value);
