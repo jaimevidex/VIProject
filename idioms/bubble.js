@@ -21,7 +21,8 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
     .append("h3")
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
-    .text("Bubble Chart");
+    .style("font-size", "24px")
+    .text("Use of Keywords in Songs");
 
   // Create the SVG container
   const svg = d3

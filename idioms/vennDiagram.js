@@ -17,7 +17,7 @@ function createVennDiagram(data, containerId) {
   console.log(set2Unique);
 
   // Set up SVG dimensions
-  const width = (window.innerWidth - 350)/2;
+  const width = (window.innerWidth - 350) / 2;
   const height = (window.innerHeight - 50 - 64) / 2;
   const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
@@ -26,7 +26,9 @@ function createVennDiagram(data, containerId) {
     .append("h3")
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
-    .text("Venn Diagram");
+    .style("font-size", "24px")
+    .style("transform", "translate(0, -20px)") //translate up 20px
+    .text("Artists and Genres Keywords");
 
   // Create the SVG container
   const svg = d3
@@ -204,7 +206,9 @@ function updateVennDiagram(artist) {
   // Get the data for the Venn diagram
   d3.csv("data/venn_table.csv").then((data) => {
     // Filter the data for the selected artist match in lowercase
-    const artistData = data.filter((d) => d.artist.toLowerCase() === artist.toLowerCase());
+    const artistData = data.filter(
+      (d) => d.artist.toLowerCase() === artist.toLowerCase()
+    );
 
     // Extract the keywords pass them to a literal array
     artistKeywords = JSON.parse(artistData[0].artist_keywords).slice(0, 5);
@@ -236,13 +240,17 @@ function updateVennDiagram(artist) {
     const radius = maxTextHeight / 2;
 
     // Set up SVG dimensions
-    const width = (window.innerWidth - 350)/2;
+    const width = (window.innerWidth - 350) / 2;
     const height = (window.innerHeight - 50 - 64) / 2;
     const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
     // Clean circles and texts
     d3.select(".Venndiagram").select("svg").selectAll("circle").remove();
     d3.select(".Venndiagram").select("svg").selectAll("text").remove();
+
+    d3.select(".Venndiagram")
+      .select("h3")
+      .text("Artists and Genres Keywords");
 
     // Select the existing SVG element
     const svg = d3
@@ -254,12 +262,14 @@ function updateVennDiagram(artist) {
       .append("g")
       .attr("transform", `translate(${width / 2},${height / 2})`);
 
-    // Append chart title
-    svg
-      .append("h3")
+    // clean old title
+    d3.select(".Venndiagram").select("h3").text("");
+
+    d3.select(".Venndiagram")
+      .select("h3")
       .style("margin-left", `${margin.left}px`)
       .style("margin-bottom", "-30px")
-      .text(artist);
+      .text("Comparing " + artist + " and other " + genre + " artists");
 
     const circle1 = svg
       .append("circle")
@@ -293,9 +303,9 @@ function updateVennDiagram(artist) {
           })
           .on("click", function () {
             // Join the keywords array into a nicely formatted string with line breaks
-            const formattedKeywords = JSON.parse(artistData[0].artist_keywords).join(
-              ",\n"
-            );
+            const formattedKeywords = JSON.parse(
+              artistData[0].artist_keywords
+            ).join(",\n");
 
             // Display the alert with formatted keywords
             swal.fire({
@@ -338,9 +348,9 @@ function updateVennDiagram(artist) {
           })
           .on("click", function () {
             // Join the keywords array into a nicely formatted string with line breaks
-            const formattedKeywords = JSON.parse(artistData[0].genre_keywords).join(
-              ",\n"
-            );
+            const formattedKeywords = JSON.parse(
+              artistData[0].genre_keywords
+            ).join(",\n");
 
             // Display the alert with formatted keywords
             swal.fire({

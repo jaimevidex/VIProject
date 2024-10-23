@@ -102,7 +102,7 @@ function RadarChart(
     ];
 
     var config = {
-      margin: { top: 60, right: 50, bottom: 60, left: 50 },
+      margin: { top: 80, right: 50, bottom: 60, left: 50 },
       levels: 4,
       wrapWidth: 40,
       opacityArea: 0.35,
@@ -114,12 +114,21 @@ function RadarChart(
     var height = (window.innerHeight - 64) / 2;
     var width = (window.innerWidth - 300 - 50) / 2;
 
-    var radius = (height-100) / 2;
+    var radius = (height - 120) / 2;
 
     var allAxis = radarData[0].polygon.map((i) => i.axis),
       total = allAxis.length,
       Format = d3.format(".1f"),
       angleSlice = (Math.PI * 2) / total;
+
+    d3.select(id)
+      .append("h3")
+      .style("margin-left", `${config.margin.left}px`)
+      .style("margin-bottom", "-30px")
+      .style("font-size", "24px")
+      .style("transform", "translate(0, -20px)") //translate up 20px
+      .text("Genre Music Attributes");
+
 
     var svg = d3.select(id).select("svg");
 
@@ -133,14 +142,7 @@ function RadarChart(
 
       var g = svg
         .append("g")
-        .attr(
-          "transform",
-          "translate(" +
-            (width / 2 ) +
-            "," +
-            (height / 2 ) +
-            ")"
-        );
+        .attr("transform", "translate(" + width / 2 + "," + (height + 20) / 2 + ")");
 
       var filter = g.append("defs").append("filter").attr("id", "glow"),
         feGaussianBlur = filter
@@ -248,7 +250,6 @@ function RadarChart(
         .append("g")
         .attr("class", "radarWrapper");
 
-    
       //The radial line function
       var radarLine = d3
         .lineRadial()
@@ -617,10 +618,10 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       strokeWidth: 2,
     };
 
-    var height = (window.innerHeight - 64 -50) / 2;
-    var width = (window.innerWidth - 300 -50) / 2;
+    var height = (window.innerHeight - 64 - 50) / 2;
+    var width = (window.innerWidth - 300 - 50) / 2;
 
-    var radius = (height-100) / 2;
+    var radius = (height - 100) / 2;
 
     var allAxis = radarData[0].polygon.map((i) => i.axis),
       total = allAxis.length,

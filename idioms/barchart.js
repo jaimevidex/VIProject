@@ -53,7 +53,8 @@ function createBarchart(
     .append("h3")
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
-    .text("Bar Chart");
+    .style("font-size", "24px")
+    .text("Popularity of Genres Over Time");
 
   const svg = d3
     .select(containerId)
@@ -145,6 +146,18 @@ function createLinechart(
   const width = (window.innerWidth - 350)/2;
   const height = (window.innerHeight - 50 - 64) / 2;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
+
+  //get checked genre
+  const selectedGenre = document.querySelector(".genre-checkbox:checked").value;
+
+
+  d3.select(containerId)
+  .append("h3")
+  .style("margin-left", `${margin.left}px`)
+  .style("margin-bottom", "-30px")
+  .style("font-size", "24px")
+  .text("Popularity of "+ selectGenre +" Over Time"); //cap the first letter of the genre
+  //cap the first letter
 
   const svg = d3
     .select(containerId)
