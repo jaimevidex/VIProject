@@ -5,17 +5,18 @@
 }
 
 body {
-  height: 100%;
+  height: 100dvh;
   margin: 0;
-  background-color: #f8f8f8;
+  background-color: #f0f0f057;
   font-family: "REM", sans-serif;
   font-optical-sizing: auto;
 }
 
 .dashboard {
   display: flex; /* Flexbox to align two sections */
-  height: 100%; /* Full viewport height */
+  height: fit-content; /* Full viewport height */
   width: 100%;
+  bottom: 0;
 }
 
 /* Left section for charts */
@@ -24,11 +25,11 @@ body {
   display: grid;
   grid-auto-columns: 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 10px;
   grid-template-areas:
     "Barchart Bubblechart"
     "Radarchart Vandiagram";
-  padding: 20px;
+  margin: 0px 20px 0px 0px;
+  padding-top: 40px;
 }
 
 .Barchart {
@@ -48,9 +49,9 @@ body {
 }
 
 .buttons {
-  background-color: #d2dae25e;
+  background-color: #f1f2f6;
   color: #1e272e;
-  height: 100%;
+  height: fit-content;
   display: flex;
   flex-direction: column; /* Align buttons vertically */
   justify-content: center;
