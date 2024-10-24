@@ -149,6 +149,7 @@ function createLinechart(
 
   //get checked genre
   const selectedGenre = document.querySelector(".genre-checkbox:checked").value;
+  const selectedGenreCap = selectedGenre.charAt(0).toUpperCase() + selectedGenre.slice(1);
 
 
   d3.select(containerId)
@@ -156,8 +157,7 @@ function createLinechart(
   .style("margin-left", `${margin.left}px`)
   .style("margin-bottom", "-30px")
   .style("font-size", "24px")
-  .text("Popularity of "+ selectGenre +" Over Time"); //cap the first letter of the genre
-  //cap the first letter
+  .text("Popularity of "+ selectedGenreCap +" Over Time");
 
   const svg = d3
     .select(containerId)
