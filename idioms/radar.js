@@ -483,32 +483,32 @@ function RadarChart(
         );
     }
   }
+}
 
-  function average(values) {
-    const validValues = values.filter(
-      (v) => v !== null && v !== undefined && v !== 0
-    );
-    const sum = validValues.reduce((acc, val) => acc + parseFloat(val), 0);
-    return sum / validValues.length;
-  }
+function average(values) {
+  const validValues = values.filter(
+    (v) => v !== null && v !== undefined && v !== 0
+  );
+  const sum = validValues.reduce((acc, val) => acc + parseFloat(val), 0);
+  return sum / validValues.length;
+}
 
-  function mode(values) {
-    const frequency = {};
-    let maxFreq = 0;
-    let modeValue = null;
+function mode(values) {
+  const frequency = {};
+  let maxFreq = 0;
+  let modeValue = null;
 
-    values.forEach((value) => {
-      if (value !== null && value !== undefined && value !== 0) {
-        frequency[value] = (frequency[value] || 0) + 1;
-        if (frequency[value] > maxFreq) {
-          maxFreq = frequency[value];
-          modeValue = value;
-        }
+  values.forEach((value) => {
+    if (value !== null && value !== undefined && value !== 0) {
+      frequency[value] = (frequency[value] || 0) + 1;
+      if (frequency[value] > maxFreq) {
+        maxFreq = frequency[value];
+        modeValue = value;
       }
-    });
+    }
+  });
 
-    return modeValue;
-  }
+  return modeValue;
 }
 
 //update radarchart with animations
@@ -818,31 +818,5 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("class", "tooltip")
       .style("opacity", 0)
       .style("user-select", "none");
-  }
-
-  function average(values) {
-    const validValues = values.filter(
-      (v) => v !== null && v !== undefined && v !== 0
-    );
-    const sum = validValues.reduce((acc, val) => acc + parseFloat(val), 0);
-    return sum / validValues.length;
-  }
-
-  function mode(values) {
-    const frequency = {};
-    let maxFreq = 0;
-    let modeValue = null;
-
-    values.forEach((value) => {
-      if (value !== null && value !== undefined && value !== 0) {
-        frequency[value] = (frequency[value] || 0) + 1;
-        if (frequency[value] > maxFreq) {
-          maxFreq = frequency[value];
-          modeValue = value;
-        }
-      }
-    });
-
-    return modeValue;
   }
 }
