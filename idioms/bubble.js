@@ -6,28 +6,22 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
 
   d3.csv("data/bubble_table.csv").then(function (table) {
     // Loop through checkedGenres to extract data for each genre
-    for (let i = 0; i < checkedGenres.length; i++) {
-      let keywordData = [];
-      let uniqueLabels = new Set();  // Track unique labels
+    checkedGenres.forEach((genre) => {
+      let genreKeywords = table.filter(row => row.genre === genre);
+      let keywordSums = genreKeywords.map(row => {
+        let yearRangeValues = Object.keys(row)
+          .filter(year => year >= minRangeValue && year <= maxRangeValue)
+          .map(year => +row[year]); // Convert to numeric
+        return {
+          label: row.keyword,
+          genre: genre,
+          r: d3.sum(yearRangeValues)
+        };
+      });
 
-      // Loop through years (columns) based on the range
-      for (let year = minRangeValue; year <= maxRangeValue; year++) {
-        let yearColumn = year.toString();
-        table.forEach((row) => {
-          if (row.genre === checkedGenres[i] && row[yearColumn] !== "0") {
-            if (!uniqueLabels.has(row.keyword)) {  // Only add if the keyword is unique
-              uniqueLabels.add(row.keyword);
-              keywordData.push({ r: +row[yearColumn], label: row.keyword, genre: row.genre });
-            }
-          }
-        });
-      }
-
-      // Sort and take the top 3 most used unique keywords
-      keywordData.sort((a, b) => b.r - a.r);
-      let top3Keywords = keywordData.slice(0, 3);
-      bubbleData = bubbleData.concat(top3Keywords);
-    }
+      keywordSums.sort((a, b) => b.r - a.r);
+      bubbleData = bubbleData.concat(keywordSums.slice(0, 3));
+    });
 
     // Set up SVG dimensions
     const width = (window.innerWidth - 350) / 2;
