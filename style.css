@@ -23,6 +23,7 @@ body {
 .container {
   flex: 8; /* Take up 90% of the width */
   display: grid;
+  gap: 20px;
   grid-auto-columns: 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
@@ -34,18 +35,24 @@ body {
 
 .Barchart {
   grid-area: Barchart;
+  border: #000000 1px solid;
+  padding-top: 20px;
+  margin-left: 20px;
 }
 
 .Bubblechart {
   grid-area: Bubblechart;
+  border: #000000 1px solid;
 }
 
 .Radarchart {
   grid-area: Radarchart;
+  border: #000000 1px solid;
 }
 
 .Venndiagram {
   grid-area: Vandiagram;
+  border: #000000 1px solid;
 }
 
 .buttons {
