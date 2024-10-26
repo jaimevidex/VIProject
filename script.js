@@ -297,8 +297,6 @@ function updateKeywordSearch() {
     console.log(genres);
     updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
   });
-
-  updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
 }
 
 function updateSlider(event) {
