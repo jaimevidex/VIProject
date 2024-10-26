@@ -291,34 +291,26 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
                 <li>${d.polygon[7].axis}: ${d.polygon[7].value}</li>
             </ul>`;
           }
-          const textSize = tooltipText.length * 6; // Adjust size based on text length
-
-          // Append background rectangle for the tooltip
-          g.append("rect")
-            .attr("id", "tooltip-bg") // Assign id for easy removal
-            .attr("x", d3.select(this).attr("cx") - 20 / 2 + 100)
-            .attr("y", d3.select(this).attr("cy") - 25 + 100) // Position above the circle
-            .attr("width", 160)
-            .attr("height", 140)
-            .attr("fill", "#fff") // Background color
-            .attr("rx", 4) // Rounded corners
-            .attr("ry", 4)
-            .style(
-              "box-shadow",
-              "-5px -5px 10px 0px rgba(255, 255, 255, 0.5), 5px 5px 10px 0px rgba(0, 0, 0, 0.3)"
-            );
 
           // Append tooltip text
           g.append("foreignObject")
             .attr("id", "tooltip") // Assign id for easy removal
-            .attr("x", d3.select(this).attr("cx") + 100)
-            .attr("y", d3.select(this).attr("cy") - 20 + 100) // Position above the circle
-            .attr("width", textSize)
-            .attr("height", 120)
+            .attr("x", d3.select(this).attr("cx") + 50)
+            .attr("y", d3.select(this).attr("cy") + 50) // Position above the circle
+            .attr("width", 160)
+            .attr("height", 200)
             .append("xhtml:div")
             .attr("xmlns", "http://www.w3.org/1999/xhtml")
             .style("font-size", "12px")
+            .style("background-color", "white")
+            .style("padding", "5px")
+            .style("margin", "5px")
+            .style("border-radius", "5px")
             .style("color", "black")
+            .style(
+              "box-shadow",
+              "-3px -3px 6px 0px rgba(255, 255, 255, 0.5),3px 3px 6px 0px rgba(0, 0, 0, 0.3)"
+            )
             .html(tooltipText);
         })
         .on("mouseout", function () {
@@ -399,70 +391,27 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
           newX = parseFloat(d3.select(this).attr("cx")) - 10;
           newY = parseFloat(d3.select(this).attr("cy")) - 10;
 
-          g.append("rect")
-            .attr("class", "tooltip-bg")
-            .attr("fill", "white")
-            .attr("stroke-width", 0.5)
+          g.append("foreignObject")
+            .attr("id", "tooltip")
+            .attr("x", newX + 10)
+            .attr("y", newY - 25)
+            .attr("width", d.value.toString().length * 10 + 10)
             .attr("height", 30)
-            .attr("width", (d.value.toString().length * 12) + ((d.value.toString().length / 2)*10))
-            .attr("x", newX - ((d.value.toString().length / 2)*10))
-            .attr("y", newY - 20)
-            .attr("rx", 2)
-            .attr("ry", 2)
-             .transition()
-            .duration(200)
-            .style("opacity", "0.95");
-
-          g.append("text")
-            .attr("class", "tooltip")
-            .attr("x", newX)
-            .attr("y", newY)
-            .text(d.value)
-            .transition()
-            .duration(200)
+            .append("xhtml:div")
+            .attr("xmlns", "http://www.w3.org/1999/xhtml")
+            .style("font-size", "16px")
+            .style("color", "black")
+            .style("text-align", "center")
+            .style("background-color", "white")
+            .style("padding", "5px")
+            .style("border-radius", "5px")
+            .html(`<p>${d.value}</p>`)
             .style("opacity", 1);
         })
         .on("mouseout", function () {
-          d3.select(".tooltip").remove();
-          d3.select(".tooltip-bg").remove();
+          d3.select("#tooltip").remove();
+          d3.select("#tooltip-bg").remove();
         });
-
-
-      function wrap(text, width) {
-        text.each(function () {
-          var text = d3.select(this),
-            words = text.text().split(/\s+/).reverse(),
-            word,
-            line = [],
-            lineNumber = 0,
-            lineHeight = 1.4,
-            y = text.attr("y"),
-            x = text.attr("x"),
-            dy = parseFloat(text.attr("dy")),
-            tspan = text
-              .text(null)
-              .append("tspan")
-              .attr("x", x)
-              .attr("y", y)
-              .attr("dy", dy + "em");
-
-          while ((word = words.pop())) {
-            line.push(word);
-            tspan.text(line.join(" "));
-            if (tspan.node().getComputedTextLength() > width) {
-              line.pop();
-              tspan.text(line.join(" "));
-              line = [word];
-              tspan = text
-                .append("tspan")
-                .attr("x", x)
-                .attr("y", y)
-                .attr("dy", ++lineNumber * lineHeight + dy + "em")
-                .text(word);
-            }
-          }
-        });
-      }
     } else {
       var g = svg.select("g");
 
@@ -753,35 +702,27 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
                 <li>${d.polygon[7].axis}: ${d.polygon[7].value}</li>
             </ul>`;
         }
-        const textSize = tooltipText.length * 6; // Adjust size based on text length
-
-        // Append background rectangle for the tooltip
-        g.append("rect")
-          .attr("id", "tooltip-bg") // Assign id for easy removal
-          .attr("x", d3.select(this).attr("cx") - 20 / 2 + 100)
-          .attr("y", d3.select(this).attr("cy") - 25 + 100) // Position above the circle
-          .attr("width", 160)
-          .attr("height", 140)
-          .attr("fill", "#fff") // Background color
-          .attr("rx", 4) // Rounded corners
-          .attr("ry", 4)
-          .style(
-            "box-shadow",
-            "-5px -5px 10px 0px rgba(255, 255, 255, 0.5), 5px 5px 10px 0px rgba(0, 0, 0, 0.3)"
-          );
 
         // Append tooltip text
         g.append("foreignObject")
-          .attr("id", "tooltip") // Assign id for easy removal
-          .attr("x", d3.select(this).attr("cx") + 100)
-          .attr("y", d3.select(this).attr("cy") - 20 + 100) // Position above the circle
-          .attr("width", textSize)
-          .attr("height", 120)
-          .append("xhtml:div")
-          .attr("xmlns", "http://www.w3.org/1999/xhtml")
-          .style("font-size", "12px")
-          .style("color", "black")
-          .html(tooltipText);
+        .attr("id", "tooltip") // Assign id for easy removal
+        .attr("x", d3.select(this).attr("cx") + 50)
+        .attr("y", d3.select(this).attr("cy") + 50) // Position above the circle
+        .attr("width", 160)
+        .attr("height", 200)
+        .append("xhtml:div")
+        .attr("xmlns", "http://www.w3.org/1999/xhtml")
+        .style("font-size", "12px")
+        .style("background-color", "white")
+        .style("padding", "5px")
+        .style("margin", "5px")
+        .style("border-radius", "5px")
+        .style("color", "black")
+        .style(
+          "box-shadow",
+          "-3px -3px 6px 0px rgba(255, 255, 255, 0.5),3px 3px 6px 0px rgba(0, 0, 0, 0.3)"
+        )
+        .html(tooltipText);
       })
       .on("mouseout", function () {
         d3.selectAll(".radarArea")
@@ -888,32 +829,42 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
         newX = parseFloat(d3.select(this).attr("cx")) - 10;
         newY = parseFloat(d3.select(this).attr("cy")) - 10;
 
-          g.append("rect")
-            .attr("class", "tooltip-bg")
-            .attr("fill", "white")
-            .attr("stroke-width", 0.5)
-            .attr("height", 30)
-            .attr("width", (d.value.toString().length * 12) + ((d.value.toString().length / 2)*10))
-            .attr("x", newX - ((d.value.toString().length / 2)*10))
-            .attr("y", newY - 20)
-            .attr("rx", 2)
-            .attr("ry", 2)
-             .transition()
-            .duration(200)
-            .style("opacity", "0.95");
+        g.append("rect")
+          .attr("id", "tooltip-bg")
+          .attr("fill", "white")
+          .attr("stroke-width", 0.5)
+          .attr("height", 30)
+          .attr(
+            "width",
+            d.value.toString().length * 12 +
+              (d.value.toString().length / 2) * 10
+          )
+          .attr("x", newX - (d.value.toString().length / 2) * 10)
+          .attr("y", newY - 20)
+          .attr("rx", 2)
+          .attr("ry", 2)
+          .style("opacity", "0.95");
 
-          g.append("text")
-            .attr("class", "tooltip")
-            .attr("x", newX)
-            .attr("y", newY)
-            .text(d.value)
-            .transition()
-            .duration(200)
-            .style("opacity", 1);
+        g.append("foreignObject")
+          .attr("id", "tooltip")
+          .attr("x", newX + 10)
+          .attr("y", newY - 25)
+          .attr("width", d.value.toString().length * 10 + 10)
+          .attr("height", 30)
+          .append("xhtml:div")
+          .attr("xmlns", "http://www.w3.org/1999/xhtml")
+          .style("font-size", "16px")
+          .style("color", "black")
+          .style("text-align", "center")
+          .style("background-color", "white")
+          .style("padding", "5px")
+          .style("border-radius", "5px")
+          .html(`<p>${d.value}</p>`)
+          .style("opacity", 1);
       })
       .on("mouseout", function () {
-        d3.select(".tooltip").remove();
-        d3.select(".tooltip-bg").remove();
+        d3.select("#tooltip").remove();
+        d3.select("#tooltip-bg").remove();
       });
 
     // Handle the update selection
@@ -934,6 +885,5 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
         (d, i) =>
           rScaleList[i](d.value) * Math.sin(angleSlice * i - Math.PI / 2)
       );
-
   }
 }
