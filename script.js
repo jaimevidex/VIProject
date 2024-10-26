@@ -290,8 +290,6 @@ function updateKeywordSearch() {
     });
     updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
   });
-
-  updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
 }
 
 function updateSlider(event) {
