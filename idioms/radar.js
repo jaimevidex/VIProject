@@ -1,5 +1,4 @@
 function RadarChart(
-  colors,
   data,
   id,
   minRangeValue,
@@ -8,7 +7,7 @@ function RadarChart(
 ) {
   const radarData = checkedGenres.map((genre) => ({
     genre: genre,
-    color: colors[genre],
+    color: colorMap[genre],
     polygon: [
       { axis: "danceability", value: 0 },
       { axis: "energy", value: 0 },

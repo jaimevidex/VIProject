@@ -8,7 +8,7 @@ const colorMap = {
 
 let minRangeValue = 1960;
 let maxRangeValue = 2021;
-let genres = ["rock", "pop", "rap", "country", "rb"];
+let genres = ["rock", "pop", "rap", "rb", "country"];
 let artist = null;
 let keyword = null;
 
@@ -54,7 +54,13 @@ function init() {
   initArtists().then(() => {
     initKeywords().then(() => {
       d3.csv("./data/genre_popularity_time.csv").then((data) => {
-        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
+        createBarchart(
+          data, 
+          ".Barchart", 
+          minRangeValue, 
+          maxRangeValue, 
+          genres
+        );
         createBubblechart(
           data,
           ".Bubblechart",
@@ -63,7 +69,6 @@ function init() {
           genres
         );
         RadarChart(
-          colorMap,
           data,
           ".Radarchart",
           minRangeValue,
@@ -365,6 +370,8 @@ function updateDashboard(
   if (artist !== localStorage.getItem("artist") && artist !== undefined && artist !== null) {
     updateVennDiagram(artist, getColor(checkedGenres[0]));
   }
+
+  updateBubblechart(minRangeValue, maxRangeValue, checkedGenres);
 
   if (checkedGenres.length === 1 && isBarchart) {
     console.log("Transform to line chart");
