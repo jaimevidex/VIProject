@@ -13,9 +13,6 @@ function createVennDiagram(data, containerId) {
   const set2Unique = set2.filter((d) => !set1.includes(d)); // Unique to set 2
   const common = set1.filter((d) => set2.includes(d)); // Common between both
 
-  console.log(set1Unique);
-  console.log(set2Unique);
-
   // Set up SVG dimensions
   const width = (window.innerWidth - 350) / 2;
   const height = (window.innerHeight - 50 - 64) / 2;
@@ -77,7 +74,6 @@ function createVennDiagram(data, containerId) {
 
 function updateVennDiagram(artist, color) {
   localStorage.setItem("artist", artist);
-  console.log("Update Venn diagram for", artist);
   artistKeywords = [];
   genreKeywords = [];
   genre = "";
@@ -95,13 +91,10 @@ function updateVennDiagram(artist, color) {
     genre = artistData[0].genre;
 
     // Extract the keywords for the selected genres
-    console.log(artistData[0].genre_keywords);
     genreKeywords = JSON.parse(artistData[0].genre_keywords).slice(0, Math.min(5, artistData[0].genre_keywords.length));
 
     // Update the Venn diagram with the new data
     const data1 = [{ keywords: artistKeywords, keywords1: genreKeywords }];
-
-    console.log(data1);
 
     // Extract the keywords from the data
     const set1 = data1[0].keywords;
