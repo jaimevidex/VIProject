@@ -59,7 +59,6 @@ function RadarChart(
         radarData[i].polygon[j].value = tableData[i][j];
       }
     }
-    console.log(radarData);
     areas = [];
     radarData.forEach((d) => {
       values = 1;
@@ -566,7 +565,6 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
         radarData[i].polygon[j].value = tableData[i][j];
       }
     }
-    console.log(radarData);
     areas = [];
     radarData.forEach((d) => {
       values = 1;

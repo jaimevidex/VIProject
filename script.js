@@ -190,7 +190,6 @@ function handleKeywordInputSearchChange(e) {
     });
     document.getElementById("keywordInput").classList.add("active"); // Show autocomplete box
     showKeywordSuggestions(emptyArray);
-    console.log(emptyArray);
     let allList = document
       .getElementById("resultKeyword")
       .querySelectorAll("li");
@@ -218,7 +217,6 @@ function selectKeyword(element) {
 
 // Function to show suggestions
 function showSuggestions(list) {
-  console.log(list);
   let listData;
   if (!list.length) {
     userValue = document.getElementById("userInput").value;
@@ -230,7 +228,6 @@ function showSuggestions(list) {
 }
 
 function showKeywordSuggestions(list) {
-  console.log(list);
   let listData;
   if (!list.length) {
     userValue = document.getElementById("wordInput").value;
@@ -251,7 +248,6 @@ function updateArtistSearch() {
     artist = artists.find((a) => a.toLowerCase() === artist.toLowerCase());
   }
 
-  console.log(artist);
 
   //get time range and genre from the artist data file
   d3.csv("./data/artist_search_table.csv").then((data) => {
@@ -268,7 +264,6 @@ function updateArtistSearch() {
     document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
       checkbox.checked = genres.includes(checkbox.value);
     });
-    console.log(genres);
     updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
   });
 }
@@ -276,7 +271,6 @@ function updateArtistSearch() {
 function updateKeywordSearch() {
   keyword = document.getElementById("wordInput").value;
 
-  console.log(keyword);
 
    //get time range and genre from the keyword data file
    d3.csv("./data/keyword_search_table.csv").then((data) => {
@@ -294,7 +288,6 @@ function updateKeywordSearch() {
     document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
       checkbox.checked = genres.includes(checkbox.value);
     });
-    console.log(genres);
     updateDashboard(minRangeValue, maxRangeValue, genres, artist, keyword);
   });
 
@@ -374,7 +367,6 @@ function updateDashboard(
   updateBubblechart(minRangeValue, maxRangeValue, checkedGenres);
 
   if (checkedGenres.length === 1 && isBarchart) {
-    console.log("Transform to line chart");
     // Update checkboxes
     document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
       checkbox.checked = checkedGenres.includes(checkbox.value);
@@ -409,7 +401,6 @@ function updateDashboard(
       );
     });
   } else if (checkedGenres.length > 1 && !isBarchart) {
-    console.log("Transform to bar chart");
     // Transform to bar chart if more than one genre is selected
     d3.csv("./data/genre_popularity_time.csv").then((data) => {
       createBarchart(
@@ -421,11 +412,9 @@ function updateDashboard(
       );
     });
   } else if (checkedGenres.length > 1 && isBarchart) {
-    console.log("Update bar chart");
     // Update bar chart if more than one genre is selected
     updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
   } else if (checkedGenres.length === 1 && !isBarchart) {
-    console.log("Update line chart");
     // Update line chart if only one genre is selected
     updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0], false);
   }
