@@ -531,7 +531,7 @@ function updateLinechart(
       .attr("fill", color)
       .on("mouseover", function (event, d) {
         d3.select(this)
-          .attr("r", 6) // Increase circle size on hover
+          .attr("r", 4) // Increase circle size on hover
           .attr("stroke", "black") // Optional: Add a stroke around the circle
           .attr("stroke-width", 2); // Make stroke visible
 
@@ -575,7 +575,7 @@ function updateLinechart(
       .duration(1000)
       .attr("cx", (d, i) => xScale(minRangeValue + i))
       .attr("cy", (d) => yScale(d))
-      .attr("r", 5); // Animate to final radius
+      .attr("r", 4); // Animate to final radius
 
     // Append a cross (close button) to return to the bar chart
     if (wasByClick) {

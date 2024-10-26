@@ -149,9 +149,7 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
 
     circles
       .transition()
-      .duration(1000)
-      .attr("r", d => rScale(d.r * 1.2))
-      .attr("fill", d => colorMap[d.genre]);
+      .duration(1000);
 
     circles.enter()
       .append("circle")
@@ -166,9 +164,7 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
 
     labels
       .transition()
-      .duration(1000)
-      .text(d => d.label)
-      .style("font-size", d => Math.min(2 * rScale(d.r), (2 * rScale(d.r) - 8) / 4) + "px");
+      .duration(1000);
 
     labels.enter()
       .append("text")
@@ -176,7 +172,9 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("text-anchor", "middle")
       .attr("dy", ".35em")
       .style("fill", "white")
+      .style("font-size", d => Math.min(2 * rScale(d.r), (2 * rScale(d.r) - 8) / 4) + "px")
       .style("font-weight", "600")
+      .text(d => d.label)
       .attr("x", width / 2) // Set initial x position for labels
       .attr("y", height / 2) // Set initial y position for labels
       .text(d => d.label)
