@@ -112,27 +112,7 @@ function init() {
   });
 
   document.getElementById("reset").addEventListener("click", function (e) {
-    // select all the svg elements and remove them and the init
-    minRangeValue = 1962;
-    maxRangeValue = 2021;
-    genres = ["rock", "pop", "rap", "rb", "country"];
-    artist = null;
-    keyword = null;
-    document.getElementById("minRange").value = minRangeValue;
-    document.getElementById("maxRange").value = maxRangeValue;
-    document.getElementById("minOutput").textContent = minRangeValue;
-    document.getElementById("maxOutput").textContent = maxRangeValue;
-    document.getElementById("userInput").value = "";
-    document.getElementById("wordInput").value = "";
-    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
-      checkbox.checked = true;
-    });
-    d3.select(".Barchart").selectAll("*").remove();
-    d3.select(".Linechart").selectAll("*").remove();
-    d3.select(".Bubblechart").selectAll("*").remove();
-    d3.select(".Venndiagram").selectAll("*").remove();
-    d3.select(".Radarchart").selectAll("*").remove();
-    init();
+    location.reload();
   });
 
   document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
