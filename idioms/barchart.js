@@ -441,7 +441,7 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .merge(gridLines)
       .lower()
       .transition()
-      .duration(500)
+      .duration(1000)
       .attr("x1", margin.left)
       .attr("x2", width - margin.right)
       .attr("y1", (d) => yScale(d))
@@ -449,14 +449,14 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("stroke-opacity", 0.3);
 
     // Change opacity to 0 for grid lines that are no longer in the data
-    gridLines.exit().transition().duration(500).attr("stroke-opacity", 0);
+    gridLines.exit().transition().duration(1000).attr("stroke-opacity", 0);
 
     // Bind new data to the existing bars and update their attributes
     const bars = svg.selectAll("rect.dataItem").data(jsonData, (d) => d.genre);
 
     bars
       .transition()
-      .duration(500)
+      .duration(1000)
       .attr("x", (d, i) => xScale(i))
       .attr("y", (d) => yScale(d.popularity))
       .attr("height", (d) => yScale(0) - yScale(d.popularity))
@@ -552,7 +552,7 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
         }
       })
       .transition()
-      .duration(500)
+      .duration(1000)
       .attr("y", (d) => yScale(d.popularity))
       .attr("height", (d) => yScale(0) - yScale(d.popularity));
 
@@ -560,7 +560,7 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
     bars
       .exit()
       .transition()
-      .duration(500)
+      .duration(1000)
       .attr("height", 0)
       .attr("y", yScale(0))
       .remove();
@@ -569,7 +569,7 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
     svg
       .select("g.xAxis")
       .transition()
-      .duration(500)
+      .duration(1000)
       .call(
         d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre.toUpperCase())
       );
@@ -580,7 +580,7 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
     svg
       .select("g.yAxis")
       .transition()
-      .duration(500)
+      .duration(1000)
       .call(yAxis)
       .select(".domain")
       .attr("stroke", "none");
@@ -641,7 +641,7 @@ function updateLinechart(
     path
       .datum(popularity)
       .transition()
-      .duration(500)
+      .duration(1000)
       .attr("d", line)
       .attr("stroke", color);
 
@@ -661,7 +661,7 @@ function updateLinechart(
     );
 
     // Update y-axis with smooth transition
-    svg.select("g.yAxis").transition().duration(500).call(d3.axisLeft(yScale));
+    svg.select("g.yAxis").transition().duration(1000).call(d3.axisLeft(yScale));
 
     // Tooltip div for hover effects
     const tooltip = d3
@@ -679,7 +679,7 @@ function updateLinechart(
     const circles = svg.selectAll("circle").data(popularity);
 
     // Remove any old circles no longer in use
-    circles.exit().transition().duration(500).attr("r", 0).remove();
+    circles.exit().transition().duration(1000).attr("r", 0).remove();
 
     // Enter new circles for new data points
     circles
@@ -732,7 +732,7 @@ function updateLinechart(
       })
       .merge(circles) // Merge enter and update selections
       .transition()
-      .duration(500)
+      .duration(1000)
       .attr("cx", (d, i) => xScale(minRangeValue + i))
       .attr("cy", (d) => yScale(d))
       .attr("r", 4); // Animate to final radius
