@@ -200,10 +200,12 @@ function updateVennDiagram(artist, color) {
     
     const circle2 = svg
       .append("circle")
+      .attr("class", "circle2")
       .attr("cx", 60) // Adjust position for overlap
       .attr("cy", 0)
       .attr("r", 0) // Start with radius 0
       .attr("fill", color)
+      .attr("data-genre", (d) => genre)
       .attr("opacity", 0.7)
       .transition() // Add transition
       .duration(1000) // Duration of 1 second
@@ -212,6 +214,7 @@ function updateVennDiagram(artist, color) {
         // Ensure the rest of the code runs after the transition
         d3.select(this)
           .on("mouseover", function () {
+            handleHover(genre);
             d3.select(this)
               .transition()
               .duration(200)
@@ -221,6 +224,7 @@ function updateVennDiagram(artist, color) {
               .attr("opacity", 1);
           })
           .on("mouseleave", function () {
+            handleMouseOut();
             d3.select(this)
               .transition()
               .duration(300)

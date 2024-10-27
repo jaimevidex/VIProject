@@ -437,3 +437,37 @@ function updateDashboard(
   }
   updateRadarChart(minRangeValue, maxRangeValue, checkedGenres);
 }
+
+function handleHover(genre) {
+  // Reduce opacity of elements in other charts that do not correspond to the hovered genre
+  d3.selectAll(".dataItem").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+  d3.selectAll(".radarArea").transition().duration(500).style("fill-opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.0;
+  });
+  d3.selectAll(".bubble").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+  d3.selectAll(".circle2").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+
+  d3.selectAll(".radarCircle").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+
+  d3.selectAll(".radarStroke").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+}
+
+function handleMouseOut() {
+  // Reset opacity of all elements
+  d3.selectAll(".dataItem").transition().duration(500).style("opacity", 1);
+  d3.selectAll(".radarArea").transition().duration(500).style("fill-opacity", 0.2);
+  d3.selectAll(".bubble").transition().duration(500).style("opacity", 1);
+  d3.selectAll(".circle2").transition().duration(500).style("opacity", 0.7);
+  d3.selectAll(".radarCircle").transition().duration(500).style("opacity", 0.8);
+  d3.selectAll(".radarStroke").transition().duration(500).style("opacity", 1);
+}
