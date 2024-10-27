@@ -36,36 +36,16 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
       .domain([0, d3.max(bubbleData, d => d.r)])
       .range([5, 50]);
 
+    // Create circles and labels first
+    createCirclesAndLabels();
+
+    // Start the simulation
     d3.forceSimulation(bubbleData)
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("charge", d3.forceManyBody().strength(80))
       .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
       .force("boundary-collision", boundaryCollision)
       .on("tick", ticked);
-
-    // Bind and create circles and labels
-    updateCirclesAndLabels();
-  });
-}
-
-// Helper function to populate bubble data
-function populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres) {
-  bubbleData = [];
-  checkedGenres.forEach((genre) => {
-    let genreKeywords = table.filter(row => row.genre === genre);
-    let keywordSums = genreKeywords.map(row => {
-      let yearRangeValues = Object.keys(row)
-        .filter(year => year >= minRangeValue && year <= maxRangeValue)
-        .map(year => +row[year]);
-      return {
-        label: row.keyword,
-        genre: genre,
-        r: d3.sum(yearRangeValues)
-      };
-    });
-
-    keywordSums.sort((a, b) => b.r - a.r);
-    bubbleData = bubbleData.concat(keywordSums.slice(0, 3));
   });
 }
 
@@ -78,24 +58,21 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
       .domain([0, d3.max(bubbleData, d => d.r)])
       .range([5, 50]);
 
+    // Update circles and labels first
+    updateCirclesAndLabels();
+
+    // Start the simulation
     d3.forceSimulation(bubbleData)
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("charge", d3.forceManyBody().strength(80))
       .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
       .force("boundary-collision", boundaryCollision)
       .on("tick", ticked);
-
-    // Update circles and labels
-    updateCirclesAndLabels();
   });
 }
 
-// Updates circles and labels based on bubbleData
-function updateCirclesAndLabels() {
-  // Remove existing circles and labels
-  svg.selectAll(".bubble").remove();
-  svg.selectAll(".bubble-text").remove();
-
+// Function to create circles and labels
+function createCirclesAndLabels() {
   // Create new circles for the updated bubble data
   svg.selectAll(".bubble")
     .data(bubbleData, d => d.label + d.genre)
@@ -125,6 +102,37 @@ function updateCirclesAndLabels() {
     .on("mouseover", handleHover)
     .on("mouseout", handleMouseOut)
     .text(d => d.label);
+}
+
+// Function to update circles and labels
+function updateCirclesAndLabels() {
+  // Remove existing circles and labels
+  svg.selectAll(".bubble").remove();
+  svg.selectAll(".bubble-text").remove();
+
+  // Create new circles and labels
+  createCirclesAndLabels();
+}
+
+// Helper function to populate bubble data
+function populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres) {
+  bubbleData = [];
+  checkedGenres.forEach((genre) => {
+    let genreKeywords = table.filter(row => row.genre === genre);
+    let keywordSums = genreKeywords.map(row => {
+      let yearRangeValues = Object.keys(row)
+        .filter(year => year >= minRangeValue && year <= maxRangeValue)
+        .map(year => +row[year]);
+      return {
+        label: row.keyword,
+        genre: genre,
+        r: d3.sum(yearRangeValues)
+      };
+    });
+
+    keywordSums.sort((a, b) => b.r - a.r);
+    bubbleData = bubbleData.concat(keywordSums.slice(0, 3));
+  });
 }
 
 

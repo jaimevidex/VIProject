@@ -53,33 +53,47 @@ function init() {
   localStorage.clear();
   initArtists().then(() => {
     initKeywords().then(() => {
-      d3.csv("./data/genre_popularity_time.csv").then((data) => {
-        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
-        createBubblechart(
-          data,
-          ".Bubblechart",
-          minRangeValue,
-          maxRangeValue,
-          genres
-        );
-        RadarChart(data, ".Radarchart", minRangeValue, maxRangeValue, genres);
-      });
+      d3.csv("./data/genre_popularity_time.csv")
+        .then((data) => {
+          setTimeout(() => {
+            createBarchart(
+              data,
+              ".Barchart",
+              minRangeValue,
+              maxRangeValue,
+              genres
+            );
+            RadarChart(data, ".Radarchart", minRangeValue, maxRangeValue, genres);
+          }, 0);
+        })
+        .then(() => {
+          d3.csv("./data/bubble_table.csv").then((data) => {
+            setTimeout(() => {
+              createBubblechart(
+                data,
+                ".Bubblechart",
+                minRangeValue,
+                maxRangeValue,
+                genres
+              );
+            }, 500);
+          });
+        })
+        .then(() => {
+          d3.csv("./data/venn_table.csv").then((data) => {
+            setTimeout(() => {
+              createVennDiagram(
+                data,
+                ".Venndiagram",
+                minRangeValue,
+                maxRangeValue,
+                genres,
+                "The Beatles"
+              );
+            }, 1000);
+          });
+        });
     });
-  });
-  /* 
-  CREATE THE VENN DIAGRAM HERE WITH A DEFAULT ARTIST
-  */
-  d3.csv("./data/venn_table.csv").then((data) => {
-    // filter the data to only send the data from the beatles
-    data = data.filter((d) => d.artist === "Ariana Grande");
-    createVennDiagram(
-      data,
-      ".Venndiagram",
-      minRangeValue,
-      maxRangeValue,
-      genres,
-      "The Beatles"
-    );
   });
 
   const minRange = document.getElementById("minRange");
@@ -355,43 +369,8 @@ function updateDashboard(
 
   updateBubblechart(minRangeValue, maxRangeValue, checkedGenres);
 
-  if (checkedGenres.length === 1 && isBarchart) {
-    // Update checkboxes
-    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
-      checkbox.checked = checkedGenres.includes(checkbox.value);
-    });
-    // Update selectedGenres array
-    genres = checkedGenres;
-    // Transform to line chart if only one genre is selected
-    const selectedGenre = checkedGenres[0];
-    d3.csv("./data/genre_popularity_time.csv").then((data) => {
-      const longFormatData = [];
-      data.forEach((row) => {
-        for (let year = minRangeValue; year <= maxRangeValue; year++) {
-          longFormatData.push({
-            genre: row.Genre,
-            year: year,
-            popularity: +row[year],
-          });
-        }
-      });
-      const selectedData = longFormatData.filter(
-        (item) => item.genre === selectedGenre
-      );
-      const popularity = selectedData.map((d) => d.popularity);
-      const color = colorMap[selectedGenre];
-      createLinechart(
-        { popularity, color },
-        ".Barchart",
-        minRangeValue,
-        maxRangeValue,
-        checkedGenres,
-        data,
-        wasByClick
-      );
-    });
-  } else if (checkedGenres.length > 1 && !isBarchart) {
-    // Transform to bar chart if more than one genre is selected
+  if (minRangeValue === maxRangeValue) {
+    // If the time range is the same, create or update the bar chart
     d3.csv("./data/genre_popularity_time.csv").then((data) => {
       createBarchart(
         data,
@@ -401,12 +380,60 @@ function updateDashboard(
         checkedGenres
       );
     });
-  } else if (checkedGenres.length > 1 && isBarchart) {
-    // Update bar chart if more than one genre is selected
-    updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
-  } else if (checkedGenres.length === 1 && !isBarchart) {
-    // Update line chart if only one genre is selected
-    updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0], false);
+  } else {
+    if (checkedGenres.length === 1 && isBarchart) {
+      // Update checkboxes
+      document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
+        checkbox.checked = checkedGenres.includes(checkbox.value);
+      });
+      // Update selectedGenres array
+      genres = checkedGenres;
+      // Transform to line chart if only one genre is selected
+      const selectedGenre = checkedGenres[0];
+      d3.csv("./data/genre_popularity_time.csv").then((data) => {
+        const longFormatData = [];
+        data.forEach((row) => {
+          for (let year = minRangeValue; year <= maxRangeValue; year++) {
+            longFormatData.push({
+              genre: row.Genre,
+              year: year,
+              popularity: +row[year],
+            });
+          }
+        });
+        const selectedData = longFormatData.filter(
+          (item) => item.genre === selectedGenre
+        );
+        const popularity = selectedData.map((d) => d.popularity);
+        const color = colorMap[selectedGenre];
+        createLinechart(
+          { popularity, color },
+          ".Barchart",
+          minRangeValue,
+          maxRangeValue,
+          checkedGenres,
+          data,
+          wasByClick
+        );
+      });
+    } else if (checkedGenres.length > 1 && !isBarchart) {
+      // Transform to bar chart if more than one genre is selected
+      d3.csv("./data/genre_popularity_time.csv").then((data) => {
+        createBarchart(
+          data,
+          ".Barchart",
+          minRangeValue,
+          maxRangeValue,
+          checkedGenres
+        );
+      });
+    } else if (checkedGenres.length > 1 && isBarchart) {
+      // Update bar chart if more than one genre is selected
+      updateBarchart(minRangeValue, maxRangeValue, checkedGenres);
+    } else if (checkedGenres.length === 1 && !isBarchart) {
+      // Update line chart if only one genre is selected
+      updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0], false);
+    }
   }
   updateRadarChart(minRangeValue, maxRangeValue, checkedGenres);
 }
