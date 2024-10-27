@@ -112,27 +112,7 @@ function init() {
   });
 
   document.getElementById("reset").addEventListener("click", function (e) {
-    // select all the svg elements and remove them and the init
-    minRangeValue = 1962;
-    maxRangeValue = 2021;
-    genres = ["rock", "pop", "rap", "rb", "country"];
-    artist = null;
-    keyword = null;
-    document.getElementById("minRange").value = minRangeValue;
-    document.getElementById("maxRange").value = maxRangeValue;
-    document.getElementById("minOutput").textContent = minRangeValue;
-    document.getElementById("maxOutput").textContent = maxRangeValue;
-    document.getElementById("userInput").value = "";
-    document.getElementById("wordInput").value = "";
-    document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
-      checkbox.checked = true;
-    });
-    d3.select(".Barchart").selectAll("*").remove();
-    d3.select(".Linechart").selectAll("*").remove();
-    d3.select(".Bubblechart").selectAll("*").remove();
-    d3.select(".Venndiagram").selectAll("*").remove();
-    d3.select(".Radarchart").selectAll("*").remove();
-    init();
+    location.reload();
   });
 
   document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
@@ -234,12 +214,14 @@ function select(element) {
   let selectData = element.textContent;
   document.getElementById("userInput").value = selectData; // Passing the selected list data inside textfield
   document.getElementById("searchInput").classList.remove("active"); // Hide autocomplete box
+  updateArtistSearch(); // Trigger search
 }
 
 function selectKeyword(element) {
   let selectData = element.textContent;
   document.getElementById("wordInput").value = selectData; // Passing the selected list data inside textfield
   document.getElementById("keywordInput").classList.remove("active"); // Hide autocomplete box
+  updateKeywordSearch(); // Trigger search
 }
 
 // Function to show suggestions
@@ -460,4 +442,38 @@ function updateDashboard(
     }
   }
   updateRadarChart(minRangeValue, maxRangeValue, checkedGenres);
+}
+
+function handleHover(genre) {
+  // Reduce opacity of elements in other charts that do not correspond to the hovered genre
+  d3.selectAll(".dataItem").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+  d3.selectAll(".radarArea").transition().duration(500).style("fill-opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.0;
+  });
+  d3.selectAll(".bubble").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+  d3.selectAll(".circle2").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+
+  d3.selectAll(".radarCircle").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+
+  d3.selectAll(".radarStroke").transition().duration(500).style("opacity", function() {
+    return d3.select(this).attr("data-genre") === genre ? 1 : 0.2;
+  });
+}
+
+function handleMouseOut() {
+  // Reset opacity of all elements
+  d3.selectAll(".dataItem").transition().duration(500).style("opacity", 1);
+  d3.selectAll(".radarArea").transition().duration(500).style("fill-opacity", 0.2);
+  d3.selectAll(".bubble").transition().duration(500).style("opacity", 1);
+  d3.selectAll(".circle2").transition().duration(500).style("opacity", 0.7);
+  d3.selectAll(".radarCircle").transition().duration(500).style("opacity", 0.8);
+  d3.selectAll(".radarStroke").transition().duration(500).style("opacity", 1);
 }

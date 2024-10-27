@@ -119,21 +119,31 @@ function createBarchart(
     .attr("width", xScale.bandwidth())
     .attr("fill", (d) => d.color)
     .attr("ry", 10)
+    .attr("data-genre", (d) => d.genre)
     .on("mouseover", function (event, d) {
       if (minRangeValue - maxRangeValue != 0) {
         d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
       }
+      handleHover(d.genre);
 
       // append text in the bottom of the bar with the value of the popularity passed by the yScale
       svg
         .append("text")
         .attr("class", `${d.genre}`)
-        .attr("x", +d3.select(this).attr("x") + +d3.select(this).attr("width") - 10)
+        .attr(
+          "x",
+          +d3.select(this).attr("x") + +d3.select(this).attr("width") - 10
+        )
         .attr("y", +d3.select(this).attr("y") + +80)
         .attr("font-size", "32px")
         .attr("font-weight", "700")
         .attr("fill", "white")
-        .attr("transform", `rotate(-90, ${+d3.select(this).attr("x") + +d3.select(this).attr("width") - 10}, ${+d3.select(this).attr("y") + +80})`)
+        .attr(
+          "transform",
+          `rotate(-90, ${
+            +d3.select(this).attr("x") + +d3.select(this).attr("width") - 10
+          }, ${+d3.select(this).attr("y") + +80})`
+        )
         .style("pointer-events", "none")
         .style("opacity", 0)
         .text(d.popularity.toFixed(1));
@@ -146,6 +156,7 @@ function createBarchart(
     })
     .on("mouseleave", function (event, d) {
       d3.select(this).style("stroke-width", "1px");
+      handleMouseOut();
 
       svg
         .select(`text.${d.genre}`)
@@ -462,24 +473,35 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("rx", 5)
       .attr("ry", 5)
       .on("mouseover", function (event, d) {
+        handleHover(d.genre);
         if (minRangeValue - maxRangeValue != 0) {
-          d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
+          d3.select(this)
+            .style("cursor", "pointer")
+            .style("stroke-width", "3px");
         }
-  
+
         // append text in the bottom of the bar with the value of the popularity passed by the yScale
         svg
           .append("text")
           .attr("class", `${d.genre}`)
-          .attr("x", +d3.select(this).attr("x") + +d3.select(this).attr("width") - 10)
+          .attr(
+            "x",
+            +d3.select(this).attr("x") + +d3.select(this).attr("width") - 10
+          )
           .attr("y", +d3.select(this).attr("y") + +80)
           .attr("font-size", "32px")
           .attr("font-weight", "700")
           .attr("fill", "white")
-          .attr("transform", `rotate(-90, ${+d3.select(this).attr("x") + +d3.select(this).attr("width") - 10}, ${+d3.select(this).attr("y") + +80})`)
+          .attr(
+            "transform",
+            `rotate(-90, ${
+              +d3.select(this).attr("x") + +d3.select(this).attr("width") - 10
+            }, ${+d3.select(this).attr("y") + +80})`
+          )
           .style("pointer-events", "none")
           .style("opacity", 0)
           .text(d.popularity.toFixed(1));
-  
+
         svg
           .select(`text.${d.genre}`)
           .transition()
@@ -487,8 +509,9 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
           .style("opacity", 1);
       })
       .on("mouseleave", function (event, d) {
+        handleMouseOut();
         d3.select(this).style("stroke-width", "1px");
-  
+
         svg
           .select(`text.${d.genre}`)
           .transition()

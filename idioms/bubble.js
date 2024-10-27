@@ -36,82 +36,16 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
       .domain([0, d3.max(bubbleData, d => d.r)])
       .range([5, 50]);
 
-    // Create circles and labels first
-    createCirclesAndLabels();
-
-    // Start the simulation
     d3.forceSimulation(bubbleData)
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("charge", d3.forceManyBody().strength(110))
       .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
       .force("boundary-collision", boundaryCollision)
       .on("tick", ticked);
-  });
-}
 
-// Function to update the bubble chart with new data
-function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
-  d3.csv("data/bubble_table.csv").then(function (table) {
-    populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres);
-
-    rScale = d3.scaleLinear()
-      .domain([0, d3.max(bubbleData, d => d.r)])
-      .range([5, 50]);
-
-    // Update circles and labels first
+    // Bind and create circles and labels
     updateCirclesAndLabels();
-
-    // Start the simulation
-    d3.forceSimulation(bubbleData)
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("charge", d3.forceManyBody().strength(110))
-      .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
-      .force("boundary-collision", boundaryCollision)
-      .on("tick", ticked);
   });
-}
-
-// Function to create circles and labels
-function createCirclesAndLabels() {
-  // Create new circles for the updated bubble data
-  svg.selectAll(".bubble")
-    .data(bubbleData, d => d.label + d.genre)
-    .enter()
-    .append("circle")
-    .attr("class", "bubble")
-    .attr("id", d => `circle-${d.label}-${d.genre}`)
-    .attr("r", d => rScale(d.r * 1.2))
-    .attr("fill", d => colorMap[d.genre])
-    .attr("cx", width / 2) // Set initial position; will be updated by the simulation
-    .attr("cy", height / 2) // Set initial position; will be updated by the simulation
-    .on("mouseover", handleHover)
-    .on("mouseout", handleMouseOut);
-
-  // Create new labels for the updated bubble data
-  svg.selectAll(".bubble-text")
-    .data(bubbleData, d => d.label + d.genre)
-    .enter()
-    .append("text")
-    .attr("class", "bubble-text")
-    .attr("text-anchor", "middle")
-    .attr("dy", ".35em")
-    .style("font-size", d => Math.min(2 * rScale(d.r), (2 * rScale(d.r) - 8) / 4) + "px")
-    .style("fill", "white")
-    .style("font-weight", "600")
-    .style("user-select", "none")
-    .on("mouseover", handleHover)
-    .on("mouseout", handleMouseOut)
-    .text(d => d.label);
-}
-
-// Function to update circles and labels
-function updateCirclesAndLabels() {
-  // Remove existing circles and labels
-  svg.selectAll(".bubble").remove();
-  svg.selectAll(".bubble-text").remove();
-
-  // Create new circles and labels
-  createCirclesAndLabels();
 }
 
 // Helper function to populate bubble data
@@ -140,6 +74,77 @@ function populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres) 
   });
 }
 
+// Function to update the bubble chart with new data
+function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
+  d3.csv("data/bubble_table.csv").then(function (table) {
+    populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres);
+
+    rScale = d3.scaleLinear()
+      .domain([0, d3.max(bubbleData, d => d.r)])
+      .range([5, 50]);
+
+    d3.forceSimulation(bubbleData)
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("charge", d3.forceManyBody().strength(110))
+      .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
+      .force("boundary-collision", boundaryCollision)
+      .on("tick", ticked);
+
+    // Update circles and labels
+    updateCirclesAndLabels();
+  });
+}
+
+// Updates circles and labels based on bubbleData
+function updateCirclesAndLabels() {
+  // Remove existing circles and labels
+  svg.selectAll(".bubble").remove();
+  svg.selectAll(".bubble-text").remove();
+
+  // Create new circles for the updated bubble data
+  svg.selectAll(".bubble")
+    .data(bubbleData, d => d.label + d.genre)
+    .enter()
+    .append("circle")
+    .attr("class", "bubble")
+    .attr("id", d => `circle-${d.label}-${d.genre}`)
+    .attr("data-genre", (d) => d.genre)
+    .attr("r", d => rScale(d.r * 1.2))
+    .attr("fill", d => colorMap[d.genre])
+    .attr("cx", width / 2) // Set initial position; will be updated by the simulation
+    .attr("cy", height / 2) // Set initial position; will be updated by the simulation
+    .on("mouseover", function (event, d) {
+      openTooltip(event, d);
+      handleHover(d.genre);
+    })
+    .on("mouseout", function (event, d) {
+      closeTooltip(event, d);
+      handleMouseOut();
+    });
+
+  // Create new labels for the updated bubble data
+  svg.selectAll(".bubble-text")
+    .data(bubbleData, d => d.label + d.genre)
+    .enter()
+    .append("text")
+    .attr("class", "bubble-text")
+    .attr("text-anchor", "middle")
+    .attr("dy", ".35em")
+    .style("font-size", d => Math.min(2 * rScale(d.r), (2 * rScale(d.r) - 8) / 4) + "px")
+    .style("fill", "white")
+    .style("font-weight", "600")
+    .style("user-select", "none")
+    .on("mouseover", function (event, d) {
+      openTooltip(event, d);
+      handleHover(d.genre);
+    })
+    .on("mouseout", function (event, d) {
+      closeTooltip(event, d);
+      handleMouseOut();
+    })
+    .text(d => d.label);
+}
+
 
 // Custom force for boundary collision
 function boundaryCollision() {
@@ -163,7 +168,7 @@ function ticked() {
 }
 
 // Hover handlers
-function handleHover(event, d) {
+function openTooltip(event, d) {
   d3.select(`#circle-${d.label}-${d.genre}`)
     .attr("stroke", "black")
     .attr("stroke-width", 2);
@@ -193,7 +198,7 @@ function handleHover(event, d) {
     .text(tooltipText);
 }
 
-function handleMouseOut(event, d) {
+function closeTooltip(event, d) {
   d3.select(`#circle-${d.label}-${d.genre}`)
     .attr("stroke-width", 0);
 

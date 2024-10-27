@@ -270,7 +270,7 @@ body {
   scale: 1.05;
 }
 
-.searchInput .searchKeywordIcon:hover {
+.keywordInput .searchKeywordIcon:hover {
   background-color: #303030;
   scale: 1.05;
 }

@@ -265,33 +265,36 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
         .attr("d", (d) => radarLine(d.polygon))
         .style("fill", (d, i) => d.color)
         .attr("id", (d, i) => i) // Set id attribute
+        .attr("data-genre", (d) => d.genre)
         .style("fill-opacity", config.opacityArea)
         .on("mouseover", function (e, i) {
+          handleHover(i.genre);
+
           d3.selectAll(".radarArea")
-          .transition()
-          .duration(200)
-          .style("fill-opacity", 0.1);
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .style("fill-opacity", 0.9)
-          .style("cursor", "pointer");
-  
-        //make other polygons lines to decrease opacity
-        d3.selectAll(".radarStroke")
-          .transition()
-          .duration(200)
-          .style("stroke-opacity", 0.1);
-  
-        //make other polygon dots decrease opacity
-        d3.selectAll(".radarCircle")
-          .transition()
-          .duration(200)
-          .style("fill-opacity", 0.1);
-  
-        let tooltipText = "";
-        if (i.polygon && i.polygon.length >= 8) {
-          tooltipText = `<h3><strong>${i.genre.toUpperCase()}</strong></h3>
+            .transition()
+            .duration(200)
+            .style("fill-opacity", 0.1);
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style("fill-opacity", 0.9)
+            .style("cursor", "pointer");
+
+          //make other polygons lines to decrease opacity
+          d3.selectAll(".radarStroke")
+            .transition()
+            .duration(200)
+            .style("stroke-opacity", 0.1);
+
+          //make other polygon dots decrease opacity
+          d3.selectAll(".radarCircle")
+            .transition()
+            .duration(200)
+            .style("fill-opacity", 0.1);
+
+          let tooltipText = "";
+          if (i.polygon && i.polygon.length >= 8) {
+            tooltipText = `<h3><strong>${i.genre.toUpperCase()}</strong></h3>
             <ul>
                 <li>${i.polygon[0].axis}: ${i.polygon[0].value}</li>
                 <li>${i.polygon[1].axis}: ${i.polygon[1].value}</li>
@@ -302,30 +305,31 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
                 <li>${i.polygon[6].axis}: ${i.polygon[6].value}</li>
                 <li>${i.polygon[7].axis}: ${i.polygon[7].value}</li>
             </ul>`;
-        }
-  
-        // Remove any existing tooltips
-        d3.select("#tooltip").remove();
-  
-        // Append tooltip text
-        g.append("foreignObject")
-          .attr("id", "tooltip") // Assign id for easy removal
-          .attr("x", d3.select(this).attr("cx") + radius-40)
-          .attr("y", d3.select(this).attr("cy") + radius-160) // Position above the circle
-          .attr("width", 160)
-          .attr("height", 200)
-          .append("xhtml:div")
-          .attr("xmlns", "http://www.w3.org/1999/xhtml")
-          .style("font-size", "12px")
-          .style("background-color", "white")
-          .style("padding", "5px")
-          .style("margin", "5px")
-          .style("border-radius", "5px")
-          .style("color", "#222f3e")
-          .style("box-shadow", "3px 3px 6px 0px rgba(0, 0, 0, 0.3)")
-          .html(tooltipText);
+          }
+
+          // Remove any existing tooltips
+          d3.select("#tooltip").remove();
+
+          // Append tooltip text
+          g.append("foreignObject")
+            .attr("id", "tooltip") // Assign id for easy removal
+            .attr("x", d3.select(this).attr("cx") + radius - 40)
+            .attr("y", d3.select(this).attr("cy") + radius - 160) // Position above the circle
+            .attr("width", 160)
+            .attr("height", 200)
+            .append("xhtml:div")
+            .attr("xmlns", "http://www.w3.org/1999/xhtml")
+            .style("font-size", "12px")
+            .style("background-color", "white")
+            .style("padding", "5px")
+            .style("margin", "5px")
+            .style("border-radius", "5px")
+            .style("color", "#222f3e")
+            .style("box-shadow", "3px 3px 6px 0px rgba(0, 0, 0, 0.3)")
+            .html(tooltipText);
         })
-        .on("mouseout", function () {
+        .on("mouseout", function (e, i) {
+          handleMouseOut();
           d3.selectAll(".radarArea")
             .transition()
             .duration(200)
@@ -367,6 +371,7 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
       blobWrapper
         .append("path")
         .attr("class", "radarStroke")
+        .attr("data-genre", (d) => d.genre)
         .attr("d", (d) => radarLine(d.polygon))
         .style("stroke-width", config.strokeWidth + "px")
         .style("stroke", (d, i) => d.color)
@@ -380,6 +385,7 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
         .append("circle")
         .attr("class", "radarCircle")
         .attr("r", config.dotRadius)
+        .attr("data-genre", (d) => d.genre)
         .attr(
           "cx",
           (d, i) =>
@@ -708,8 +714,10 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("d", (d) => radarLine(d.polygon))
       .style("fill", (d, i) => d.color)
       .attr("id", (d, i) => i) // Update id attribute
+      .attr("data-genre", (d) => d.genre)
       .style("fill-opacity", config.opacityArea)
       .on("mouseover", function (e, d) {
+        handleHover(d.genre)
         d3.selectAll(".radarArea")
           .transition()
           .duration(200)
@@ -754,8 +762,8 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
         // Append tooltip text
         g.append("foreignObject")
           .attr("id", "tooltip") // Assign id for easy removal
-          .attr("x", d3.select(this).attr("cx") + radius-40)
-          .attr("y", d3.select(this).attr("cy") + radius-160) // Position above the circle
+          .attr("x", d3.select(this).attr("cx") + radius - 40)
+          .attr("y", d3.select(this).attr("cy") + radius - 160) // Position above the circle
           .attr("width", 160)
           .attr("height", 200)
           .append("xhtml:div")
@@ -770,6 +778,7 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
           .html(tooltipText);
       })
       .on("mouseout", function () {
+        handleMouseOut()
         d3.selectAll(".radarArea")
           .transition()
           .duration(200)
@@ -789,8 +798,8 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
         d3.select("#tooltip-bg").remove();
       })
       .on("click", function () {
-         // Remove any existing tooltips
-         d3.select("#tooltip").remove();
+        // Remove any existing tooltips
+        d3.select("#tooltip").remove();
         const genre = radarData[this.id].genre;
         document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
           if (checkbox.value != genre) checkbox.checked = false;
@@ -814,6 +823,7 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("class", "radarStroke")
       .style("stroke-width", config.strokeWidth + "px")
       .style("stroke", (d, i) => d.color)
+      .attr("data-genre", (d) => d.genre)
       .style("fill", "none")
       .style("filter", "url(#glow)");
 
@@ -824,6 +834,7 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       .append("circle")
       .attr("class", "radarCircle")
       .attr("r", config.dotRadius)
+      .attr("data-genre", (d) => d.genre)
       .style("fill-opacity", 0.8);
 
     // Handle the update selection
