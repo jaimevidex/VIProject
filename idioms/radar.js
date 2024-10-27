@@ -900,21 +900,8 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
         newX = parseFloat(d3.select(this).attr("cx")) - 10;
         newY = parseFloat(d3.select(this).attr("cy")) - 10;
 
-        g.append("rect")
-          .attr("id", "tooltip-bg")
-          .attr("fill", "white")
-          .attr("stroke-width", 0.5)
-          .attr("height", 30)
-          .attr(
-            "width",
-            d.value.toString().length * 12 +
-              (d.value.toString().length / 2) * 10
-          )
-          .attr("x", newX - (d.value.toString().length / 2) * 10)
-          .attr("y", newY - 20)
-          .attr("rx", 2)
-          .attr("ry", 2)
-          .style("opacity", "0.95");
+        //remove old tooltips
+        d3.select("#tooltip").remove();
 
         g.append("foreignObject")
           .attr("id", "tooltip")
