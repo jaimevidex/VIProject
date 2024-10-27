@@ -287,6 +287,7 @@ body {
 .other-options {
   width: 90%; /* Adjust width as needed */
   margin: 10px 0;
+  height: 40px;
   gap: 10px;
   display: flex;
   flex-wrap: wrap;
@@ -494,11 +495,11 @@ input[type="range"]::-webkit-slider-thumb {
   transition: all 0.1s ease;
 }
 
-button {
+#selectAll {
   background-color: #1e272e;
   color: #fff;
   border: none;
-  width: 100%;
+  width: calc(100% - 50px);
   padding: 10px 20px;
   border-radius: 10px;
   cursor: pointer;
@@ -508,7 +509,37 @@ button {
   transition: all 0.2s ease;
 }
 
-button:hover {
+#selectAll:hover {
+  box-shadow: -2px -2px 5px 0px rgba(255, 255, 255, 0.5),
+    2px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  background-color: #485460;
+}
+
+#reset {
+  background-color: #1e272e;
+  color: #fff;
+  border: none;
+  height: 100%;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14pt;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+#reset img{
+  height: 100%;
+  aspect-ratio: 1/1;
+  filter: invert(1);
+}
+
+#reset:hover {
   box-shadow: -2px -2px 5px 0px rgba(255, 255, 255, 0.5),
     2px 2px 5px 0px rgba(0, 0, 0, 0.3);
   background-color: #485460;
