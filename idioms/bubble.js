@@ -78,15 +78,15 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
       .domain([0, d3.max(bubbleData, d => d.r)])
       .range([5, 50]);
 
-    // Update circles and labels
-    updateCirclesAndLabels();
-
     d3.forceSimulation(bubbleData)
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("charge", d3.forceManyBody().strength(80))
       .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
       .force("boundary-collision", boundaryCollision)
       .on("tick", ticked);
+
+    // Update circles and labels
+    updateCirclesAndLabels();
   });
 }
 
@@ -123,6 +123,8 @@ function updateCirclesAndLabels() {
     .style("fill", "white")
     .style("font-weight", "600")
     .style("user-select", "none")
+    .on("mouseover", handleHover)
+    .on("mouseout", handleMouseOut)
     .text(d => d.label)
     .merge(labels);
 }
@@ -154,7 +156,7 @@ function handleHover(event, d) {
     .attr("stroke", "black")
     .attr("stroke-width", 2);
 
-  const tooltipText = `Appearances: ${d.r}`;
+  const tooltipText = ` Appearances: ${d.r} `;
   const textSize = tooltipText.length * 6;
 
   // Position the tooltip background below the circle
