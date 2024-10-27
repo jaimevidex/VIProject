@@ -214,12 +214,14 @@ function select(element) {
   let selectData = element.textContent;
   document.getElementById("userInput").value = selectData; // Passing the selected list data inside textfield
   document.getElementById("searchInput").classList.remove("active"); // Hide autocomplete box
+  updateArtistSearch(); // Trigger search
 }
 
 function selectKeyword(element) {
   let selectData = element.textContent;
   document.getElementById("wordInput").value = selectData; // Passing the selected list data inside textfield
   document.getElementById("keywordInput").classList.remove("active"); // Hide autocomplete box
+  updateKeywordSearch(); // Trigger search
 }
 
 // Function to show suggestions
