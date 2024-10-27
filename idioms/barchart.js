@@ -44,7 +44,7 @@ function createBarchart(
     color: colorMap[d.Genre],
   }));
 
-  const width = (window.innerWidth - 370)/2;
+  const width = (window.innerWidth - 370) / 2;
   const height = (window.innerHeight - 50 - 164) / 2;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
@@ -54,6 +54,7 @@ function createBarchart(
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
     .style("font-size", "24px")
+    .style("color", "#222f3e")
     .style("font-weight", "500")
     .text("Popularity of Genres Over Time");
 
@@ -75,6 +76,36 @@ function createBarchart(
     .domain([0, d3.max(jsonData, (d) => d.popularity) + 5])
     .range([height - margin.bottom, margin.top]);
 
+  // Create y-axis
+  const yAxis = d3.axisLeft(yScale).ticks(null, jsonData.format);
+
+  svg
+    .append("g")
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(yAxis)
+    .attr("class", "yAxis")
+    .attr("font-size", "16px")
+    .attr("color", "#222f3e")
+    .select(".domain")
+    .remove(); // Remove the vertical line
+
+  // Add horizontal grid lines
+  svg
+    .selectAll("line.horizontalGrid")
+    .data(yScale.ticks())
+    .enter()
+    .append("line")
+    .attr("class", "horizontalGrid")
+    .attr("x1", margin.left)
+    .attr("x2", width - margin.right)
+    .attr("y1", (d) => yScale(d))
+    .attr("y2", (d) => yScale(d))
+    .attr("stroke", "grey")
+    .attr("stroke-opacity", 0.3)
+    .attr("stroke-width", "1.5")
+    .attr("rx", 10)
+    .attr("ry", 10); // Rounded corners
+
   // Create bars
   const bars = svg
     .selectAll("rect")
@@ -88,13 +119,58 @@ function createBarchart(
     .attr("width", xScale.bandwidth())
     .attr("fill", (d) => d.color)
     .attr("ry", 10)
-    .on("mouseover", function () {
+    .on("mouseover", function (event, d) {
       if (minRangeValue - maxRangeValue != 0) {
         d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
+
+        // append text in the bottom of the bar with the value of the popularity passed by the yScale
+        svg
+          .append("text")
+          .attr("class", `${d.genre}`)
+          .attr("x", d3.select(this).attr("x"))
+          .attr("y", d3.select(this).attr("y"))
+          .attr("font-size", "32px")
+          .attr("font-weight", "700")
+          .attr("fill", "white")
+          .style(
+            "transform",
+            `translate(${d3.select(this).attr("width")}px, ${
+              d3.select(this).attr("height") - 10
+            }px)`
+          )
+          .style("opacity", 0)
+          .text(d.popularity.toFixed(1));
+
+        svg
+          .select(`text.${d.genre}`)
+          .transition()
+          .duration(500)
+          .style(
+            "transform",
+            `translate(${d3.select(this).attr("width") - 72}px, ${
+              d3.select(this).attr("height") - 10
+            }px)`
+          )
+          .style("opacity", 1);
       }
     })
-    .on("mouseleave", function () {
+    .on("mouseleave", function (event, d) {
       d3.select(this).style("stroke-width", "1px");
+
+      svg
+        .select(`text.${d.genre}`)
+        .transition()
+        .duration(300)
+        .style(
+          "transform",
+          `translate(${d3.select(this).attr("width")}px, ${
+            d3.select(this).attr("height") - 10
+          }px)`
+        )
+        .style("opacity", 0)
+        .on("end", function () {
+          svg.select(`text.${d.genre}`).remove();
+        });
     })
     .on("click", function (event, d) {
       //get checked genres from html element
@@ -107,7 +183,14 @@ function createBarchart(
       localStorage.setItem("selectedGenres", JSON.stringify(genres));
       if (minRangeValue - maxRangeValue != 0) {
         selectGenre = d.genre;
-        updateDashboard(minRangeValue, maxRangeValue, [selectGenre],null, null, true);
+        updateDashboard(
+          minRangeValue,
+          maxRangeValue,
+          [selectGenre],
+          null,
+          null,
+          true
+        );
       }
     });
 
@@ -115,19 +198,13 @@ function createBarchart(
   svg
     .append("g")
     .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre))
+    .call(
+      d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre.toUpperCase())
+    )
     .attr("class", "xAxis")
-    .attr("font-size", "10px")
-    .attr("color", "black");
-
-  // Create y-axis
-  svg
-    .append("g")
-    .attr("transform", `translate(${margin.left},0)`)
-    .call(d3.axisLeft(yScale).ticks(null, jsonData.format))
-    .attr("class", "yAxis")
-    .attr("font-size", "10px")
-    .attr("color", "black");
+    .attr("font-size", "12px")
+    .attr("font-weight", "600")
+    .attr("color", "#222f3e");
 }
 
 function createLinechart(
@@ -143,22 +220,23 @@ function createLinechart(
   // Clear the existing chart elements
   d3.select(containerId).selectAll("*").remove();
 
-  const width = (window.innerWidth - 370)/2;
+  const width = (window.innerWidth - 370) / 2;
   const height = (window.innerHeight - 50 - 164) / 2;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   //get checked genre
   const selectedGenre = document.querySelector(".genre-checkbox:checked").value;
-  const selectedGenreCap = selectedGenre.charAt(0).toUpperCase() + selectedGenre.slice(1);
-
+  const selectedGenreCap =
+    selectedGenre.charAt(0).toUpperCase() + selectedGenre.slice(1);
 
   d3.select(containerId)
-  .append("h3")
-  .style("margin-left", `${margin.left}px`)
-  .style("margin-bottom", "-30px")
-  .style("font-size", "24px")
-  .style("font-weight", "500")
-  .text("Popularity of "+ selectedGenreCap +" Over Time");
+    .append("h3")
+    .style("margin-left", `${margin.left}px`)
+    .style("margin-bottom", "-30px")
+    .style("font-size", "24px")
+    .style("font-weight", "500")
+    .style("color", "#222f3e")
+    .text("Popularity of " + selectedGenreCap + " Over Time");
 
   const svg = d3
     .select(containerId)
@@ -328,8 +406,8 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       }))
       .sort((a, b) => d3.descending(a.popularity, b.popularity));
 
-      const width = (window.innerWidth - 370)/2;
-      const height = (window.innerHeight - 50 - 164) / 2;
+    const width = (window.innerWidth - 370) / 2;
+    const height = (window.innerHeight - 50 - 164) / 2;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
     // Select the existing SVG element
@@ -346,12 +424,39 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .domain([0, d3.max(jsonData, (d) => d.popularity) + 5])
       .range([height - margin.bottom, margin.top]);
 
+    // Update horizontal grid lines with smooth transition
+    const gridLines = svg.selectAll("line.horizontalGrid").data(yScale.ticks());
+
+    gridLines
+      .enter()
+      .append("line")
+      .attr("class", "horizontalGrid")
+      .attr("x1", margin.left)
+      .attr("x2", width - margin.right)
+      .attr("y1", (d) => yScale(d))
+      .attr("y2", (d) => yScale(d))
+      .attr("stroke", "grey")
+      .attr("stroke-opacity", 0)
+      .attr("stroke-width", "1.5")
+      .merge(gridLines)
+      .lower()
+      .transition()
+      .duration(500)
+      .attr("x1", margin.left)
+      .attr("x2", width - margin.right)
+      .attr("y1", (d) => yScale(d))
+      .attr("y2", (d) => yScale(d))
+      .attr("stroke-opacity", 0.3);
+
+    // Change opacity to 0 for grid lines that are no longer in the data
+    gridLines.exit().transition().duration(500).attr("stroke-opacity", 0);
+
     // Bind new data to the existing bars and update their attributes
     const bars = svg.selectAll("rect.dataItem").data(jsonData, (d) => d.genre);
 
     bars
       .transition()
-      .duration(1000)
+      .duration(500)
       .attr("x", (d, i) => xScale(i))
       .attr("y", (d) => yScale(d.popularity))
       .attr("height", (d) => yScale(0) - yScale(d.popularity))
@@ -372,15 +477,58 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("fill", (d) => d.color)
       .attr("rx", 5)
       .attr("ry", 5)
-      .on("mouseover", function () {
+      .on("mouseover", function (event, d) {
         if (minRangeValue - maxRangeValue != 0) {
-          d3.select(this)
-            .style("cursor", "pointer")
-            .style("stroke-width", "3px");
+          d3.select(this).style("cursor", "pointer").style("stroke-width", "3px");
+  
+          // append text in the bottom of the bar with the value of the popularity passed by the yScale
+          svg
+            .append("text")
+            .attr("class", `${d.genre}`)
+            .attr("x", d3.select(this).attr("x"))
+            .attr("y", d3.select(this).attr("y"))
+            .attr("font-size", "32px")
+            .attr("font-weight", "700")
+            .attr("fill", "white")
+            .style(
+              "transform",
+              `translate(${d3.select(this).attr("width")}px, ${
+                d3.select(this).attr("height") - 10
+              }px)`
+            )
+            .style("opacity", 0)
+            .text(d.popularity.toFixed(1));
+  
+          svg
+            .select(`text.${d.genre}`)
+            .transition()
+            .duration(500)
+            .style(
+              "transform",
+              `translate(${d3.select(this).attr("width") - 72}px, ${
+                d3.select(this).attr("height") - 10
+              }px)`
+            )
+            .style("opacity", 1);
         }
       })
-      .on("mouseleave", function () {
+      .on("mouseleave", function (event, d) {
         d3.select(this).style("stroke-width", "1px");
+  
+        svg
+          .select(`text.${d.genre}`)
+          .transition()
+          .duration(300)
+          .style(
+            "transform",
+            `translate(${d3.select(this).attr("width")}px, ${
+              d3.select(this).attr("height") - 10
+            }px)`
+          )
+          .style("opacity", 0)
+          .on("end", function () {
+            svg.select(`text.${d.genre}`).remove();
+          });
       })
       .on("click", function (event, d) {
         //get checked genres from html element
@@ -393,11 +541,18 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
         localStorage.setItem("selectedGenres", JSON.stringify(genres));
         if (minRangeValue - maxRangeValue != 0) {
           selectGenre = d.genre;
-          updateDashboard(minRangeValue, maxRangeValue, [selectGenre], null, null, true);
+          updateDashboard(
+            minRangeValue,
+            maxRangeValue,
+            [selectGenre],
+            null,
+            null,
+            true
+          );
         }
       })
       .transition()
-      .duration(1000)
+      .duration(500)
       .attr("y", (d) => yScale(d.popularity))
       .attr("height", (d) => yScale(0) - yScale(d.popularity));
 
@@ -405,7 +560,7 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
     bars
       .exit()
       .transition()
-      .duration(1000)
+      .duration(500)
       .attr("height", 0)
       .attr("y", yScale(0))
       .remove();
@@ -414,15 +569,21 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
     svg
       .select("g.xAxis")
       .transition()
-      .duration(1000)
-      .call(d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre));
+      .duration(500)
+      .call(
+        d3.axisBottom(xScale).tickFormat((i) => jsonData[i].genre.toUpperCase())
+      );
 
-    // Update y-axis with smooth transition
+    // Update y-axis with smooth transition and remove vertical line
+    const yAxis = d3.axisLeft(yScale).ticks(null, jsonData.format);
+
     svg
       .select("g.yAxis")
       .transition()
-      .duration(1000)
-      .call(d3.axisLeft(yScale).ticks(null, jsonData.format));
+      .duration(500)
+      .call(yAxis)
+      .select(".domain")
+      .attr("stroke", "none");
   });
 }
 
@@ -452,7 +613,7 @@ function updateLinechart(
     const popularity = selectedData.map((d) => d.popularity);
     const color = colorMap[selectedGenre];
 
-    const width = (window.innerWidth - 370)/2;
+    const width = (window.innerWidth - 370) / 2;
     const height = (window.innerHeight - 50 - 164) / 2;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
@@ -480,7 +641,7 @@ function updateLinechart(
     path
       .datum(popularity)
       .transition()
-      .duration(1000)
+      .duration(500)
       .attr("d", line)
       .attr("stroke", color);
 
@@ -500,7 +661,7 @@ function updateLinechart(
     );
 
     // Update y-axis with smooth transition
-    svg.select("g.yAxis").transition().duration(1000).call(d3.axisLeft(yScale));
+    svg.select("g.yAxis").transition().duration(500).call(d3.axisLeft(yScale));
 
     // Tooltip div for hover effects
     const tooltip = d3
@@ -518,7 +679,7 @@ function updateLinechart(
     const circles = svg.selectAll("circle").data(popularity);
 
     // Remove any old circles no longer in use
-    circles.exit().transition().duration(1000).attr("r", 0).remove();
+    circles.exit().transition().duration(500).attr("r", 0).remove();
 
     // Enter new circles for new data points
     circles
@@ -571,7 +732,7 @@ function updateLinechart(
       })
       .merge(circles) // Merge enter and update selections
       .transition()
-      .duration(1000)
+      .duration(500)
       .attr("cx", (d, i) => xScale(minRangeValue + i))
       .attr("cy", (d) => yScale(d))
       .attr("r", 4); // Animate to final radius

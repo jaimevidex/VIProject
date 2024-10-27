@@ -106,7 +106,7 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
     var height = (window.innerHeight - 164 - 50) / 2;
     var width = (window.innerWidth - 300 - 70) / 2;
 
-    var radius = (height - 120) / 2;
+    var radius = (height - 90) / 2;
 
     var allAxis = radarData[0].polygon.map((i) => i.axis),
       total = allAxis.length,
@@ -119,6 +119,7 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
       .style("margin-bottom", "-30px")
       .style("font-size", "24px")
       .style("font-weight", "500")
+      .style("color", "#222f3e")
       .style("transform", "translate(0, 20px)") //translate up 20px
       .text("Genre Music Attributes");
 
@@ -308,7 +309,7 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
             .style("padding", "5px")
             .style("margin", "5px")
             .style("border-radius", "5px")
-            .style("color", "black")
+            .style("color", "#222f3e")
             .style(
               "box-shadow",
               "-3px -3px 6px 0px rgba(255, 255, 255, 0.5),3px 3px 6px 0px rgba(0, 0, 0, 0.3)"
@@ -627,7 +628,7 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
     var height = (window.innerHeight - 164 - 50) / 2;
     var width = (window.innerWidth - 300 - 70) / 2;
 
-    var radius = (height - 100) / 2;
+    var radius = (height - 90) / 2;
 
     var allAxis = radarData[0].polygon.map((i) => i.axis),
       total = allAxis.length,
@@ -719,7 +720,7 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
         .style("padding", "5px")
         .style("margin", "5px")
         .style("border-radius", "5px")
-        .style("color", "black")
+        .style("color", "#222f3e")
         .style(
           "box-shadow",
           "-3px -3px 6px 0px rgba(255, 255, 255, 0.5),3px 3px 6px 0px rgba(0, 0, 0, 0.3)"

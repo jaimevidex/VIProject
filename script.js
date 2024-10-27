@@ -1,9 +1,9 @@
 const colorMap = {
-  rock: "#f53b57", // Red
+  rock: "#F62B45", // Red
   pop: "#ffa801", // Orange
   rap: "#05c46b", // Green
-  rb: "#0fbcf9", // Blue
-  country: "#3c40c6", // Purple
+  rb: "#386EFA", // Blue
+  country: "#A520D3", // Purple
 };
 
 let minRangeValue = 1960;
@@ -54,13 +54,7 @@ function init() {
   initArtists().then(() => {
     initKeywords().then(() => {
       d3.csv("./data/genre_popularity_time.csv").then((data) => {
-        createBarchart(
-          data, 
-          ".Barchart", 
-          minRangeValue, 
-          maxRangeValue, 
-          genres
-        );
+        createBarchart(data, ".Barchart", minRangeValue, maxRangeValue, genres);
         createBubblechart(
           data,
           ".Bubblechart",
@@ -68,13 +62,7 @@ function init() {
           maxRangeValue,
           genres
         );
-        RadarChart(
-          data,
-          ".Radarchart",
-          minRangeValue,
-          maxRangeValue,
-          genres
-        );
+        RadarChart(data, ".Radarchart", minRangeValue, maxRangeValue, genres);
       });
     });
   });
@@ -94,7 +82,6 @@ function init() {
     );
   });
 
-
   const minRange = document.getElementById("minRange");
   const maxRange = document.getElementById("maxRange");
 
@@ -103,7 +90,7 @@ function init() {
   minRange.addEventListener("mouseup", sliderChange);
   maxRange.addEventListener("mouseup", sliderChange);
 
-  document.getElementById("selectAll").addEventListener("click", function (e) { 
+  document.getElementById("selectAll").addEventListener("click", function (e) {
     document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
       checkbox.checked = true;
     });
@@ -146,9 +133,11 @@ function init() {
     updateArtistSearch();
   });
 
-  document.getElementById("searchKeywordIcon").addEventListener("click", function (e) {
-    updateKeywordSearch();
-  });
+  document
+    .getElementById("searchKeywordIcon")
+    .addEventListener("click", function (e) {
+      updateKeywordSearch();
+    });
 }
 
 // Function to handle input changes
@@ -248,7 +237,6 @@ function updateArtistSearch() {
     artist = artists.find((a) => a.toLowerCase() === artist.toLowerCase());
   }
 
-
   //get time range and genre from the artist data file
   d3.csv("./data/artist_search_table.csv").then((data) => {
     data = data.filter((d) => d.artist === artist);
@@ -271,9 +259,8 @@ function updateArtistSearch() {
 function updateKeywordSearch() {
   keyword = document.getElementById("wordInput").value;
 
-
-   //get time range and genre from the keyword data file
-   d3.csv("./data/keyword_search_table.csv").then((data) => {
+  //get time range and genre from the keyword data file
+  d3.csv("./data/keyword_search_table.csv").then((data) => {
     data = data.filter((d) => d.keyword === keyword);
     time_interval = data[0].time_interval.replace(/['"(),]/g, "").split(" ");
     minRangeValue = Math.max(parseInt(time_interval[0]), 1962);
@@ -358,7 +345,11 @@ function updateDashboard(
   wasByClick
 ) {
   // clean the data so that only musics from that artist are shown and contains the keyword
-  if (artist !== localStorage.getItem("artist") && artist !== undefined && artist !== null) {
+  if (
+    artist !== localStorage.getItem("artist") &&
+    artist !== undefined &&
+    artist !== null
+  ) {
     updateVennDiagram(artist, getColor(checkedGenres[0]));
   }
 
@@ -395,7 +386,8 @@ function updateDashboard(
         minRangeValue,
         maxRangeValue,
         checkedGenres,
-        data,wasByClick
+        data,
+        wasByClick
       );
     });
   } else if (checkedGenres.length > 1 && !isBarchart) {
@@ -416,9 +408,5 @@ function updateDashboard(
     // Update line chart if only one genre is selected
     updateLinechart(minRangeValue, maxRangeValue, checkedGenres[0], false);
   }
-  updateRadarChart(
-    minRangeValue,
-    maxRangeValue,
-    checkedGenres
-  );
+  updateRadarChart(minRangeValue, maxRangeValue, checkedGenres);
 }

@@ -25,6 +25,7 @@ function createVennDiagram(data, containerId) {
     .style("margin-bottom", "-30px")
     .style("font-size", "24px")
     .style("font-weight", "500")
+    .style("color", "#222f3e")
     .style("transform", "translate(0, 20px)") //translate up 20px
     .text("Artists and Genres Keywords");
 
@@ -146,6 +147,7 @@ function updateVennDiagram(artist, color) {
       .style("font-size", "24px")
       .style("transform", "translate(0, 20px)") //translate up 20px
       .style("font-weight", "500")
+      .style("color", "#222f3e")
       .text("Comparing " + artist + " and other " + genre + " artists");
 
     const circle1 = svg

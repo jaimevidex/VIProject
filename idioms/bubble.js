@@ -35,6 +35,7 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
       .style("margin-left", `${margin.left}px`)
       .style("margin-bottom", "-30px")
       .style("font-weight", "500")
+      .style("color", "#222f3e")
       .style("transform", "translate(0, 20px)")
       .text("Usage of Keywords in Songs");
 

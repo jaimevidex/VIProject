@@ -49,19 +49,20 @@ body {
 
 .header h1 {
   font-size: 24pt;
-  color: #1e272e;
+  color: #222f3e;
   text-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
   width: 100%;
-  background-color: rgb(254, 254, 254, 0.75);
+  background-color: rgba(241, 242, 246, 0.82);
   border-radius: 10px;
   padding: 10px 20px;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .Barchart {
   grid-area: Barchart;
   padding-top: 20px;
-  background-color: rgb(254, 254, 254, 0.75);
+  background-color: rgba(241, 242, 246, 0.9);
   border-radius: 10px;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
@@ -69,7 +70,7 @@ body {
 
 .Bubblechart {
   grid-area: Bubblechart;
-  background-color: rgb(254, 254, 254, 0.75);
+  background-color: rgba(241, 242, 246, 0.9);
   border-radius: 10px;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
@@ -77,7 +78,7 @@ body {
 
 .Radarchart {
   grid-area: Radarchart;
-  background-color: rgb(254, 254, 254, 0.75);
+  background-color: rgba(241, 242, 246, 0.9);
   border-radius: 10px;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
@@ -85,14 +86,14 @@ body {
 
 .Venndiagram {
   grid-area: Vandiagram;
-  background-color: rgb(254, 254, 254, 0.75);
+  background-color: rgba(241, 242, 246, 0.9);
   border-radius: 10px;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
 }
 
 .buttons {
-  background-color: rgb(254, 254, 254, 0.75);
+  background-color: rgba(241, 242, 246, 0.9);
   color: #1e272e;
   height: fit-content;
   display: flex;
@@ -299,7 +300,7 @@ body {
   height: fit-content;
   font-size: 14pt;
   cursor: pointer;
-  color: #1e272e;
+  color: #222f3e;
   transition: all 0.1s ease;
   text-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
 }
@@ -311,7 +312,7 @@ body {
   height: fit-content;
   font-size: 14pt;
   cursor: pointer;
-  color: #808e9b;
+  color: #576574;
   transition: all 0.1s ease;
 }
 
@@ -325,24 +326,23 @@ body {
   cursor: pointer; /* Change cursor to pointer */
   position: relative; /* Position for the after element */
   background-color: transparent; /* Background color */
-  box-shadow: -1px -1px 3px 0px rgba(255, 255, 255, 0.5),
-    2px 2px 4px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
 }
 
 /* Use the same colors as D3's schemeCategory10 color palette */
 .checkbox-options input[type="checkbox"].rock {
   border-color: #1e272e; /* Red */
-  background-color: #f53b5700;
+  background-color: #f62b4500;
   transition: all 0.2s ease;
 }
 
 .checkbox-options input[type="checkbox"].rock:hover {
-  background-color: #f53b5766;
+  background-color: #f62b4566;
   transition: all 0.2s ease;
 }
 
 .checkbox-options input[type="checkbox"].rock:checked {
-  background-color: #f53b57ff;
+  background-color: #f62b45ff;
   transition: all 0.2s ease;
 }
 
@@ -380,33 +380,33 @@ body {
 
 .checkbox-options input[type="checkbox"].rb {
   border-color: #1e272e; /* Red */
-  background-color: #0fbcf900; /* Red fill */
+  background-color: #386efa00; /* Red fill */
   transition: all 0.2s ease;
 }
 
 .checkbox-options input[type="checkbox"].rb:hover {
-  background-color: #0fbcf966; /* Red fill */
+  background-color: #386efa66; /* Red fill */
   transition: all 0.2s ease;
 }
 
 .checkbox-options input[type="checkbox"].rb:checked {
-  background-color: #0fbcf9ff; /* Red fill */
+  background-color: #386efaff; /* Red fill */
   transition: all 0.2s ease;
 }
 
 .checkbox-options input[type="checkbox"].country {
   border-color: #1e272e; /* Purple */
-  background-color: #3c40c600; /* Purple fill */
+  background-color: #A520D300; /* Purple fill */
   transition: all 0.2s ease;
 }
 
 .checkbox-options input[type="checkbox"].country:hover {
-  background-color: #3c40c666; /* Purple fill */
+  background-color: #A520D366; /* Purple fill */
   transition: all 0.2s ease;
 }
 
 .checkbox-options input[type="checkbox"].country:checked {
-  background-color: #3c40c6ff; /* Purple fill */
+  background-color: #A520D3ff; /* Purple fill */
   transition: all 0.2s ease;
 }
 
