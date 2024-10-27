@@ -64,6 +64,11 @@ function populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres) 
       };
     });
 
+    // remove genre if there the sum of all keywords is 0
+    if (d3.sum(keywordSums, d => d.r) === 0) {
+      checkedGenres = checkedGenres.filter(g => g !== genre);
+      return;
+    }
     keywordSums.sort((a, b) => b.r - a.r);
     bubbleData = bubbleData.concat(keywordSums.slice(0, 3));
   });
@@ -80,7 +85,7 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
 
     d3.forceSimulation(bubbleData)
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("charge", d3.forceManyBody().strength(80))
+      .force("charge", d3.forceManyBody().strength(110))
       .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
       .force("boundary-collision", boundaryCollision)
       .on("tick", ticked);
@@ -155,7 +160,7 @@ function handleHover(event, d) {
     .attr("stroke", "black")
     .attr("stroke-width", 2);
 
-  const tooltipText = ` Appearances: ${d.r} `;
+  const tooltipText = ` "${d.label.toUpperCase()}" appears ${d.r} times `;
   const textSize = tooltipText.length * 6;
 
   // Position the tooltip background below the circle
