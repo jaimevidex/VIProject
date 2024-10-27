@@ -37,7 +37,7 @@ function createVennDiagram(data, containerId) {
     .attr("height", height)
     .attr("viewBox", [0, 0, width, height])
     .append("g")
-    .attr("transform", `translate(${width / 2},${(height+100) / 2}) scale(1.4)`);
+    .attr("transform", `translate(${width / 2},${(height+80) / 2}) scale(1.25)`);
 
 
   // Draw the circles for the Venn diagram with overlap
@@ -116,7 +116,7 @@ function updateVennDiagram(artist, color) {
 
     // Set up SVG dimensions
     const width = (window.innerWidth - 370) / 2;
-    const height = (window.innerHeight - 50 - 164) / 2;
+    const height = (window.innerHeight - 50 - 140) / 2;
     const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
     // Clean circles and texts
@@ -135,7 +135,7 @@ function updateVennDiagram(artist, color) {
       .attr("height", height)
       .attr("viewBox", [0, 0, width, height])
       .append("g")
-      .attr("transform", `translate(${width / 2},${(height+100) / 2}), scale(1.4)`);
+      .attr("transform", `translate(${width / 2},${(height+100) / 2}), scale(1.25)`);
 
     // clean old title
     d3.select(".Venndiagram").select("h3").text("");
@@ -167,7 +167,7 @@ function updateVennDiagram(artist, color) {
             d3.select(this)
               .transition()
               .duration(200)
-              .attr("r", 102)
+              .attr("r", 100)
               .attr("cx", -70)
               .attr("fill", "#a4b0be")
               .attr("cursor", "pointer")
@@ -215,7 +215,7 @@ function updateVennDiagram(artist, color) {
             d3.select(this)
               .transition()
               .duration(200)
-              .attr("r", 102)
+              .attr("r", 100)
               .attr("cx", 70)
               .attr("cursor", "pointer")
               .attr("opacity", 1);
