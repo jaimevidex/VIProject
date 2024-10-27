@@ -6,7 +6,7 @@ const colorMap = {
   country: "#A520D3", // Purple
 };
 
-let minRangeValue = 1960;
+let minRangeValue = 1962;
 let maxRangeValue = 2021;
 let genres = ["rock", "pop", "rap", "rb", "country"];
 let artist = null;
@@ -109,6 +109,10 @@ function init() {
       checkbox.checked = true;
     });
     updateGenreSelection();
+  });
+
+  document.getElementById("reset").addEventListener("click", function (e) {
+    location.reload();
   });
 
   document.querySelectorAll(".genre-checkbox").forEach((checkbox) => {
