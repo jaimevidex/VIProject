@@ -14,8 +14,8 @@ function createVennDiagram(data, containerId) {
   const common = set1.filter((d) => set2.includes(d)); // Common between both
 
   // Set up SVG dimensions
-  const width = (window.innerWidth - 350) / 2;
-  const height = (window.innerHeight - 50 - 64) / 2;
+  const width = (window.innerWidth - 370) / 2;
+  const height = (window.innerHeight - 50 - 164) / 2;
   const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
   // Append chart title
@@ -24,7 +24,8 @@ function createVennDiagram(data, containerId) {
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
     .style("font-size", "24px")
-    .style("transform", "translate(0, -20px)") //translate up 20px
+    .style("font-weight", "500")
+    .style("transform", "translate(0, 20px)") //translate up 20px
     .text("Artists and Genres Keywords");
 
   // Create the SVG container
@@ -35,7 +36,7 @@ function createVennDiagram(data, containerId) {
     .attr("height", height)
     .attr("viewBox", [0, 0, width, height])
     .append("g")
-    .attr("transform", `translate(${width / 2},${height / 2}) scale(1.2)`);
+    .attr("transform", `translate(${width / 2},${(height+100) / 2}) scale(1.4)`);
 
 
   // Draw the circles for the Venn diagram with overlap
@@ -113,8 +114,8 @@ function updateVennDiagram(artist, color) {
     const radius = maxTextHeight / 2;
 
     // Set up SVG dimensions
-    const width = (window.innerWidth - 350) / 2;
-    const height = (window.innerHeight - 50 - 64) / 2;
+    const width = (window.innerWidth - 370) / 2;
+    const height = (window.innerHeight - 50 - 164) / 2;
     const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
     // Clean circles and texts
@@ -133,7 +134,7 @@ function updateVennDiagram(artist, color) {
       .attr("height", height)
       .attr("viewBox", [0, 0, width, height])
       .append("g")
-      .attr("transform", `translate(${width / 2},${height / 2}), scale(1.25)`);
+      .attr("transform", `translate(${width / 2},${(height+100) / 2}), scale(1.4)`);
 
     // clean old title
     d3.select(".Venndiagram").select("h3").text("");
@@ -142,6 +143,9 @@ function updateVennDiagram(artist, color) {
       .select("h3")
       .style("margin-left", `${margin.left}px`)
       .style("margin-bottom", "-30px")
+      .style("font-size", "24px")
+      .style("transform", "translate(0, 20px)") //translate up 20px
+      .style("font-weight", "500")
       .text("Comparing " + artist + " and other " + genre + " artists");
 
     const circle1 = svg

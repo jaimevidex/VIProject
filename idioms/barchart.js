@@ -44,8 +44,8 @@ function createBarchart(
     color: colorMap[d.Genre],
   }));
 
-  const width = (window.innerWidth - 350)/2;
-  const height = (window.innerHeight - 50 - 64) / 2;
+  const width = (window.innerWidth - 370)/2;
+  const height = (window.innerHeight - 50 - 164) / 2;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   // Append chart title
@@ -54,6 +54,7 @@ function createBarchart(
     .style("margin-left", `${margin.left}px`)
     .style("margin-bottom", "-30px")
     .style("font-size", "24px")
+    .style("font-weight", "500")
     .text("Popularity of Genres Over Time");
 
   const svg = d3
@@ -142,8 +143,8 @@ function createLinechart(
   // Clear the existing chart elements
   d3.select(containerId).selectAll("*").remove();
 
-  const width = (window.innerWidth - 350)/2;
-  const height = (window.innerHeight - 50 - 64) / 2;
+  const width = (window.innerWidth - 370)/2;
+  const height = (window.innerHeight - 50 - 164) / 2;
   const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
   //get checked genre
@@ -156,6 +157,7 @@ function createLinechart(
   .style("margin-left", `${margin.left}px`)
   .style("margin-bottom", "-30px")
   .style("font-size", "24px")
+  .style("font-weight", "500")
   .text("Popularity of "+ selectedGenreCap +" Over Time");
 
   const svg = d3
@@ -326,8 +328,8 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       }))
       .sort((a, b) => d3.descending(a.popularity, b.popularity));
 
-      const width = (window.innerWidth - 350)/2;
-      const height = (window.innerHeight - 50 - 64) / 2;
+      const width = (window.innerWidth - 370)/2;
+      const height = (window.innerHeight - 50 - 164) / 2;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
     // Select the existing SVG element
@@ -450,8 +452,8 @@ function updateLinechart(
     const popularity = selectedData.map((d) => d.popularity);
     const color = colorMap[selectedGenre];
 
-    const width = (window.innerWidth - 350)/2;
-    const height = (window.innerHeight - 50 - 64) / 2;
+    const width = (window.innerWidth - 370)/2;
+    const height = (window.innerHeight - 50 - 164) / 2;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
 
     // Select the existing SVG element

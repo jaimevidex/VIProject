@@ -24,8 +24,8 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
     });
 
     // Set up SVG dimensions
-    const width = (window.innerWidth - 350) / 2;
-    const height = (window.innerHeight - 50 - 64) / 2;
+    const width = (window.innerWidth - 370) / 2;
+    const height = (window.innerHeight - 50 - 164) / 2;
     const margin = { bottom: 50, left: 50, right: 50, top: 50 };
     const topPadding = 50; // Padding to keep circles below header text
 
@@ -34,6 +34,8 @@ function createBubblechart(data, containerId, minRangeValue, maxRangeValue, chec
       .append("h2")
       .style("margin-left", `${margin.left}px`)
       .style("margin-bottom", "-30px")
+      .style("font-weight", "500")
+      .style("transform", "translate(0, 20px)")
       .text("Usage of Keywords in Songs");
 
     // Create SVG container
@@ -171,8 +173,8 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
     });
 
     // Set up dimensions and scales
-    const width = (window.innerWidth - 350) / 2;
-    const height = (window.innerHeight - 50 - 64) / 2;
+    const width = (window.innerWidth - 370) / 2;
+    const height = (window.innerHeight - 50 - 164) / 2;
     const topPadding = 50;
     const rScale = d3.scaleLinear()
       .domain([0, d3.max(bubbleData, d => d.r)])

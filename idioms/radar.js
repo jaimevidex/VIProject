@@ -103,8 +103,8 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
       strokeWidth: 2,
     };
 
-    var height = (window.innerHeight - 64) / 2;
-    var width = (window.innerWidth - 300 - 50) / 2;
+    var height = (window.innerHeight - 164 - 50) / 2;
+    var width = (window.innerWidth - 300 - 70) / 2;
 
     var radius = (height - 120) / 2;
 
@@ -118,7 +118,8 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
       .style("margin-left", `${config.margin.left}px`)
       .style("margin-bottom", "-30px")
       .style("font-size", "24px")
-      .style("transform", "translate(0, -20px)") //translate up 20px
+      .style("font-weight", "500")
+      .style("transform", "translate(0, 20px)") //translate up 20px
       .text("Genre Music Attributes");
 
     var svg = d3.select(id).select("svg");
@@ -129,7 +130,8 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
         .append("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr("class", "radar" + id);
+        .attr("class", "radar" + id)
+        .style("transform", "translate(0, 30px)");
 
       var g = svg
         .append("g")
@@ -229,11 +231,11 @@ function RadarChart(data, id, minRangeValue, maxRangeValue, checkedGenres) {
         .attr("text-anchor", "middle")
         .attr(
           "x",
-          (d, i) => radius * 1.2 * Math.cos(angleSlice * i - Math.PI / 2)
+          (d, i) => radius * 1.25 * Math.cos(angleSlice * i - Math.PI / 2)
         )
         .attr(
           "y",
-          (d, i) => radius * 1.2 * Math.sin(angleSlice * i - Math.PI / 2)
+          (d, i) => radius * 1.15 * Math.sin(angleSlice * i - Math.PI / 2)
         )
         .text((d) => d);
 
@@ -622,8 +624,8 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       strokeWidth: 2,
     };
 
-    var height = (window.innerHeight - 64 - 50) / 2;
-    var width = (window.innerWidth - 300 - 50) / 2;
+    var height = (window.innerHeight - 164 - 50) / 2;
+    var width = (window.innerWidth - 300 - 70) / 2;
 
     var radius = (height - 100) / 2;
 

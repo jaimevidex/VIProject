@@ -7,7 +7,9 @@
 body {
   height: 100dvh;
   margin: 0;
-  background-color: #f0f0f057;
+  background-color: #ececec;
+  background-image: url("./bg.webp");
+  background-size: cover;
   font-family: "REM", sans-serif;
   font-optical-sizing: auto;
 }
@@ -23,40 +25,74 @@ body {
 .container {
   flex: 8; /* Take up 90% of the width */
   display: grid;
+  position: relative;
   gap: 20px;
   grid-auto-columns: 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
     "Barchart Bubblechart"
     "Radarchart Vandiagram";
-  margin: 0px 20px 0px 0px;
-  padding-top: 40px;
+  margin: 0px 20px 0px 20px;
+  padding-top: 100px;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.header h1 {
+  font-size: 24pt;
+  color: #1e272e;
+  text-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  background-color: rgb(254, 254, 254, 0.75);
+  border-radius: 10px;
+  padding: 10px 20px;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 .Barchart {
   grid-area: Barchart;
-  border: #000000 1px solid;
   padding-top: 20px;
-  margin-left: 20px;
+  background-color: rgb(254, 254, 254, 0.75);
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .Bubblechart {
   grid-area: Bubblechart;
-  border: #000000 1px solid;
+  background-color: rgb(254, 254, 254, 0.75);
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .Radarchart {
   grid-area: Radarchart;
-  border: #000000 1px solid;
+  background-color: rgb(254, 254, 254, 0.75);
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .Venndiagram {
   grid-area: Vandiagram;
-  border: #000000 1px solid;
+  background-color: rgb(254, 254, 254, 0.75);
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .buttons {
-  background-color: #f1f2f6;
+  background-color: rgb(254, 254, 254, 0.75);
   color: #1e272e;
   height: fit-content;
   display: flex;
@@ -66,7 +102,8 @@ body {
   padding: 20px;
   min-width: 300px;
   border-radius: 0px 0px 0px 20px;
-  box-shadow: -5px -5px 10px 0px rgba(255, 255, 255, 0.5), 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 
@@ -90,7 +127,7 @@ body {
   width: 100%;
   border-radius: 10px;
   position: relative;
-  box-shadow: -5px -5px 10px 0px rgba(255, 255, 255, 0.5), 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 .search_keyword_container .keywordInput {
@@ -98,8 +135,7 @@ body {
   width: 100%;
   border-radius: 10px;
   position: relative;
-  box-shadow: -5px -5px 10px 0px rgba(255, 255, 255, 0.5), 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
-
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 .searchInput input {
@@ -266,7 +302,6 @@ body {
   color: #1e272e;
   transition: all 0.1s ease;
   text-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
-  ;
 }
 
 .checkbox-options label:hover {
@@ -290,8 +325,8 @@ body {
   cursor: pointer; /* Change cursor to pointer */
   position: relative; /* Position for the after element */
   background-color: transparent; /* Background color */
-  box-shadow: -1px -1px 3px 0px rgba(255, 255, 255, 0.5), 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
-
+  box-shadow: -1px -1px 3px 0px rgba(255, 255, 255, 0.5),
+    2px 2px 4px 0px rgba(0, 0, 0, 0.3);
 }
 
 /* Use the same colors as D3's schemeCategory10 color palette */
@@ -390,7 +425,7 @@ body {
 .range-slider {
   position: relative;
   width: 90%; /* Change width to 100% to utilize the full width of the buttons section */
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
 }
 
 #slider {
@@ -407,8 +442,8 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 0; box-shadow: -5px -5px 10px 0px rgba(255, 255, 255, 0.5), 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
-  
+  z-index: 0;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 input[type="range"] {
@@ -468,12 +503,13 @@ button {
   border-radius: 10px;
   cursor: pointer;
   font-size: 14pt;
-  box-shadow: -5px -5px 10px 0px rgba(255, 255, 255, 0.5), 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3);
   font-weight: 500;
   transition: all 0.2s ease;
 }
 
 button:hover {
-  box-shadow: -2px -2px 5px 0px rgba(255, 255, 255, 0.5), 2px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: -2px -2px 5px 0px rgba(255, 255, 255, 0.5),
+    2px 2px 5px 0px rgba(0, 0, 0, 0.3);
   background-color: #485460;
 }
