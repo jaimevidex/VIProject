@@ -92,29 +92,28 @@ function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
 
 // Updates circles and labels based on bubbleData
 function updateCirclesAndLabels() {
-  let circles = svg.selectAll(".bubble")
-    .data(bubbleData, d => d.label + d.genre);
+  // Remove existing circles and labels
+  svg.selectAll(".bubble").remove();
+  svg.selectAll(".bubble-text").remove();
 
-  circles.exit().remove();
-
-  circles = circles.enter()
+  // Create new circles for the updated bubble data
+  svg.selectAll(".bubble")
+    .data(bubbleData, d => d.label + d.genre)
+    .enter()
     .append("circle")
     .attr("class", "bubble")
     .attr("id", d => `circle-${d.label}-${d.genre}`)
     .attr("r", d => rScale(d.r * 1.2))
     .attr("fill", d => colorMap[d.genre])
-    .attr("cx", width / 2)
-    .attr("cy", height / 2)
+    .attr("cx", width / 2) // Set initial position; will be updated by the simulation
+    .attr("cy", height / 2) // Set initial position; will be updated by the simulation
     .on("mouseover", handleHover)
-    .on("mouseout", handleMouseOut)
-    .merge(circles);
+    .on("mouseout", handleMouseOut);
 
-  let labels = svg.selectAll(".bubble-text")
-    .data(bubbleData, d => d.label + d.genre);
-
-  labels.exit().remove();
-
-  labels = labels.enter()
+  // Create new labels for the updated bubble data
+  svg.selectAll(".bubble-text")
+    .data(bubbleData, d => d.label + d.genre)
+    .enter()
     .append("text")
     .attr("class", "bubble-text")
     .attr("text-anchor", "middle")
@@ -125,9 +124,9 @@ function updateCirclesAndLabels() {
     .style("user-select", "none")
     .on("mouseover", handleHover)
     .on("mouseout", handleMouseOut)
-    .text(d => d.label)
-    .merge(labels);
+    .text(d => d.label);
 }
+
 
 // Custom force for boundary collision
 function boundaryCollision() {
