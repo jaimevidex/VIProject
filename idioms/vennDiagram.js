@@ -46,7 +46,7 @@ function createVennDiagram(data, containerId) {
     .attr("cx", -60) // Adjust position for overlap
     .attr("cy", 0)
     .attr("r", 0) // Start with radius 0
-    .attr("fill", "#d2dae2")
+    .attr("fill", "#747d8c")
     .attr("opacity", 0.5)
     .transition() // Add transition
     .duration(1000) // Duration of 1 second
@@ -57,7 +57,7 @@ function createVennDiagram(data, containerId) {
     .attr("cx", 60) // Adjust position for overlap
     .attr("cy", 0)
     .attr("r", 0) // Start with radius 0
-    .attr("fill", "#d2dae2")
+    .attr("fill", "#747d8c")
     .attr("opacity", 0.5)
     .transition() // Add transition
     .duration(1000) // Duration of 1 second
@@ -155,11 +155,11 @@ function updateVennDiagram(artist, color) {
       .attr("cx", -60) // Adjust position for overlap
       .attr("cy", 0)
       .attr("r", 0) // Start with radius 0
-      .attr("fill", "#d2dae2")
+      .attr("fill", "#747d8c")
       .attr("opacity", 0.5)
       .transition() // Add transition
       .duration(1000) // Duration of 1 second
-      .attr("r", 100) // Animate radius to 100
+      .attr("r", 98) // Animate radius to 100
       .on("end", function () {
         // Ensure the rest of the code runs after the transition
         d3.select(this)
@@ -167,8 +167,9 @@ function updateVennDiagram(artist, color) {
             d3.select(this)
               .transition()
               .duration(200)
-              .attr("r", 110)
+              .attr("r", 102)
               .attr("cx", -70)
+              .attr("fill", "#a4b0be")
               .attr("cursor", "pointer")
               .attr("opacity", 1);
           })
@@ -176,7 +177,8 @@ function updateVennDiagram(artist, color) {
             d3.select(this)
               .transition()
               .duration(300)
-              .attr("r", 100)
+              .attr("r", 98)
+              .attr("fill", "#747d8c")
               .attr("cx", -60)
               .attr("opacity", 0.5);
           })
@@ -202,10 +204,10 @@ function updateVennDiagram(artist, color) {
       .attr("cy", 0)
       .attr("r", 0) // Start with radius 0
       .attr("fill", color)
-      .attr("opacity", 0.5)
+      .attr("opacity", 0.7)
       .transition() // Add transition
       .duration(1000) // Duration of 1 second
-      .attr("r", 100) // Animate radius to 100
+      .attr("r", 98) // Animate radius to 100
       .on("end", function () {
         // Ensure the rest of the code runs after the transition
         d3.select(this)
@@ -213,7 +215,7 @@ function updateVennDiagram(artist, color) {
             d3.select(this)
               .transition()
               .duration(200)
-              .attr("r", 110)
+              .attr("r", 102)
               .attr("cx", 70)
               .attr("cursor", "pointer")
               .attr("opacity", 1);
@@ -222,7 +224,7 @@ function updateVennDiagram(artist, color) {
             d3.select(this)
               .transition()
               .duration(300)
-              .attr("r", 100)
+              .attr("r", 98)
               .attr("cx", 60)
               .attr("opacity", 0.5);
           })
@@ -250,7 +252,7 @@ function updateVennDiagram(artist, color) {
     svg
       .append("text")
       .attr("class", "artist-name")
-      .attr("x", -80) // Adjust the x-position to the left of the first circle
+      .attr("x", -100) // Adjust the x-position to the left of the first circle
       .attr("y", -110) // Align vertically with the center of the first circle
       .attr("text-anchor", "middle")
       .text(artist) // Artist's name from the data
@@ -260,8 +262,8 @@ function updateVennDiagram(artist, color) {
     // Add the artist's name near the left circle
     svg
       .append("text")
-      .attr("x", 80) // Adjust the x-position to the left of the first circle
-      .attr("y", 120) // Align vertically with the center of the first circle
+      .attr("x", 100) // Adjust the x-position to the left of the first circle
+      .attr("y", -110) // Align vertically with the center of the first circle
       .attr("text-anchor", "middle")
       .text(`Other ${genre} artists`) // Artist's name from the data
       .attr("font-size", "14px")
