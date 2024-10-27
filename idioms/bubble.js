@@ -1,286 +1,188 @@
 let isBubblechart = null;
 let genre1 = null;
 
+let bubbleData = [];
+let rScale = null;
+let svg = null;
+
+const width = (window.innerWidth - 370) / 2;
+const height = (window.innerHeight - 50 - 164) / 2;
+const margin = { bottom: 50, left: 50, right: 50, top: 50 };
+const topPadding = 50;
+
+// Main function to create the bubble chart
 function createBubblechart(data, containerId, minRangeValue, maxRangeValue, checkedGenres) {
-  let bubbleData = [];
-
   d3.csv("data/bubble_table.csv").then(function (table) {
-    // Loop through checkedGenres to extract data for each genre
-    checkedGenres.forEach((genre) => {
-      let genreKeywords = table.filter(row => row.genre === genre);
-      let keywordSums = genreKeywords.map(row => {
-        let yearRangeValues = Object.keys(row)
-          .filter(year => year >= minRangeValue && year <= maxRangeValue)
-          .map(year => +row[year]); // Convert to numeric
-        return {
-          label: row.keyword,
-          genre: genre,
-          r: d3.sum(yearRangeValues)
-        };
-      });
+    // Filter data based on genres and range
+    populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres);
 
-      keywordSums.sort((a, b) => b.r - a.r);
-      bubbleData = bubbleData.concat(keywordSums.slice(0, 3));
-    });
-
-    // Set up SVG dimensions
-    const width = (window.innerWidth - 370) / 2;
-    const height = (window.innerHeight - 50 - 164) / 2;
-    const margin = { bottom: 50, left: 50, right: 50, top: 50 };
-    const topPadding = 50; // Padding to keep circles below header text
-
-    // Append chart title
+    // Add header text
     d3.select(containerId)
       .append("h2")
       .style("margin-left", `${margin.left}px`)
-      .style("margin-bottom", "-30px")
+      .style("margin-bottom", "-20px")
       .style("font-weight", "500")
       .style("color", "#222f3e")
       .style("transform", "translate(0, 20px)")
       .text("Usage of Keywords in Songs");
 
-    // Create SVG container
-    const svg = d3
-      .select(containerId)
+    svg = d3.select(containerId)
       .append("svg")
       .attr("height", height)
       .attr("width", width)
       .attr("viewBox", [0, 0, width, height]);
 
-    // Define radius scale
-    const rScale = d3.scaleLinear()
+    rScale = d3.scaleLinear()
       .domain([0, d3.max(bubbleData, d => d.r)])
       .range([5, 50]);
 
-    // Create tooltip container with higher z-index
-    const tooltipGroup = d3.select(containerId)
-      .append("div")
-      .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("background-color", "black")
-      .style("padding", "5px")
-      .style("border-radius", "5px")
-      .style("color", "white")
-      .style("opacity", 0)
-      .style("pointer-events", "none"); // Avoids interfering with hover events on bubbles
-
-    const tooltipKeyword = tooltipGroup.append("div").attr("class", "tooltip-keyword");
-    const tooltipSum = tooltipGroup.append("div").attr("class", "tooltip-sum");
-
-    const simulation = d3.forceSimulation(bubbleData)
+    d3.forceSimulation(bubbleData)
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("charge", d3.forceManyBody().strength(80))
       .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
-      .force("boundary-collision", boundaryCollision) // Custom boundary collision force
+      .force("boundary-collision", boundaryCollision)
       .on("tick", ticked);
 
-    // Bind data and create circles
-    let circles = svg.selectAll(".bubble")
-      .data(bubbleData, d => d.label);
-
-    circles.exit().remove();
-
-    circles = circles.enter()
-      .append("circle")
-      .attr("class", "bubble")
-      .attr("r", d => rScale(d.r * 1.2))
-      .attr("fill", d => colorMap[d.genre])
-      .attr("cx", width / 2)
-      .attr("cy", height / 2)
-      .on("mouseover", (event, d) => {
-        tooltipGroup.style("opacity", 1);
-        tooltipKeyword.text(`Keyword: ${d.label}`);
-        tooltipSum.text(`Sum: ${d.r}`);
-      })
-      .on("mousemove", (event) => {
-        tooltipGroup
-          .style("left", `${event.pageX + 5}px`)
-          .style("top", `${event.pageY - 30}px`);
-      })
-      .on("mouseout", () => tooltipGroup.style("opacity", 0))
-      .merge(circles);
-
-    // Bind data and create labels
-    let labels = svg.selectAll(".bubble-text")
-      .data(bubbleData, d => d.label);
-
-    labels.exit().remove();
-
-    labels = labels.enter()
-      .append("text")
-      .attr("class", "bubble-text")
-      .attr("text-anchor", "middle")
-      .attr("dy", ".35em")
-      .style("font-size", d => Math.min(2 * rScale(d.r), (2 * rScale(d.r) - 8) / 4) + "px")
-      .style("fill", "white")
-      .style("font-weight", "600")
-      .text(d => d.label)
-      .attr("x", width / 2)
-      .attr("y", height / 2)
-      .on("mouseover", (event, d) => {
-        tooltipGroup.style("opacity", 1);
-        tooltipKeyword.text(`Keyword: ${d.label}`);
-        tooltipSum.text(`Sum: ${d.r}`);
-      })
-      .on("mousemove", (event) => {
-        tooltipGroup
-          .style("left", `${event.pageX + 5}px`)
-          .style("top", `${event.pageY - 30}px`);
-      })
-      .on("mouseout", () => tooltipGroup.style("opacity", 0))
-      .merge(labels);
-
-    // Custom force for boundary collision
-    function boundaryCollision() {
-      bubbleData.forEach(d => {
-        if (d.x - rScale(d.r) < 0) d.x = rScale(d.r);
-        if (d.x + rScale(d.r) > width) d.x = width - rScale(d.r);
-        if (d.y - rScale(d.r) < topPadding) d.y = rScale(d.r) + topPadding;
-        if (d.y + rScale(d.r) > height) d.y = height - rScale(d.r);
-      });
-    }
-
-    function ticked() {
-      circles
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
-
-      labels
-        .attr("x", d => d.x)
-        .attr("y", d => d.y);
-    }
+    // Bind and create circles and labels
+    updateCirclesAndLabels();
   });
 }
 
-function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
-  d3.csv("data/bubble_table.csv").then(function (table) {
-    let bubbleData = [];
-
-    checkedGenres.forEach((genre) => {
-      let genreKeywords = table.filter(row => row.genre === genre);
-      let keywordSums = genreKeywords.map(row => {
-        let yearRangeValues = Object.keys(row)
-          .filter(year => year >= minRangeValue && year <= maxRangeValue)
-          .map(year => +row[year]); // Convert to numeric
-        return {
-          label: row.keyword,
-          genre: genre,
-          r: d3.sum(yearRangeValues)
-        };
-      });
-
-      keywordSums.sort((a, b) => b.r - a.r);
-      bubbleData = bubbleData.concat(keywordSums.slice(0, 3));
+// Helper function to populate bubble data
+function populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres) {
+  bubbleData = [];
+  checkedGenres.forEach((genre) => {
+    let genreKeywords = table.filter(row => row.genre === genre);
+    let keywordSums = genreKeywords.map(row => {
+      let yearRangeValues = Object.keys(row)
+        .filter(year => year >= minRangeValue && year <= maxRangeValue)
+        .map(year => +row[year]);
+      return {
+        label: row.keyword,
+        genre: genre,
+        r: d3.sum(yearRangeValues)
+      };
     });
 
-    // Set up dimensions and scales
-    const width = (window.innerWidth - 370) / 2;
-    const height = (window.innerHeight - 50 - 164) / 2;
-    const topPadding = 50;
-    const rScale = d3.scaleLinear()
+    keywordSums.sort((a, b) => b.r - a.r);
+    bubbleData = bubbleData.concat(keywordSums.slice(0, 3));
+  });
+}
+
+// Function to update the bubble chart with new data
+function updateBubblechart(minRangeValue, maxRangeValue, checkedGenres) {
+  d3.csv("data/bubble_table.csv").then(function (table) {
+    populateBubbleData(table, minRangeValue, maxRangeValue, checkedGenres);
+
+    rScale = d3.scaleLinear()
       .domain([0, d3.max(bubbleData, d => d.r)])
       .range([5, 50]);
 
-    const svg = d3.select(".Bubblechart svg");
+    // Update circles and labels
+    updateCirclesAndLabels();
 
-    // Tooltip setup
-    const tooltipGroup = d3.select(".Bubblechart")
-      .select(".tooltip");
-
-    if (tooltipGroup.empty()) {
-      // Create tooltip if it doesn't exist yet
-      tooltipGroup = d3.select(".Bubblechart")
-        .append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("background-color", "black")
-        .style("padding", "5px")
-        .style("border-radius", "5px")
-        .style("color", "white")
-        .style("opacity", 0)
-        .style("pointer-events", "none"); // Avoids interfering with hover events on bubbles
-    }
-
-    const tooltipKeyword = tooltipGroup.select(".tooltip-keyword");
-    const tooltipSum = tooltipGroup.select(".tooltip-sum");
-
-    // Update circles with new data
-    let circles = svg.selectAll(".bubble")
-      .data(bubbleData, d => d.label);
-
-    circles.exit().remove();
-
-    circles = circles.enter()
-      .append("circle")
-      .attr("class", "bubble")
-      .merge(circles)
-      .attr("r", d => rScale(d.r * 1.2))
-      .attr("fill", d => colorMap[d.genre])
-      .on("mouseover", (event, d) => {
-        tooltipGroup.style("opacity", 1);
-        tooltipKeyword.text(`Keyword: ${d.label}`);
-        tooltipSum.text(`Sum: ${d.r}`);
-      })
-      .on("mousemove", (event) => {
-        tooltipGroup
-          .style("left", `${event.pageX + 5}px`)
-          .style("top", `${event.pageY - 30}px`);
-      })
-      .on("mouseout", () => tooltipGroup.style("opacity", 0));
-
-    // Update labels with new data
-    let labels = svg.selectAll(".bubble-text")
-      .data(bubbleData, d => d.label);
-
-    labels.exit().remove();
-
-    labels = labels.enter()
-      .append("text")
-      .attr("class", "bubble-text")
-      .attr("text-anchor", "middle")
-      .attr("dy", ".35em")
-      .style("fill", "white")
-      .style("font-weight", "600")
-      .merge(labels)
-      .text(d => d.label)
-      .style("font-size", d => Math.min(2 * rScale(d.r), (2 * rScale(d.r) - 8) / 4) + "px")
-      .on("mouseover", (event, d) => {
-        tooltipGroup.style("opacity", 1);
-        tooltipKeyword.text(`Keyword: ${d.label}`);
-        tooltipSum.text(`Sum: ${d.r}`);
-      })
-      .on("mousemove", (event) => {
-        tooltipGroup
-          .style("left", `${event.pageX + 5}px`)
-          .style("top", `${event.pageY - 30}px`);
-      })
-      .on("mouseout", () => tooltipGroup.style("opacity", 0));
-
-    const simulation = d3.forceSimulation(bubbleData)
+    d3.forceSimulation(bubbleData)
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("charge", d3.forceManyBody().strength(80))
       .force("collision", d3.forceCollide().radius(d => rScale(d.r * 1.2)))
-      .force("boundary-collision", boundaryCollision) // Custom boundary collision force
+      .force("boundary-collision", boundaryCollision)
       .on("tick", ticked);
-
-    // Custom force for boundary collision
-    function boundaryCollision() {
-      bubbleData.forEach(d => {
-        if (d.x - rScale(d.r) < 0) d.x = rScale(d.r);
-        if (d.x + rScale(d.r) > width) d.x = width - rScale(d.r);
-        if (d.y - rScale(d.r) < topPadding) d.y = rScale(d.r) + topPadding;
-        if (d.y + rScale(d.r) > height) d.y = height - rScale(d.r);
-      });
-    }
-
-    function ticked() {
-      circles
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
-
-      labels
-        .attr("x", d => d.x)
-        .attr("y", d => d.y);
-    }
   });
+}
+
+// Updates circles and labels based on bubbleData
+function updateCirclesAndLabels() {
+  let circles = svg.selectAll(".bubble")
+    .data(bubbleData, d => d.label + d.genre);
+
+  circles.exit().remove();
+
+  circles = circles.enter()
+    .append("circle")
+    .attr("class", "bubble")
+    .attr("id", d => `circle-${d.label}-${d.genre}`)
+    .attr("r", d => rScale(d.r * 1.2))
+    .attr("fill", d => colorMap[d.genre])
+    .attr("cx", width / 2)
+    .attr("cy", height / 2)
+    .on("mouseover", handleHover)
+    .on("mouseout", handleMouseOut)
+    .merge(circles);
+
+  let labels = svg.selectAll(".bubble-text")
+    .data(bubbleData, d => d.label + d.genre);
+
+  labels.exit().remove();
+
+  labels = labels.enter()
+    .append("text")
+    .attr("class", "bubble-text")
+    .attr("text-anchor", "middle")
+    .attr("dy", ".35em")
+    .style("font-size", d => Math.min(2 * rScale(d.r), (2 * rScale(d.r) - 8) / 4) + "px")
+    .style("fill", "white")
+    .style("font-weight", "600")
+    .style("user-select", "none")
+    .text(d => d.label)
+    .merge(labels);
+}
+
+// Custom force for boundary collision
+function boundaryCollision() {
+  bubbleData.forEach(d => {
+    if (d.x - rScale(d.r) < 0) d.x = rScale(d.r);
+    if (d.x + rScale(d.r) > width) d.x = width - rScale(d.r);
+    if (d.y - rScale(d.r) < topPadding) d.y = rScale(d.r) + topPadding;
+    if (d.y + rScale(d.r) > height) d.y = height - rScale(d.r);
+  });
+}
+
+// Function for simulation tick updates
+function ticked() {
+  svg.selectAll(".bubble")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y);
+
+  svg.selectAll(".bubble-text")
+    .attr("x", d => d.x)
+    .attr("y", d => d.y);
+}
+
+// Hover handlers
+function handleHover(event, d) {
+  d3.select(`#circle-${d.label}-${d.genre}`)
+    .attr("stroke", "black")
+    .attr("stroke-width", 2);
+
+  const tooltipText = `Appearances: ${d.r}`;
+  const textSize = tooltipText.length * 6;
+
+  // Position the tooltip background below the circle
+  svg.append("rect")
+    .attr("id", "tooltip-bg")
+    .attr("x", d.x - textSize / 2)
+    .attr("y", d.y + rScale(d.r) ) // Adjusted for below the circle
+    .attr("width", textSize)
+    .attr("height", 20)
+    .attr("fill", "lightgray")
+    .attr("rx", 4)
+    .attr("ry", 4);
+
+  // Position the tooltip text below the background rectangle
+  svg.append("text")
+    .attr("id", "tooltip")
+    .attr("x", d.x)
+    .attr("y", d.y + rScale(d.r) + 15) // Adjusted for below the background
+    .attr("text-anchor", "middle")
+    .attr("font-size", "12px")
+    .attr("fill", "black")
+    .text(tooltipText);
+}
+
+function handleMouseOut(event, d) {
+  d3.select(`#circle-${d.label}-${d.genre}`)
+    .attr("stroke-width", 0);
+
+  d3.select("#tooltip").remove();
+  d3.select("#tooltip-bg").remove();
 }
