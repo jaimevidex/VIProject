@@ -676,9 +676,13 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
 
     var svg = d3.select(id).select("svg");
 
-    var g = svg.select("g");
+     // Clear old data
+    d3.selectAll(".radar-chart").remove();
 
-    var axisGrid = g.select("g").attr("class", "axisWrapper");
+    var g = svg.append("g")
+    .attr("transform", "translate(" + width / 2 + "," + (height + 20) / 2 + ")");
+
+  var axisGrid = g.append("g").attr("class", "axisWrapper");
 
     var rScaleList = [
       d3.scaleLinear().range([0, radius]).domain([0, scaleList[0][4]]),
@@ -696,6 +700,13 @@ function updateRadarChart(minRangeValue, maxRangeValue, checkedGenres) {
       .curve(d3.curveCatmullRomClosed)
       .radius((d, i) => rScaleList[i](d.value))
       .angle((d, i) => i * angleSlice);
+
+      //remove all polygons
+    d3.selectAll(".radarArea").remove();
+    d3.selectAll(".radarStroke").remove();
+    d3.selectAll(".radarCircle").remove();
+    d3.selectAll(".radarCircleWrapper").remove();
+    d3.selectAll(".radarInvisibleCircle").remove();
 
     var blobWrapper = g.selectAll(".radarWrapper").data(radarData);
 

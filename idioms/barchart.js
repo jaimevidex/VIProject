@@ -447,7 +447,8 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
     gridLines.exit().transition().duration(1000).attr("stroke-opacity", 0);
 
     // Bind new data to the existing bars and update their attributes
-    const bars = svg.selectAll("rect.dataItem").data(jsonData, (d) => d.genre);
+    const bars = svg.selectAll("rect.dataItem").data(jsonData, (d) => d.genre)
+    .attr("data-genre", (d) => d.genre);
 
     bars
       .transition()
@@ -471,6 +472,7 @@ function updateBarchart(minRangeValue, maxRangeValue, checkedGenres) {
       .attr("width", xScale.bandwidth())
       .attr("fill", (d) => d.color)
       .attr("rx", 5)
+      .attr("data-genre", (d) => d.genre)
       .attr("ry", 5)
       .on("mouseover", function (event, d) {
         handleHover(d.genre);
