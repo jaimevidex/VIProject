@@ -4,7 +4,7 @@ An interactive dashboard that explores how popular music changed between **1962 
 
 Built with plain **JavaScript + D3 v7** — no framework, no build step.
 
-**[Live demo](https://jaimevidex.github.io/VIProject/)**
+**[Live demo](https://jaimevidex.github.io/music-trends/)**
 
 ## What you can do
 
@@ -59,10 +59,10 @@ style.css             styling
 idioms/               one file per visualization
 data/                 precomputed CSVs
 dataprocessing/       Python pipeline
-CPIII-08.pdf …        checkpoint reports from the course
-VI-video3.mp4         demo walkthrough
+report-1.pdf …        three report checkpoints
+demo.mp4              demo walkthrough
 ```
 
-## Context
+## Notes
 
-Built for the *Visualização de Informação* course at Instituto Superior Técnico. The three PDFs are the checkpoint reports submitted during the semester.
+The `report-*.pdf` files document the three checkpoints of the project: the initial data study, the visual idioms, and the final evaluation.
